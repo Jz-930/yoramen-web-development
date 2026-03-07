@@ -4,160 +4,118 @@ import { ArrowRight, MoveRight } from "lucide-react";
 
 export default function Home() {
   return (
-    <div className="flex flex-col min-h-screen bg-brand-ink overflow-x-hidden">
+    <div className="flex flex-col min-h-screen overflow-x-hidden">
 
-      {/* Cinematic Hero Section */}
-      <section className="relative h-screen flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-brand-ink/40 z-10 bg-[radial-gradient(circle_at_center,transparent_0%,#0A1118_100%)]"></div>
-          <Image
-            src="/images/ramen-placeholder.png"
-            alt="Delicious Japanese Ramen"
-            fill
-            className="object-cover animate-ken-burns scale-105 opacity-80"
-            priority
-          />
-        </div>
+      {/* ── Zen Hero Section ── */}
+      <section className="relative min-h-screen flex items-center justify-center bg-rice-paper pt-20">
+        {/* Subtle background texture — very faint */}
+        <div className="absolute inset-0 opacity-[0.03] pointer-events-none"
+          style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%232C2C2C' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")" }}
+        ></div>
 
+        <div className="relative z-10 w-full max-w-6xl mx-auto px-6 lg:px-8 flex flex-col lg:flex-row items-center gap-16 lg:gap-20">
 
-
-        <div className="relative z-20 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-20 flex flex-col md:flex-row items-center justify-between gap-12">
-
-          <div className="md:w-3/5 text-left">
-            <div className="inline-block border border-brand-red/30 bg-brand-red/10 backdrop-blur-md px-4 py-1.5 rounded-full mb-8">
-              <span className="text-brand-red text-xs tracking-[0.2em] uppercase font-bold flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-brand-red animate-pulse"></span>
-                Freshly made. Boldly flavored.
+          {/* Text Side */}
+          <div className="lg:w-1/2 text-center lg:text-left">
+            <div className="inline-flex items-center gap-2 mb-8">
+              <span className="w-8 h-px bg-brand-red"></span>
+              <span className="text-brand-red text-xs tracking-[0.25em] uppercase font-medium">
+                Freshly Made · Boldly Flavored
               </span>
             </div>
 
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-serif font-bold text-white mb-6 leading-[1.05] text-shadow-glow">
-              Eat a ramen bowl <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-red to-gold italic">with actual soul.</span>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-semibold text-sumi mb-6 leading-[1.15]">
+              A ramen bowl <br />
+              <span className="text-brand-red">with actual soul.</span>
             </h1>
 
-            <p className="text-lg md:text-xl text-gray-300 mb-10 font-light leading-relaxed max-w-xl border-l-2 border-brand-red/50 pl-6">
-              Slow-simmered, made to order, and layered with flavor. We turned "delicious" into a daily standard.
+            <p className="text-lg text-stone mb-10 leading-relaxed max-w-lg mx-auto lg:mx-0">
+              Slow-simmered, made to order, and layered with flavor. We turned &quot;delicious&quot; into a daily standard.
             </p>
 
-            <div className="flex flex-col sm:flex-row items-start gap-6">
-              <Link href="/order" className="bg-brand-red hover:bg-brand-red-light text-white px-10 py-5 rounded-full text-sm uppercase tracking-[0.2em] font-semibold transition-all hover-lift flex items-center gap-3 group relative overflow-hidden">
-                <span className="relative z-10">Order Now</span>
-                <ArrowRight size={18} className="relative z-10 group-hover:translate-x-1 transition-transform" />
-                <div className="absolute inset-0 bg-white/20 -translate-x-full group-hover:translate-x-0 transition-transform duration-500 skew-x-12"></div>
+            <div className="flex flex-col sm:flex-row items-center lg:items-start gap-4">
+              <Link href="/order" className="bg-brand-red hover:bg-brand-red-hover text-white px-8 py-4 rounded-full text-sm tracking-[0.15em] uppercase font-medium transition-all hover-rise flex items-center gap-3 group">
+                <span>Order Now</span>
+                <ArrowRight size={16} className="group-hover:translate-x-0.5 transition-transform" />
               </Link>
-              <Link href="/menu" className="border border-white/20 hover:border-white text-white px-10 py-5 rounded-full text-sm uppercase tracking-[0.2em] font-semibold transition-all hover-lift">
+              <Link href="/menu" className="border border-sumi/20 hover:border-sumi text-sumi px-8 py-4 rounded-full text-sm tracking-[0.15em] uppercase font-medium transition-all hover-rise">
                 View Menu
               </Link>
             </div>
           </div>
 
-          <div className="hidden md:flex flex-col justify-end items-end w-2/5">
-            <div className="relative w-64 h-80 rounded-[2rem] overflow-hidden border border-white/20 shadow-[-20px_20px_0px_rgba(178,30,43,0.2)] hover:-translate-y-2 hover:shadow-[-20px_30px_0px_rgba(178,30,43,0.3)] transition-all duration-500">
-              <Image src="/images/ramen-placeholder.png" alt="Preparation" fill className="object-cover" />
+          {/* Image Side */}
+          <div className="lg:w-1/2 flex justify-center">
+            <div className="relative w-80 h-96 md:w-[400px] md:h-[500px] rounded-[2rem] overflow-hidden shadow-lg">
+              <Image
+                src="/images/ramen-placeholder.png"
+                alt="Signature Ramen Bowl"
+                fill
+                className="object-cover"
+                priority
+              />
             </div>
           </div>
 
         </div>
 
+        {/* Quick highlights — bottom of hero */}
+        <div className="absolute bottom-0 left-0 right-0 border-t border-light-border bg-warm-white/60 backdrop-blur-sm">
+          <div className="max-w-6xl mx-auto px-6 lg:px-8 py-5 flex justify-center gap-12 text-xs tracking-[0.2em] uppercase text-stone">
+            <span>Fresh Prep Daily</span>
+            <span className="text-brand-red">·</span>
+            <span>Signature Flavor</span>
+            <span className="text-brand-red">·</span>
+            <span>Made to Order</span>
+          </div>
+        </div>
       </section>
 
-      {/* Cross Marquee Banners */}
-      <div className="relative z-30 w-full mb-16 md:mb-24 h-40 mt-4">
-
-        {/* Trapezoid Filler Layer to flawlessly bridge the angled wedge gap without edge bleeding */}
-        <div
-          className="absolute left-0 w-[110%] -ml-[5%] h-16 md:h-[100px] top-4 bg-[#3F4B5B] z-0"
-          style={{
-            clipPath: 'polygon(0% 0%, 100% 35%, 100% 60%, 0% 100%)'
-          }}
-        ></div>
-
-        {/* Dark/Red Ribbon (Background, Rotated Up-Right) */}
-        <div className="absolute top-0 left-0 w-[110%] -ml-[5%] bg-brand-red py-6 md:py-8 overflow-hidden flex whitespace-nowrap rotate-[1deg] shadow-[0_20px_50px_rgba(0,0,0,0.5)] -mt-8 md:-mt-10 border-y border-brand-red-light z-10">
-          <div className="animate-[slide_30s_linear_infinite] inline-block font-sans uppercase tracking-[0.4em] text-white font-bold text-sm md:text-lg">
-            Unmistakably Japanese <span className="mx-8 text-gold">•</span> Fresh Prep Daily <span className="mx-8 text-gold">•</span> Signature Flavor <span className="mx-8 text-gold">•</span> Made To Order <span className="mx-8 text-gold">•</span>
-            Unmistakably Japanese <span className="mx-8 text-gold">•</span> Fresh Prep Daily <span className="mx-8 text-gold">•</span> Signature Flavor <span className="mx-8 text-gold">•</span> Made To Order <span className="mx-8 text-gold">•</span>
-            Unmistakably Japanese <span className="mx-8 text-gold">•</span> Fresh Prep Daily <span className="mx-8 text-gold">•</span> Signature Flavor <span className="mx-8 text-gold">•</span> Made To Order <span className="mx-8 text-gold">•</span>
-          </div>
-        </div>
-
-        {/* Light Ribbon (Foreground, Rotated Up-Left) */}
-        <div className="absolute top-12 md:top-16 left-0 w-[110%] -ml-[5%] bg-[#E8E4D9] py-6 md:py-8 overflow-hidden flex whitespace-nowrap -rotate-[2deg] shadow-[0_20px_50px_rgba(0,0,0,0.5)] border-y border-[#D0CBB8] z-20">
-          <div className="animate-[slide_reverse_30s_linear_infinite] inline-block font-sans uppercase tracking-[0.4em] text-brand-ink font-bold text-sm md:text-lg">
-            Established 2018 <span className="mx-8 text-brand-red">•</span> Modern Ramen Experience <span className="mx-8 text-brand-red">•</span> No Compromises <span className="mx-8 text-brand-red">•</span> Downtown Flagship <span className="mx-8 text-brand-red">•</span>
-            Established 2018 <span className="mx-8 text-brand-red">•</span> Modern Ramen Experience <span className="mx-8 text-brand-red">•</span> No Compromises <span className="mx-8 text-brand-red">•</span> Downtown Flagship <span className="mx-8 text-brand-red">•</span>
-            Established 2018 <span className="mx-8 text-brand-red">•</span> Modern Ramen Experience <span className="mx-8 text-brand-red">•</span> No Compromises <span className="mx-8 text-brand-red">•</span> Downtown Flagship <span className="mx-8 text-brand-red">•</span>
-          </div>
-        </div>
-
+      {/* ── Japanese Decorative Divider ── */}
+      <div className="py-12 flex items-center justify-center gap-4 bg-rice-paper">
+        <div className="w-16 h-px bg-light-border"></div>
+        <div className="w-1.5 h-1.5 rounded-full bg-brand-red"></div>
+        <div className="w-16 h-px bg-light-border"></div>
       </div>
 
-      <style dangerouslySetInnerHTML={{
-        __html: `
-        @keyframes slide {
-          from { transform: translateX(0); }
-          to { transform: translateX(-50%); }
-        }
-        @keyframes slide_reverse {
-          from { transform: translateX(-50%); }
-          to { transform: translateX(0); }
-        }
-      `}} />
+      {/* ── Brand Intro ── */}
+      <section className="py-24 md:py-32 bg-rice-paper">
+        <div className="max-w-6xl mx-auto px-6 lg:px-8">
+          <div className="flex flex-col lg:flex-row gap-16 lg:gap-24 items-center">
 
-      {/* Brand Intro - Overlapping Layout */}
-      <section className="py-32 md:py-48 bg-brand-ink relative">
-        {/* Desaturated, background image wrapper with dedicated hidden overflow to prevent cropping the red glow blob above */}
-        <div className="absolute top-0 right-0 bottom-0 w-full md:w-2/3 lg:w-[60%] z-0 overflow-hidden">
-          <Image
-            src="/images/bg-1.webp"
-            alt="Ramen Background Pattern"
-            fill
-            className="object-cover object-[right_top] opacity-[0.15] mix-blend-luminosity grayscale"
-            quality={60}
-          />
-          {/* Subtle vignette gradients to bleed the image softly into the dark background */}
-          <div className="absolute inset-0 bg-gradient-to-r from-brand-ink via-brand-ink/50 to-transparent"></div>
-          <div className="absolute top-0 inset-x-0 h-32 bg-gradient-to-b from-brand-ink to-transparent z-10"></div>
-          <div className="absolute bottom-0 inset-x-0 h-32 bg-gradient-to-t from-brand-ink to-transparent z-10"></div>
-        </div>
-
-        {/* Floating Ambient Glow (The 'Orange Block') - Restored without sharp horizontal crop */}
-        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-brand-red/15 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/3 pointer-events-none z-0"></div>
-
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="flex flex-col lg:flex-row gap-0 lg:gap-16 items-center">
-
-            {/* Split Images */}
-            <div className="w-full lg:w-1/2 relative min-h-[500px] md:min-h-[600px] mb-16 lg:mb-0">
-              <div className="absolute top-0 left-0 w-3/4 h-[400px] rounded-3xl overflow-hidden border border-white/10 shadow-2xl z-10 hover:scale-105 transition-transform duration-700">
-                <Image src="/images/ramen-placeholder.png" alt="Chef preparing ramen" fill className="object-cover" />
-              </div>
-              <div className="absolute bottom-0 right-0 w-2/3 h-[350px] rounded-3xl overflow-hidden border border-gold/20 shadow-[0_30px_60px_rgba(0,0,0,0.6)] z-20 hover:scale-105 transition-transform duration-700">
-                <Image src="/images/ramen-placeholder.png" alt="Premium Bowl" fill className="object-cover" />
-                <div className="absolute inset-0 bg-brand-ink/20 mix-blend-multiply"></div>
+            {/* Images */}
+            <div className="w-full lg:w-1/2 relative">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="relative aspect-[3/4] rounded-2xl overflow-hidden">
+                  <Image src="/images/ramen-placeholder.png" alt="Chef preparing ramen" fill className="object-cover" />
+                </div>
+                <div className="relative aspect-[3/4] rounded-2xl overflow-hidden mt-8">
+                  <Image src="/images/ramen-placeholder.png" alt="Premium Bowl" fill className="object-cover" />
+                </div>
               </div>
             </div>
 
-            {/* Typography Heavy Text */}
-            <div className="w-full lg:w-1/2 lg:pl-10">
-              <span className="text-gold font-sans tracking-[0.3em] uppercase text-xs font-bold block mb-6">Our Philosophy</span>
-              <h2 className="text-4xl md:text-6xl font-serif font-bold text-white mb-8 leading-[1.1]">
+            {/* Text */}
+            <div className="w-full lg:w-1/2">
+              <span className="text-brand-red text-xs tracking-[0.25em] uppercase font-medium block mb-4">Our Philosophy</span>
+              <div className="jp-divider-left mb-8"></div>
+
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-serif text-sumi mb-8 leading-[1.2]">
                 A ramen house <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-gray-400 to-white italic font-light">built around flavor.</span>
+                <span className="text-stone font-light italic">built around flavor.</span>
               </h2>
 
-              <div className="space-y-6 border-l border-white/10 pl-8 mb-12">
-                <p className="text-lg text-gray-400 leading-relaxed font-light">
+              <div className="space-y-5 mb-10">
+                <p className="text-base text-stone leading-[1.85]">
                   We believe a great ramen bowl should do more than fill you up. It should make you feel genuinely taken care of in the middle of a busy day.
                 </p>
-                <p className="text-lg text-gray-400 leading-relaxed font-light">
+                <p className="text-base text-stone leading-[1.85]">
                   From broth to noodles to toppings, we never cut corners. Every ingredient is deliberately chosen and meticulously prepared.
                 </p>
               </div>
 
-              <Link href="/about" className="inline-flex items-center gap-4 text-white hover:text-brand-red uppercase tracking-[0.2em] text-sm font-bold transition-colors group">
-                <span className="w-12 h-[1px] bg-white group-hover:bg-brand-red transition-colors"></span>
+              <Link href="/about" className="inline-flex items-center gap-3 text-sumi hover:text-brand-red text-sm tracking-[0.15em] uppercase font-medium transition-colors group">
+                <span className="w-8 h-px bg-sumi group-hover:bg-brand-red group-hover:w-12 transition-all"></span>
                 Discover Our Story
               </Link>
             </div>
@@ -165,37 +123,38 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Modern Grid - Value Proposition */}
-      <section className="py-32 bg-[#05090C] border-t border-white/5 relative overflow-hidden">
-        {/* Decorative background removed */}
-
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="flex flex-col md:flex-row justify-between items-end mb-20 gap-8">
-            <h2 className="text-4xl md:text-5xl lg:text-7xl font-serif text-white max-w-2xl leading-[1.1]">
-              Why this bowl keeps people coming back.
-            </h2>
-            <Link href="/menu" className="shrink-0 flex items-center gap-3 text-gold hover:text-white uppercase tracking-widest text-xs font-bold transition-colors group">
+      {/* ── Value Proposition Grid ── */}
+      <section className="py-24 md:py-32 bg-section-warm">
+        <div className="max-w-6xl mx-auto px-6 lg:px-8">
+          <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
+            <div>
+              <span className="text-brand-red text-xs tracking-[0.25em] uppercase font-medium block mb-4">Our Promise</span>
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-serif text-sumi leading-[1.15]">
+                Why this bowl keeps<br /> people coming back.
+              </h2>
+            </div>
+            <Link href="/menu" className="shrink-0 flex items-center gap-3 text-stone hover:text-sumi text-xs tracking-[0.15em] uppercase font-medium transition-colors group">
               Explore Menu
-              <div className="w-8 h-8 rounded-full border border-gold group-hover:border-white flex items-center justify-center transition-colors">
+              <div className="w-8 h-8 rounded-full border border-stone/30 group-hover:border-sumi flex items-center justify-center transition-colors">
                 <MoveRight size={14} />
               </div>
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
-              { title: "Layered Broth", desc: "Rich up front, clean on the finish, never heavy. Simmered for 14 hours daily.", img: "/images/ramen-placeholder.png" },
-              { title: "Perfect Bite", desc: "Springy texture in every mouthful. Custom-crafted noodles with exact hydration.", img: "/images/ramen-placeholder.png" },
-              { title: "Toppings", desc: "Chashu, soft-boiled egg, and savory sauce build flavor in every layer.", img: "/images/ramen-placeholder.png" }
-            ].map((prop, idx) => (
-              <div key={idx} className="group relative rounded-3xl overflow-hidden h-[450px] border border-white/5 hover:border-gold/30 transition-colors duration-500">
-                <Image src={prop.img} alt={prop.title} fill className="object-cover group-hover:scale-110 transition-transform duration-1000" />
-                <div className="absolute inset-0 bg-gradient-to-t from-brand-ink via-brand-ink/50 to-transparent opacity-90 group-hover:opacity-100 transition-opacity"></div>
-
-                <div className="absolute bottom-0 left-0 w-full p-8 translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-                  <div className="text-gold font-serif text-5xl opacity-20 mb-[-20px] font-bold">0{idx + 1}</div>
-                  <h3 className="text-2xl font-serif text-white mb-3">{prop.title}</h3>
-                  <p className="text-gray-400 font-light leading-relaxed">{prop.desc}</p>
+              { num: "01", title: "Layered Broth", desc: "Rich up front, clean on the finish, never heavy. Simmered for 14 hours daily.", img: "/images/ramen-placeholder.png" },
+              { num: "02", title: "Perfect Bite", desc: "Springy texture in every mouthful. Custom-crafted noodles with exact hydration.", img: "/images/ramen-placeholder.png" },
+              { num: "03", title: "Memorable Toppings", desc: "Chashu, soft-boiled egg, and savory sauce build flavor in every layer.", img: "/images/ramen-placeholder.png" }
+            ].map((prop) => (
+              <div key={prop.num} className="bg-warm-white rounded-2xl overflow-hidden border border-light-border hover-rise group">
+                <div className="relative h-64 overflow-hidden">
+                  <Image src={prop.img} alt={prop.title} fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
+                </div>
+                <div className="p-8">
+                  <span className="text-brand-red/30 font-serif text-3xl font-bold block mb-2">{prop.num}</span>
+                  <h3 className="text-xl font-serif text-sumi mb-3">{prop.title}</h3>
+                  <p className="text-stone text-sm leading-relaxed">{prop.desc}</p>
                 </div>
               </div>
             ))}
@@ -203,58 +162,47 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Heavy Stylized Seasonal Promotion */}
-      <section className="py-24 bg-brand-ink overflow-hidden border-t border-white/5 relative">
-        {/* Decorative Background Image for Seasonal Promotion */}
-        <div className="absolute inset-y-0 -left-[10%] w-[120%] z-0 pointer-events-none">
-          <Image
-            src="/images/bg-2.webp"
-            alt="Seasonal Promotion Background"
-            fill
-            className="object-cover object-left opacity-[0.35] mix-blend-screen"
-            quality={85}
-          />
-          {/* Subtle vignette gradients to bleed the image softly into the dark background */}
-          <div className="absolute inset-0 bg-gradient-to-r from-brand-ink via-brand-ink/50 to-transparent z-10"></div>
-          <div className="absolute top-0 inset-x-0 h-24 bg-gradient-to-b from-brand-ink to-transparent z-10"></div>
-          <div className="absolute bottom-0 inset-x-0 h-24 bg-gradient-to-t from-brand-ink to-transparent z-10"></div>
-        </div>
+      {/* ── Seasonal Promotion ── */}
+      <section className="py-24 md:py-32 bg-rice-paper">
+        <div className="max-w-6xl mx-auto px-6 lg:px-8">
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="bg-warm-white rounded-3xl overflow-hidden border border-light-border shadow-sm">
+            <div className="flex flex-col md:flex-row">
 
-          <div className="bg-brand-red rounded-[2rem] p-1 md:p-2 overflow-hidden shadow-[0_0_50px_rgba(178,30,43,0.3)]">
-            <div className="bg-[#0A1118] rounded-[1.5rem] relative overflow-hidden flex flex-col md:flex-row">
-
-              <div className="w-full md:w-1/2 p-10 md:p-16 lg:p-24 flex flex-col justify-center relative z-10">
-                <div className="inline-block bg-white text-brand-ink text-xs font-bold px-4 py-1.5 uppercase tracking-widest mb-8 rounded-full w-max shadow-lg">
-                  Limited Time Drop
+              {/* Text Side */}
+              <div className="w-full md:w-1/2 p-10 md:p-16 flex flex-col justify-center">
+                <div className="inline-block bg-brand-red/10 text-brand-red text-xs font-medium px-4 py-1.5 tracking-[0.15em] uppercase mb-8 rounded-full w-max">
+                  Limited Time
                 </div>
-                <h2 className="text-4xl md:text-6xl lg:text-7xl font-serif text-white mb-4 leading-[1.05]">Spring Light<br />Series</h2>
-                <p className="text-xl md:text-2xl text-brand-red-light italic font-serif mb-8">Yuzu-inspired clear broth.</p>
+                <h2 className="text-3xl md:text-5xl font-serif text-sumi mb-4 leading-[1.1]">
+                  Spring Light<br />Series
+                </h2>
+                <p className="text-lg text-brand-red italic font-serif mb-6">
+                  Yuzu-inspired clear broth.
+                </p>
 
-                <p className="text-gray-300 font-light leading-relaxed text-lg mb-10 max-w-md">
+                <p className="text-stone leading-relaxed mb-10 max-w-md">
                   Bright, clean, and deeply satisfying. Miss it now, wait another season.
                 </p>
 
-                <div className="flex flex-col sm:flex-row items-center gap-6">
-                  <Link href="/order" className="w-full sm:w-auto text-center bg-brand-red hover:bg-white hover:text-brand-ink text-white px-8 py-4 rounded-full text-sm uppercase tracking-widest font-bold transition-all">
+                <div className="flex flex-col sm:flex-row items-start gap-4">
+                  <Link href="/order" className="bg-brand-red hover:bg-brand-red-hover text-white px-8 py-3.5 rounded-full text-sm tracking-[0.12em] uppercase font-medium transition-all hover-rise">
                     Order This Bowl
                   </Link>
-                  <span className="text-sm text-gray-500 tracking-widest uppercase font-semibold">
-                    03.15 - 05.31
+                  <span className="text-xs text-stone tracking-[0.15em] uppercase font-medium self-center">
+                    03.15 — 05.31
                   </span>
                 </div>
               </div>
 
-              <div className="w-full md:w-1/2 h-[400px] md:h-auto relative clip-path-slant object-cover">
+              {/* Image Side */}
+              <div className="w-full md:w-1/2 h-[350px] md:h-auto relative">
                 <Image
                   src="/images/ramen-placeholder.png"
                   alt="Spring Light Series"
                   fill
                   className="object-cover"
                 />
-                {/* Slant overlay for cool design aesthetic */}
-                <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-[#0A1118] to-transparent hidden md:block"></div>
               </div>
 
             </div>

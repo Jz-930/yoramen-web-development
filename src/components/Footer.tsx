@@ -3,30 +3,32 @@ import Image from "next/image";
 
 export default function Footer() {
     return (
-        <footer className="bg-[#05090C] pt-20 pb-10 border-t border-white/5">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <footer className="bg-section-warm pt-20 pb-10 border-t border-light-border">
+            <div className="max-w-6xl mx-auto px-6 lg:px-8">
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
-                    <div className="col-span-1 md:col-span-1">
+                    {/* Brand */}
+                    <div className="col-span-1">
                         <Link href="/" className="flex items-center gap-3 mb-6">
                             <Image
                                 src="/images/logo/logo-64.webp"
                                 alt="Yoramen Logo"
-                                width={48}
-                                height={48}
+                                width={40}
+                                height={40}
                                 className="object-contain"
                             />
-                            <span className="font-serif text-3xl font-bold tracking-wider text-rice-paper">
+                            <span className="font-serif text-2xl font-semibold tracking-wider text-sumi">
                                 YORAMEN
                             </span>
                         </Link>
-                        <p className="text-gray-400 text-sm leading-relaxed">
+                        <p className="text-stone text-sm leading-relaxed">
                             Our most important job is simple: make every bowl right, every day.
                         </p>
                     </div>
 
+                    {/* Explore */}
                     <div>
-                        <h4 className="font-serif text-lg mb-6 text-gold">Explore</h4>
-                        <ul className="space-y-4 text-sm text-gray-400">
+                        <h4 className="font-serif text-base mb-6 text-sumi font-semibold">Explore</h4>
+                        <ul className="space-y-4 text-sm text-stone">
                             <li>
                                 <Link href="/menu" className="hover:text-brand-red transition-colors">
                                     Menu
@@ -45,9 +47,10 @@ export default function Footer() {
                         </ul>
                     </div>
 
+                    {/* Visit */}
                     <div>
-                        <h4 className="font-serif text-lg mb-6 text-gold">Visit Us</h4>
-                        <ul className="space-y-4 text-sm text-gray-400">
+                        <h4 className="font-serif text-base mb-6 text-sumi font-semibold">Visit Us</h4>
+                        <ul className="space-y-4 text-sm text-stone">
                             <li>
                                 <Link href="/locations" className="hover:text-brand-red transition-colors">
                                     Locations
@@ -66,9 +69,10 @@ export default function Footer() {
                         </ul>
                     </div>
 
+                    {/* Connect */}
                     <div>
-                        <h4 className="font-serif text-lg mb-6 text-gold">Connect</h4>
-                        <ul className="space-y-4 text-sm text-gray-400">
+                        <h4 className="font-serif text-base mb-6 text-sumi font-semibold">Connect</h4>
+                        <ul className="space-y-4 text-sm text-stone">
                             <li>
                                 <a href="#" className="hover:text-brand-red transition-colors">
                                     Instagram
@@ -88,11 +92,18 @@ export default function Footer() {
                     </div>
                 </div>
 
-                <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center text-xs text-gray-500">
+                {/* Decorative Divider */}
+                <div className="flex items-center gap-4 mb-8">
+                    <div className="flex-1 h-px bg-light-border"></div>
+                    <div className="w-2 h-2 rounded-full bg-brand-red/30"></div>
+                    <div className="flex-1 h-px bg-light-border"></div>
+                </div>
+
+                <div className="flex flex-col md:flex-row justify-between items-center text-xs text-stone">
                     <p>© {new Date().getFullYear()} Yoramen. All rights reserved.</p>
                     <div className="flex space-x-6 mt-4 md:mt-0">
-                        <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
-                        <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
+                        <a href="#" className="hover:text-sumi transition-colors">Privacy Policy</a>
+                        <a href="#" className="hover:text-sumi transition-colors">Terms of Service</a>
                     </div>
                 </div>
             </div>

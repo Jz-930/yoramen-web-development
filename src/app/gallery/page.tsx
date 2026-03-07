@@ -17,33 +17,35 @@ const galleryImages = [
 
 export default function GalleryPage() {
     return (
-        <div className="pt-32 pb-24 min-h-screen bg-brand-ink">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="pt-28 pb-24 min-h-screen bg-rice-paper">
+            <div className="max-w-6xl mx-auto px-6 lg:px-8">
 
                 {/* Page Header */}
                 <div className="text-center mb-16">
-                    <h1 className="text-5xl md:text-7xl font-serif text-white mb-6">Gallery</h1>
-                    <p className="text-xl text-gray-400 font-light max-w-2xl mx-auto mb-6">
+                    <span className="text-brand-red text-xs tracking-[0.25em] uppercase font-medium block mb-4">Visual</span>
+                    <h1 className="text-4xl md:text-6xl font-serif text-sumi mb-4">Gallery</h1>
+                    <div className="jp-divider mb-6"></div>
+                    <p className="text-base text-stone max-w-xl mx-auto mb-4">
                         Every image captures a real moment from our daily craft.
                     </p>
-                    <p className="text-sm uppercase tracking-widest text-gold">
+                    <p className="text-xs uppercase tracking-[0.2em] text-gold-muted">
                         From prep station to final plating, from store interior to table service.
                     </p>
                 </div>
 
                 {/* Masonry-style Grid Container */}
-                <div className="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6">
+                <div className="columns-1 sm:columns-2 lg:columns-3 gap-5 space-y-5">
                     {galleryImages.map((img, idx) => (
                         <div key={idx} className="break-inside-avoid group cursor-pointer">
-                            <div className={`relative ${img.aspect} w-full rounded-2xl overflow-hidden border border-white/10`}>
+                            <div className={`relative ${img.aspect} w-full rounded-2xl overflow-hidden border border-light-border`}>
                                 <Image
                                     src={img.url}
                                     alt={img.title}
                                     fill
-                                    className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                                    className="object-cover group-hover:scale-[1.03] transition-transform duration-700 ease-out"
                                 />
-                                <div className="absolute inset-0 bg-brand-ink/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center backdrop-blur-[2px]">
-                                    <span className="text-white font-serif tracking-wider text-xl">{img.title}</span>
+                                <div className="absolute inset-0 bg-warm-white/70 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center backdrop-blur-[2px]">
+                                    <span className="text-sumi font-serif tracking-wider text-lg">{img.title}</span>
                                 </div>
                             </div>
                         </div>
