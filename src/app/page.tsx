@@ -1,75 +1,14 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, MoveRight } from "lucide-react";
+import { MoveRight } from "lucide-react";
+import HeroSection from "@/components/HeroSection";
 
 export default function Home() {
   return (
     <div className="flex flex-col min-h-screen overflow-x-hidden">
 
-      {/* ── Zen Hero Section ── */}
-      <section className="relative min-h-screen flex items-center justify-center bg-rice-paper pt-20">
-        {/* Subtle background texture — very faint */}
-        <div className="absolute inset-0 opacity-[0.03] pointer-events-none"
-          style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%232C2C2C' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")" }}
-        ></div>
-
-        <div className="relative z-10 w-full max-w-6xl mx-auto px-6 lg:px-8 flex flex-col lg:flex-row items-center gap-16 lg:gap-20">
-
-          {/* Text Side */}
-          <div className="lg:w-1/2 text-center lg:text-left">
-            <div className="inline-flex items-center gap-2 mb-8">
-              <span className="w-8 h-px bg-brand-red"></span>
-              <span className="text-brand-red text-xs tracking-[0.25em] uppercase font-medium">
-                Freshly Made · Boldly Flavored
-              </span>
-            </div>
-
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-semibold text-sumi mb-6 leading-[1.15]">
-              A ramen bowl <br />
-              <span className="text-brand-red">with actual soul.</span>
-            </h1>
-
-            <p className="text-lg text-stone mb-10 leading-relaxed max-w-lg mx-auto lg:mx-0">
-              Slow-simmered, made to order, and layered with flavor. We turned &quot;delicious&quot; into a daily standard.
-            </p>
-
-            <div className="flex flex-col sm:flex-row items-center lg:items-start gap-4">
-              <Link href="/order" className="bg-brand-red hover:bg-brand-red-hover text-white px-8 py-4 rounded-full text-sm tracking-[0.15em] uppercase font-medium transition-all hover-rise flex items-center gap-3 group">
-                <span>Order Now</span>
-                <ArrowRight size={16} className="group-hover:translate-x-0.5 transition-transform" />
-              </Link>
-              <Link href="/menu" className="border border-sumi/20 hover:border-sumi text-sumi px-8 py-4 rounded-full text-sm tracking-[0.15em] uppercase font-medium transition-all hover-rise">
-                View Menu
-              </Link>
-            </div>
-          </div>
-
-          {/* Image Side */}
-          <div className="lg:w-1/2 flex justify-center">
-            <div className="relative w-80 h-96 md:w-[400px] md:h-[500px] rounded-[2rem] overflow-hidden shadow-lg">
-              <Image
-                src="/images/ramen-placeholder.png"
-                alt="Signature Ramen Bowl"
-                fill
-                className="object-cover"
-                priority
-              />
-            </div>
-          </div>
-
-        </div>
-
-        {/* Quick highlights — bottom of hero */}
-        <div className="absolute bottom-0 left-0 right-0 border-t border-light-border bg-warm-white/60 backdrop-blur-sm">
-          <div className="max-w-6xl mx-auto px-6 lg:px-8 py-5 flex justify-center gap-12 text-xs tracking-[0.2em] uppercase text-stone">
-            <span>Fresh Prep Daily</span>
-            <span className="text-brand-red">·</span>
-            <span>Signature Flavor</span>
-            <span className="text-brand-red">·</span>
-            <span>Made to Order</span>
-          </div>
-        </div>
-      </section>
+      {/* ── Animated Hero Section ── */}
+      <HeroSection />
 
       {/* ── Japanese Decorative Divider ── */}
       <div className="py-12 flex items-center justify-center gap-4 bg-rice-paper">
