@@ -101,7 +101,7 @@ export default function HeroSection() {
                     />
                 </div>
                 {/* Soft gradient overlays so art blends into rice paper on edges */}
-                <div className="absolute inset-0 bg-gradient-to-r from-rice-paper/90 via-transparent to-rice-paper/70" />
+                <div className="absolute inset-0 bg-gradient-to-r from-rice-paper via-rice-paper/60 to-rice-paper/70" />
                 <div className="absolute inset-0 bg-gradient-to-b from-rice-paper/60 via-transparent to-rice-paper/80" />
                 <div className="absolute inset-0 bg-gradient-to-l from-rice-paper/40 via-transparent to-transparent" />
             </motion.div>
@@ -191,14 +191,14 @@ export default function HeroSection() {
                     <div className="relative">
                         {/* Ensō circle — slowly rotating behind the bowl */}
                         <motion.div
-                            className="absolute -inset-8 md:-inset-12 rounded-full border-2 border-brand-red/10 hero-enso"
+                            className="absolute -inset-4 md:-inset-12 rounded-full border-2 border-brand-red/10 hero-enso"
                             initial={{ opacity: 0, scale: 0.8 }}
                             animate={{ opacity: 1, scale: 1 }}
                             transition={{ duration: 1.2, delay: 0.6 }}
                         />
-                        {/* Second ensō ring */}
+                        {/* Second ensō ring — hidden on mobile */}
                         <motion.div
-                            className="absolute -inset-16 md:-inset-20 rounded-full border border-dashed border-brand-red/5 hero-enso-reverse"
+                            className="absolute -inset-20 rounded-full border border-dashed border-brand-red/5 hero-enso-reverse hidden md:block"
                             initial={{ opacity: 0, scale: 0.7 }}
                             animate={{ opacity: 1, scale: 1 }}
                             transition={{ duration: 1.4, delay: 0.8 }}
@@ -206,7 +206,7 @@ export default function HeroSection() {
 
                         {/* Floating image container — STRONGER float */}
                         <motion.div
-                            className="relative w-80 h-96 md:w-[400px] md:h-[500px] rounded-[2rem] overflow-hidden shadow-xl hero-float"
+                            className="relative w-64 h-80 md:w-[400px] md:h-[500px] rounded-[2rem] overflow-hidden shadow-xl hero-float"
                             style={{ x: imgX, y: imgY }}
                         >
                             <Image

@@ -369,3 +369,269 @@ html {
   animation-delay: 3s;
   animation-duration: 10s;
 }
+
+/* ═══════════════════════════════════════════
+   Japanese Design Elements — 和風デザイン
+   ═══════════════════════════════════════════ */
+
+/* ── Tategaki 縦書き (Vertical writing) ── */
+.jp-tategaki {
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+  letter-spacing: 0.35em;
+  font-family: "Noto Serif JP", serif;
+}
+
+/* ── Hanko 印鑑 (Red stamp seal) ── */
+.jp-hanko {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border: 2.5px solid var(--color-brand-red);
+  border-radius: 6px;
+  color: var(--color-brand-red);
+  font-family: "Noto Serif JP", serif;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  transform: rotate(-6deg);
+  opacity: 0.85;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.jp-hanko:hover {
+  transform: rotate(0deg);
+  opacity: 1;
+}
+
+/* ── Seigaiha 青海波 (Wave pattern background) ── */
+.jp-seigaiha-bg {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='40'%3E%3Cpath d='M0 40 C20 40 20 20 40 20 C60 20 60 40 80 40' fill='none' stroke='%23C8553D' stroke-opacity='0.06' stroke-width='1'/%3E%3Cpath d='M-40 40 C-20 40 -20 20 0 20 C20 20 20 40 40 40' fill='none' stroke='%23C8553D' stroke-opacity='0.06' stroke-width='1'/%3E%3Cpath d='M40 40 C60 40 60 20 80 20 C100 20 100 40 120 40' fill='none' stroke='%23C8553D' stroke-opacity='0.06' stroke-width='1'/%3E%3C/svg%3E");
+  background-size: 80px 40px;
+}
+
+/* ── Asanoha 麻の葉 (Hemp leaf pattern overlay) ── */
+.jp-asanoha-overlay {
+  position: relative;
+}
+
+.jp-asanoha-overlay::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48'%3E%3Cpath d='M24 0 L48 24 L24 48 L0 24 Z' fill='none' stroke='%23C8553D' stroke-opacity='0.07' stroke-width='0.5'/%3E%3Cpath d='M24 0 L24 48 M0 24 L48 24 M0 0 L48 48 M48 0 L0 48' fill='none' stroke='%23C8553D' stroke-opacity='0.04' stroke-width='0.5'/%3E%3C/svg%3E");
+  background-size: 48px 48px;
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+/* ── Noren 暖簾 (Curtain bar) ── */
+.jp-noren {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  padding: 0.75rem 0;
+  border-bottom: 2px solid var(--color-brand-red);
+  position: relative;
+}
+
+.jp-noren::before,
+.jp-noren::after {
+  content: "";
+  width: 6px;
+  height: 24px;
+  background: var(--color-brand-red);
+  opacity: 0.2;
+  border-radius: 0 0 3px 3px;
+  position: absolute;
+  bottom: -26px;
+}
+
+.jp-noren::before {
+  left: 30%;
+}
+
+.jp-noren::after {
+  left: 70%;
+}
+
+/* ── Sakura 桜 (Cherry blossom float) ── */
+@keyframes sakura-fall {
+  0% {
+    opacity: 0;
+    transform: translateY(-30px) translateX(0) rotate(0deg);
+  }
+
+  8% {
+    opacity: 0.9;
+  }
+
+  50% {
+    opacity: 0.7;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateY(450px) translateX(80px) rotate(400deg);
+  }
+}
+
+@keyframes sakura-fall-reverse {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px) translateX(0) rotate(0deg);
+  }
+
+  8% {
+    opacity: 0.85;
+  }
+
+  50% {
+    opacity: 0.6;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateY(420px) translateX(-70px) rotate(-360deg);
+  }
+}
+
+.jp-sakura {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  background: radial-gradient(ellipse at 30% 30%, rgba(255, 175, 190, 0.9), rgba(255, 140, 165, 0.5) 55%, transparent 75%);
+  border-radius: 50% 0 50% 50%;
+  animation: sakura-fall linear infinite;
+  pointer-events: none;
+}
+
+.jp-sakura-1 {
+  left: 5%;
+  animation-duration: 7s;
+  animation-delay: 0s;
+  width: 13px;
+  height: 13px;
+}
+
+.jp-sakura-2 {
+  left: 15%;
+  animation-duration: 9s;
+  animation-delay: 1.5s;
+  width: 16px;
+  height: 16px;
+}
+
+.jp-sakura-3 {
+  left: 25%;
+  animation-duration: 8s;
+  animation-delay: 3s;
+  width: 10px;
+  height: 10px;
+}
+
+.jp-sakura-4 {
+  left: 35%;
+  animation-duration: 10s;
+  animation-delay: 0.5s;
+  width: 14px;
+  height: 14px;
+}
+
+.jp-sakura-5 {
+  left: 45%;
+  animation-duration: 8.5s;
+  animation-delay: 2s;
+  width: 17px;
+  height: 17px;
+}
+
+.jp-sakura-6 {
+  left: 55%;
+  animation-duration: 9.5s;
+  animation-delay: 4s;
+  width: 11px;
+  height: 11px;
+}
+
+.jp-sakura-7 {
+  left: 65%;
+  animation-duration: 7.5s;
+  animation-delay: 5s;
+  width: 15px;
+  height: 15px;
+}
+
+.jp-sakura-8 {
+  left: 75%;
+  animation-duration: 11s;
+  animation-delay: 1s;
+  width: 12px;
+  height: 12px;
+  animation-name: sakura-fall-reverse;
+}
+
+.jp-sakura-9 {
+  left: 85%;
+  animation-duration: 8s;
+  animation-delay: 3.5s;
+  width: 18px;
+  height: 18px;
+}
+
+.jp-sakura-10 {
+  left: 92%;
+  animation-duration: 10s;
+  animation-delay: 6s;
+  width: 10px;
+  height: 10px;
+  animation-name: sakura-fall-reverse;
+}
+
+.jp-sakura-11 {
+  left: 20%;
+  animation-duration: 12s;
+  animation-delay: 7s;
+  width: 9px;
+  height: 9px;
+  animation-name: sakura-fall-reverse;
+}
+
+.jp-sakura-12 {
+  left: 50%;
+  animation-duration: 9s;
+  animation-delay: 4.5s;
+  width: 13px;
+  height: 13px;
+}
+
+/* ── Ema 絵馬 (Votive tablet tag shape) ── */
+.jp-ema-tag {
+  position: relative;
+  background: linear-gradient(135deg, var(--color-brand-red), #d4614d);
+  color: white;
+  padding: 6px 16px 6px 22px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  clip-path: polygon(12px 0%, 100% 0%, 100% 100%, 12px 100%, 0% 50%);
+}
+
+/* ── Seigaiha Divider (decorative wave section break) ── */
+.jp-wave-divider {
+  position: relative;
+  overflow: hidden;
+}
+
+.jp-wave-divider::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='50'%3E%3Cpath d='M0 50 Q25 0 50 25 Q75 50 100 50' fill='none' stroke='%23C8553D' stroke-opacity='0.1' stroke-width='1'/%3E%3C/svg%3E");
+  background-size: 100px 50px;
+  background-position: center;
+}
