@@ -83,11 +83,7 @@ export default function Footer() {
                                     Facebook
                                 </a>
                             </li>
-                            <li>
-                                <a href="#" className="hover:text-brand-red transition-colors">
-                                    Twitter
-                                </a>
-                            </li>
+
                         </ul>
                     </div>
                 </div>

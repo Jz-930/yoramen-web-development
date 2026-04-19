@@ -2,9 +2,9 @@
 
 @theme {
   /* Japanese Bright Palette */
-  --color-rice-paper: #FAF7F2;
+  --color-rice-paper: #FFFFFF;
   --color-warm-white: #FFFFFF;
-  --color-section-warm: #F3EDE4;
+  --color-section-warm: #FFFFFF;
   --color-sumi: #2C2C2C;
   --color-stone: #6B6B6B;
   --color-brand-red: #C13838;
@@ -406,232 +406,75 @@ html {
   opacity: 1;
 }
 
-/* ── Seigaiha 青海波 (Wave pattern background) ── */
-.jp-seigaiha-bg {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='40'%3E%3Cpath d='M0 40 C20 40 20 20 40 20 C60 20 60 40 80 40' fill='none' stroke='%23C8553D' stroke-opacity='0.06' stroke-width='1'/%3E%3Cpath d='M-40 40 C-20 40 -20 20 0 20 C20 20 20 40 40 40' fill='none' stroke='%23C8553D' stroke-opacity='0.06' stroke-width='1'/%3E%3Cpath d='M40 40 C60 40 60 20 80 20 C100 20 100 40 120 40' fill='none' stroke='%23C8553D' stroke-opacity='0.06' stroke-width='1'/%3E%3C/svg%3E");
-  background-size: 80px 40px;
-}
-
-/* ── Asanoha 麻の葉 (Hemp leaf pattern overlay) ── */
-.jp-asanoha-overlay {
+/* ── Authentic Ukiyo-e Background Patterns (Envato Assets) ── */
+.jp-pattern-geo {
   position: relative;
+  z-index: 1; /* Establish stacking context to contain pseudo-element */
 }
 
-.jp-asanoha-overlay::after {
+.jp-pattern-geo::before {
   content: "";
   position: absolute;
   inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48'%3E%3Cpath d='M24 0 L48 24 L24 48 L0 24 Z' fill='none' stroke='%23C8553D' stroke-opacity='0.07' stroke-width='0.5'/%3E%3Cpath d='M24 0 L24 48 M0 24 L48 24 M0 0 L48 48 M48 0 L0 48' fill='none' stroke='%23C8553D' stroke-opacity='0.04' stroke-width='0.5'/%3E%3C/svg%3E");
-  background-size: 48px 48px;
+  background-image: url("/images/geometric-pattern.webp");
+  background-size: 250px 250px;
+  background-repeat: repeat;
+  mix-blend-mode: multiply;
+  opacity: 0.05; /* Faint but frequently tiled geometric texture */
   pointer-events: none;
-  border-radius: inherit;
+  z-index: 0; /* Kept safely behind content */
 }
 
-/* ── Noren 暖簾 (Curtain bar) ── */
-.jp-noren {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 1.5rem;
-  padding: 0.75rem 0;
-  border-bottom: 2px solid var(--color-brand-red);
+/* Guarantee main content wrappers float above the pseudo-element pattern */
+.jp-pattern-geo > .max-w-6xl,
+.jp-pattern-geo > .max-w-4xl,
+.jp-pattern-geo > .container {
   position: relative;
+  z-index: 10;
 }
 
-.jp-noren::before,
-.jp-noren::after {
-  content: "";
-  width: 6px;
-  height: 24px;
-  background: var(--color-brand-red);
-  opacity: 0.2;
-  border-radius: 0 0 3px 3px;
+/* ── Japanese Lantern Embers Animation (Continuous Hearth Dynamic) ── */
+@keyframes floatUp {
+  0% { top: 100%; opacity: 0; transform: scale(0.3); }
+  10% { opacity: 1; transform: scale(1); }
+  80% { opacity: 0.6; transform: scale(0.5); }
+  100% { top: -10%; opacity: 0; transform: scale(0.1); }
+}
+
+@keyframes swayLeftRight {
+  0% { margin-left: 0px; }
+  25% { margin-left: 20px; }
+  50% { margin-left: -15px; }
+  75% { margin-left: 10px; }
+  100% { margin-left: -20px; }
+}
+
+@keyframes flickerSpark {
+  0%, 100% { filter: brightness(1) drop-shadow(0 0 2px #ff4500); }
+  50% { filter: brightness(1.5) drop-shadow(0 0 5px #ff7700); }
+}
+
+.jp-ember {
   position: absolute;
-  bottom: -26px;
-}
-
-.jp-noren::before {
-  left: 30%;
-}
-
-.jp-noren::after {
-  left: 70%;
-}
-
-/* ── Sakura 桜 (Cherry blossom float) ── */
-@keyframes sakura-fall {
-  0% {
-    opacity: 0;
-    transform: translateY(-30px) translateX(0) rotate(0deg);
-  }
-
-  8% {
-    opacity: 0.9;
-  }
-
-  50% {
-    opacity: 0.7;
-  }
-
-  100% {
-    opacity: 0;
-    transform: translateY(450px) translateX(80px) rotate(400deg);
-  }
-}
-
-@keyframes sakura-fall-reverse {
-  0% {
-    opacity: 0;
-    transform: translateY(-20px) translateX(0) rotate(0deg);
-  }
-
-  8% {
-    opacity: 0.85;
-  }
-
-  50% {
-    opacity: 0.6;
-  }
-
-  100% {
-    opacity: 0;
-    transform: translateY(420px) translateX(-70px) rotate(-360deg);
-  }
-}
-
-.jp-sakura {
-  position: absolute;
-  width: 14px;
-  height: 14px;
-  background: radial-gradient(ellipse at 30% 30%, rgba(255, 175, 190, 0.9), rgba(255, 140, 165, 0.5) 55%, transparent 75%);
-  border-radius: 50% 0 50% 50%;
-  animation: sakura-fall linear infinite;
+  /* Core of the spark is extremely bright */
+  background-color: #fffbdf; 
+  /* High-contrast brand red/orange halo */
+  box-shadow: 0 0 4px 1px #ff5a00, 0 0 8px 3px #ff2a00;
+  border-radius: 50%;
   pointer-events: none;
+  z-index: 15;
+  /* Apply upward rise, side-sway, and rapid flickering simultaneously */
+  animation: floatUp linear infinite, swayLeftRight ease-in-out infinite alternate, flickerSpark 0.4s ease-in-out infinite alternate;
 }
 
-.jp-sakura-1 {
-  left: 5%;
-  animation-duration: 7s;
-  animation-delay: 0s;
-  width: 13px;
-  height: 13px;
-}
+.jp-ember-1 { left: 15%; width: 3px; height: 3px; animation-duration: 8s, 4s, 0.3s; animation-delay: 0s, 1s, 0s; }
+.jp-ember-2 { left: 45%; width: 4px; height: 4px; animation-duration: 11s, 5s, 0.4s; animation-delay: 2s, 0s, 0.1s; }
+.jp-ember-3 { left: 75%; width: 2px; height: 2px; animation-duration: 9s, 3s, 0.2s; animation-delay: 5s, 2s, 0s; }
+.jp-ember-4 { left: 25%; width: 5px; height: 5px; animation-duration: 14s, 6s, 0.5s; animation-delay: 1s, 3s, 0.2s; box-shadow: 0 0 6px 2px #ff8800, 0 0 10px 4px #ff5500; }
+.jp-ember-5 { left: 88%; width: 3px; height: 3px; animation-duration: 7s, 4s, 0.3s; animation-delay: 4s, 1s, 0.1s; }
+.jp-ember-6 { left: 55%; width: 4px; height: 4px; animation-duration: 10s, 5s, 0.4s; animation-delay: 6s, 2s, 0.3s; }
+.jp-ember-7 { left: 10%; width: 3px; height: 3px; animation-duration: 12s, 4.5s, 0.2s; animation-delay: 8s, 0s, 0.5s; box-shadow: 0 0 5px 2px #ff8800, 0 0 8px 3px #ff5500; }
+.jp-ember-8 { left: 95%; width: 4px; height: 4px; animation-duration: 9.5s, 3.5s, 0.4s; animation-delay: 1.5s, 2s, 0.2s; }
 
-.jp-sakura-2 {
-  left: 15%;
-  animation-duration: 9s;
-  animation-delay: 1.5s;
-  width: 16px;
-  height: 16px;
-}
 
-.jp-sakura-3 {
-  left: 25%;
-  animation-duration: 8s;
-  animation-delay: 3s;
-  width: 10px;
-  height: 10px;
-}
-
-.jp-sakura-4 {
-  left: 35%;
-  animation-duration: 10s;
-  animation-delay: 0.5s;
-  width: 14px;
-  height: 14px;
-}
-
-.jp-sakura-5 {
-  left: 45%;
-  animation-duration: 8.5s;
-  animation-delay: 2s;
-  width: 17px;
-  height: 17px;
-}
-
-.jp-sakura-6 {
-  left: 55%;
-  animation-duration: 9.5s;
-  animation-delay: 4s;
-  width: 11px;
-  height: 11px;
-}
-
-.jp-sakura-7 {
-  left: 65%;
-  animation-duration: 7.5s;
-  animation-delay: 5s;
-  width: 15px;
-  height: 15px;
-}
-
-.jp-sakura-8 {
-  left: 75%;
-  animation-duration: 11s;
-  animation-delay: 1s;
-  width: 12px;
-  height: 12px;
-  animation-name: sakura-fall-reverse;
-}
-
-.jp-sakura-9 {
-  left: 85%;
-  animation-duration: 8s;
-  animation-delay: 3.5s;
-  width: 18px;
-  height: 18px;
-}
-
-.jp-sakura-10 {
-  left: 92%;
-  animation-duration: 10s;
-  animation-delay: 6s;
-  width: 10px;
-  height: 10px;
-  animation-name: sakura-fall-reverse;
-}
-
-.jp-sakura-11 {
-  left: 20%;
-  animation-duration: 12s;
-  animation-delay: 7s;
-  width: 9px;
-  height: 9px;
-  animation-name: sakura-fall-reverse;
-}
-
-.jp-sakura-12 {
-  left: 50%;
-  animation-duration: 9s;
-  animation-delay: 4.5s;
-  width: 13px;
-  height: 13px;
-}
-
-/* ── Ema 絵馬 (Votive tablet tag shape) ── */
-.jp-ema-tag {
-  position: relative;
-  background: linear-gradient(135deg, var(--color-brand-red), #d4614d);
-  color: white;
-  padding: 6px 16px 6px 22px;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  clip-path: polygon(12px 0%, 100% 0%, 100% 100%, 12px 100%, 0% 50%);
-}
-
-/* ── Seigaiha Divider (decorative wave section break) ── */
-.jp-wave-divider {
-  position: relative;
-  overflow: hidden;
-}
-
-.jp-wave-divider::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='50'%3E%3Cpath d='M0 50 Q25 0 50 25 Q75 50 100 50' fill='none' stroke='%23C8553D' stroke-opacity='0.1' stroke-width='1'/%3E%3C/svg%3E");
-  background-size: 100px 50px;
-  background-position: center;
-}
+

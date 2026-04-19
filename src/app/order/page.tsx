@@ -1,35 +1,53 @@
-import Link from "next/link";
-import { Clock } from "lucide-react";
-
 export const metadata = {
-    title: "Order Now | Yoramen",
-    description: "Online ordering coming soon.",
+    title: "Order Online | Yoramen",
+    description: "Order your favorite ramen bowls directly.",
 };
+
+import Image from "next/image";
 
 export default function OrderPage() {
     return (
-        <div className="pt-28 pb-24 min-h-screen bg-rice-paper flex items-center justify-center">
-            <div className="max-w-xl mx-auto px-6 lg:px-8 w-full">
+        <div className="pt-24 min-h-screen bg-gray-50 flex flex-col relative overflow-hidden jp-pattern-geo">
+            {/* ── Abstract Vector Watermarks ── */}
+            <div className="absolute top-1/4 -left-32 w-[600px] h-[600px] opacity-[0.02] pointer-events-none z-0 transform -rotate-[15deg]">
+                <Image src="/images/icons/gyoza, dumpling, japanese, food, appetizer.svg" alt="gyoza" fill className="object-contain" />
+            </div>
+            <div className="absolute bottom-0 -right-20 w-[700px] h-[700px] opacity-[0.02] pointer-events-none z-0 transform rotate-[10deg]">
+                <Image src="/images/icons/tempura, shrimp, fried, japanese, food.svg" alt="tempura" fill className="object-contain" />
+            </div>
 
-                <div className="bg-warm-white rounded-2xl p-10 md:p-16 border border-light-border text-center">
-
-                    <div className="w-16 h-16 rounded-full bg-section-warm border border-light-border flex items-center justify-center mx-auto mb-8">
-                        <Clock size={28} className="text-brand-red" />
+            <div className="text-center py-8 relative z-10">
+                <h1 className="text-3xl font-serif text-sumi">Online Ordering</h1>
+                <p className="text-stone mt-2 text-sm">Secure ordering powered by our POS partner</p>
+            </div>
+            
+            {/* Full-width iframe container allowing for a seamless integration */}
+            <div className="flex-1 w-full bg-white relative z-10">
+                {/* 
+                  * TODO: Replace 'src' with the actual third-party ordering system URL provided by the client.
+                  * The iframe is currently disabled visually but structure is ready.
+                  */}
+                <iframe 
+                    src="about:blank" 
+                    className="absolute inset-0 w-full h-full border-0"
+                    title="Yoramen Online Ordering"
+                    allow="geolocation; payment"
+                />
+                
+                {/* Temporary Placeholder for when URL is blank */}
+                <div className="absolute inset-0 flex items-center justify-center bg-gray-50/80 backdrop-blur-sm pointer-events-none">
+                    <div className="bg-white p-8 rounded-xl border border-gray-200 shadow-sm text-center max-w-sm">
+                        <div className="w-12 h-12 rounded-full border border-gray-200 flex items-center justify-center mx-auto mb-4">
+                            <svg className="w-5 h-5 text-stone" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                            </svg>
+                        </div>
+                        <h3 className="font-serif text-xl mb-2 text-sumi">Awaiting Integration</h3>
+                        <p className="text-stone text-sm">
+                            Third-party ordering system URL is not yet provided.
+                        </p>
                     </div>
-
-                    <h1 className="text-3xl md:text-4xl font-serif text-sumi mb-4">Online Ordering</h1>
-                    <p className="text-lg text-brand-red italic font-serif mb-4">Coming Soon</p>
-                    <div className="jp-divider mb-8"></div>
-
-                    <p className="text-stone text-sm mb-10 max-w-sm mx-auto leading-relaxed">
-                        We are currently integrating with our POS provider to bring you a seamless online ordering experience. In the meantime, please visit us in-store.
-                    </p>
-
-                    <Link href="/menu" className="inline-flex items-center gap-2 bg-brand-red hover:bg-brand-red-hover text-white px-8 py-3.5 rounded-full text-sm uppercase tracking-[0.12em] font-medium transition-all hover-rise">
-                        Explore Our Menu
-                    </Link>
                 </div>
-
             </div>
         </div>
     );

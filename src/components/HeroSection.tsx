@@ -6,36 +6,29 @@ import { ArrowRight } from "lucide-react";
 import { motion, useMotionValue, useTransform, useSpring } from "framer-motion";
 import { useRef, useEffect, useState } from "react";
 
-/* ── animation presets ── */
 const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
-
 const fadeSlideUp = (delay: number) => ({
     initial: { opacity: 0, y: 30 },
     animate: { opacity: 1, y: 0 },
-    transition: { duration: 0.7, delay, ease: EASE },
+    transition: { duration: 0.8, delay, ease: EASE },
 });
-
-const staggerContainer = {
-    animate: { transition: { staggerChildren: 0.12 } },
-};
 
 export default function HeroSection() {
     const heroRef = useRef<HTMLElement>(null);
     const [isMounted, setIsMounted] = useState(false);
 
-    /* mouse parallax — STRONGER ranges for noticeable depth */
+    /* mouse parallax */
     const mouseX = useMotionValue(0);
     const mouseY = useMotionValue(0);
     const springConfig = { damping: 20, stiffness: 80 };
-    /* Bowl moves 30px in each axis (was 12) */
-    const imgX = useSpring(useTransform(mouseX, [-0.5, 0.5], [30, -30]), springConfig);
-    const imgY = useSpring(useTransform(mouseY, [-0.5, 0.5], [30, -30]), springConfig);
-    /* Background art moves opposite, 15px (was 6) */
-    const bgArtX = useSpring(useTransform(mouseX, [-0.5, 0.5], [-15, 15]), springConfig);
-    const bgArtY = useSpring(useTransform(mouseY, [-0.5, 0.5], [-10, 10]), springConfig);
-    /* Pattern background — subtle shift */
-    const bgX = useSpring(useTransform(mouseX, [-0.5, 0.5], [-6, 6]), springConfig);
-    const bgY = useSpring(useTransform(mouseY, [-0.5, 0.5], [-6, 6]), springConfig);
+    
+    // Reverse movement for the bowl to create floating feeling
+    const imgX = useSpring(useTransform(mouseX, [-0.5, 0.5], [40, -40]), springConfig);
+    const imgY = useSpring(useTransform(mouseY, [-0.5, 0.5], [40, -40]), springConfig);
+    
+    // Background ink elements move slightly in the same direction
+    const bgArtX = useSpring(useTransform(mouseX, [-0.5, 0.5], [-20, 20]), springConfig);
+    const bgArtY = useSpring(useTransform(mouseY, [-0.5, 0.5], [-20, 20]), springConfig);
 
     useEffect(() => {
         setIsMounted(true);
@@ -49,208 +42,146 @@ export default function HeroSection() {
         return () => window.removeEventListener("mousemove", handleMouse);
     }, [mouseX, mouseY]);
 
-    const highlights = ["Fresh Prep Daily", "Signature Flavor", "Made to Order"];
-
     return (
         <section
             ref={heroRef}
-            className="relative min-h-screen flex items-center justify-center bg-rice-paper pt-20 overflow-hidden"
+            className="relative min-h-[95vh] flex items-center justify-center bg-white pt-24 overflow-hidden"
         >
-            {/* ── Animated pattern background layer ── */}
-            <motion.div
-                className="absolute inset-0 pointer-events-none"
-                style={{ x: bgX, y: bgY }}
-            >
-                {/* Subtle cross pattern */}
-                <div
-                    className="absolute inset-0 opacity-[0.03]"
-                    style={{
-                        backgroundImage:
-                            "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%232C2C2C' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")",
-                    }}
-                />
-                {/* Floating decorative dots */}
-                {isMounted && (
-                    <>
-                        <div className="hero-dot hero-dot-1" />
-                        <div className="hero-dot hero-dot-2" />
-                        <div className="hero-dot hero-dot-3" />
-                        <div className="hero-dot hero-dot-4" />
-                        <div className="hero-dot hero-dot-5" />
-                    </>
-                )}
-            </motion.div>
-
-            {/* ── Hero background art (bg-3 ramen chef) ── */}
-            <motion.div
-                className="absolute inset-0 pointer-events-none hero-bg-art-container"
-                initial={{ opacity: 0, scale: 1.05 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 1.8, delay: 0.2, ease: EASE }}
+            {/* ── Core Background: Render the requested bg-3.webp with parallax and subtle styling ── */}
+            <motion.div 
+                className="absolute inset-[-5%] pointer-events-none opacity-[0.35]" 
                 style={{ x: bgArtX, y: bgArtY }}
             >
-                {/* Full-bleed background art — fills entire hero, scaled 110% for sway headroom */}
-                <div className="absolute inset-[-5%] hero-bg-art-sway">
-                    <Image
-                        src="/images/bg-3.webp"
-                        alt=""
-                        fill
-                        className="object-cover opacity-[0.14]"
-                        style={{ objectPosition: "center 30%" }}
-                        priority
-                    />
-                </div>
-                {/* Soft gradient overlays so art blends into rice paper on edges */}
-                <div className="absolute inset-0 bg-gradient-to-r from-rice-paper via-rice-paper/60 to-rice-paper/70" />
-                <div className="absolute inset-0 bg-gradient-to-b from-rice-paper/60 via-transparent to-rice-paper/80" />
-                <div className="absolute inset-0 bg-gradient-to-l from-rice-paper/40 via-transparent to-transparent" />
+                <Image 
+                    src="/images/bg-3.webp" 
+                    alt="Ramen Chef Background" 
+                    fill 
+                    className="object-cover mix-blend-multiply" 
+                    priority 
+                />
+                {/* ── Soft gradient fade to keep text readable ── */}
+                <div className="absolute inset-0 bg-gradient-to-r from-white via-white/80 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-white via-white/50 to-transparent" />
             </motion.div>
 
-            {/* ── Main content ── */}
-            <div className="relative z-10 w-full max-w-6xl mx-auto px-6 lg:px-8 flex flex-col lg:flex-row items-center gap-16 lg:gap-20">
+            {/* ── Lantern Embers Dynamics (Hearth Warmth) ── */}
+            <div className="absolute inset-0 overflow-hidden pointer-events-none z-10">
+                <div className="jp-ember jp-ember-1"></div>
+                <div className="jp-ember jp-ember-2"></div>
+                <div className="jp-ember jp-ember-3"></div>
+                <div className="jp-ember jp-ember-4"></div>
+                <div className="jp-ember jp-ember-5"></div>
+                <div className="jp-ember jp-ember-6"></div>
+                <div className="jp-ember jp-ember-7"></div>
+                <div className="jp-ember jp-ember-8"></div>
+            </div>
+
+            <div className="relative z-20 w-full max-w-6xl mx-auto px-6 lg:px-8 flex flex-col-reverse lg:flex-row items-center gap-12 lg:gap-8">
+                
                 {/* Text Side */}
-                <motion.div
-                    className="lg:w-1/2 text-center lg:text-left"
-                    variants={staggerContainer}
-                    initial="initial"
-                    animate="animate"
-                >
-                    {/* Tagline */}
-                    <motion.div
-                        className="inline-flex items-center gap-2 mb-8"
-                        {...fadeSlideUp(0.1)}
-                    >
-                        <motion.span
-                            className="w-8 h-px bg-brand-red"
-                            initial={{ scaleX: 0 }}
-                            animate={{ scaleX: 1 }}
-                            transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
-                            style={{ transformOrigin: "left" }}
-                        />
-                        <span className="text-brand-red text-xs tracking-[0.25em] uppercase font-medium">
+                <div className="lg:w-1/2 text-center lg:text-left relative z-20">
+                    <motion.div className="inline-flex items-center gap-3 mb-6" {...fadeSlideUp(0.1)}>
+                        {/* Authentic Japanese Brush stroke indicator instead of straight line */}
+                        <div className="relative w-12 h-4 overflow-hidden">
+                             <Image src="/images/Asset 20.png" alt="brush" fill className="object-contain object-left opacity-80" style={{ filter: "invert(32%) sepia(85%) saturate(3015%) hue-rotate(346deg) brightness(88%) contrast(92%)" }} />
+                        </div>
+                        <span className="text-brand-red text-xs tracking-[0.25em] uppercase font-bold">
                             Freshly Made · Boldly Flavored
                         </span>
                     </motion.div>
 
-                    {/* Title */}
-                    <motion.h1
-                        className="text-4xl md:text-5xl lg:text-6xl font-serif font-semibold text-sumi mb-6 leading-[1.15]"
+                    <motion.h1 
+                        className="text-5xl md:text-6xl lg:text-7xl font-serif text-sumi mb-6 leading-[1.1] tracking-tight"
                         {...fadeSlideUp(0.25)}
                     >
                         A ramen bowl <br />
-                        <motion.span
-                            className="text-brand-red inline-block"
-                            initial={{ opacity: 0, x: -20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ duration: 0.8, delay: 0.55, ease: EASE }}
-                        >
-                            with actual soul.
-                        </motion.span>
+                        <span className="italic font-light text-stone/80">with actual soul.</span>
                     </motion.h1>
 
-                    {/* Description */}
-                    <motion.p
-                        className="text-lg text-stone mb-10 leading-relaxed max-w-lg mx-auto lg:mx-0"
-                        {...fadeSlideUp(0.45)}
+                    <motion.p 
+                        className="text-lg md:text-xl text-stone mb-10 leading-relaxed max-w-xl mx-auto lg:mx-0"
+                        {...fadeSlideUp(0.4)}
                     >
-                        Slow-simmered, made to order, and layered with flavor. We turned
-                        &quot;delicious&quot; into a daily standard.
+                        Slow-simmered, made to order, and layered with flavor. 
+                        We turned &quot;delicious&quot; into a daily standard.
                     </motion.p>
 
-                    {/* Buttons */}
-                    <motion.div
-                        className="flex flex-col sm:flex-row items-center lg:items-start gap-4"
-                        {...fadeSlideUp(0.6)}
+                    <motion.div 
+                        className="flex flex-col sm:flex-row items-center lg:items-start justify-center lg:justify-start gap-4"
+                        {...fadeSlideUp(0.55)}
                     >
-                        <Link
-                            href="/order"
-                            className="bg-brand-red hover:bg-brand-red-hover text-white px-8 py-4 rounded-full text-sm tracking-[0.15em] uppercase font-medium transition-all hover-rise flex items-center gap-3 group"
-                        >
+                        <Link href="/order" className="bg-brand-red hover:bg-brand-red-hover text-white px-8 py-4 rounded-full text-sm tracking-[0.15em] uppercase font-bold transition-all hover:-translate-y-1 shadow-md flex items-center gap-3 group">
                             <span>Order Now</span>
-                            <ArrowRight
-                                size={16}
-                                className="group-hover:translate-x-1 transition-transform"
-                            />
+                            <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
                         </Link>
-                        <Link
-                            href="/menu"
-                            className="border border-sumi/20 hover:border-sumi text-sumi px-8 py-4 rounded-full text-sm tracking-[0.15em] uppercase font-medium transition-all hover-rise"
-                        >
+                        <Link href="/menu" className="border-2 border-stone/20 hover:border-sumi text-sumi px-8 py-4 rounded-full text-sm tracking-[0.15em] uppercase font-bold transition-all hover:bg-gray-50">
                             View Menu
                         </Link>
                     </motion.div>
-                </motion.div>
+                </div>
 
-                {/* Image Side */}
-                <motion.div
-                    className="lg:w-1/2 flex justify-center"
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.9, delay: 0.3, ease: EASE }}
-                >
-                    <div className="relative">
-                        {/* Ensō circle — slowly rotating behind the bowl */}
-                        <motion.div
-                            className="absolute -inset-4 md:-inset-12 rounded-full border-2 border-brand-red/10 hero-enso"
-                            initial={{ opacity: 0, scale: 0.8 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            transition={{ duration: 1.2, delay: 0.6 }}
-                        />
-                        {/* Second ensō ring — hidden on mobile */}
-                        <motion.div
-                            className="absolute -inset-20 rounded-full border border-dashed border-brand-red/5 hero-enso-reverse hidden md:block"
-                            initial={{ opacity: 0, scale: 0.7 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            transition={{ duration: 1.4, delay: 0.8 }}
-                        />
+                {/* Hand-drawn Illustration Side */}
+                <div className="lg:w-1/2 flex justify-center items-center relative h-[400px] md:h-[550px] w-full">
+                    {isMounted && (
+                        <>
+                            {/* Defensive Replacement: The requested bg-1 pattern as the dynamic backdrop layer instead of ink splashes */}
+                            <motion.div 
+                                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150%] h-[150%] opacity-[0.12] pointer-events-none"
+                                style={{ x: bgArtX, y: bgArtY, rotate: bgArtX }}
+                            >
+                                <Image src="/images/bg-1.webp" alt="Japanese Pattern Background" fill className="object-contain mix-blend-multiply" priority />
+                            </motion.div>
 
-                        {/* Floating image container — STRONGER float */}
-                        <motion.div
-                            className="relative w-64 h-80 md:w-[400px] md:h-[500px] rounded-[2rem] overflow-hidden shadow-xl hero-float"
-                            style={{ x: imgX, y: imgY }}
-                        >
-                            <Image
-                                src="/images/ramen-placeholder.png"
-                                alt="Signature Ramen Bowl"
-                                fill
-                                className="object-cover"
-                                priority
-                            />
-                            {/* Subtle inner glow overlay */}
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent" />
-                        </motion.div>
+                            {/* Floating Ramen Cartoon */}
+                            <motion.div 
+                                className="relative w-[300px] h-[300px] md:w-[450px] md:h-[450px] z-10"
+                                style={{ x: imgX, y: imgY }}
+                                initial={{ opacity: 0, scale: 0.8, rotate: -5 }}
+                                animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                                transition={{ duration: 1.2, ease: "easeOut" }}
+                            >
+                                {/* Floating animation using keyframes for continuous hover */}
+                                <motion.div 
+                                    animate={{ y: [0, -15, 0] }}
+                                    transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                                    className="w-full h-full relative"
+                                >
+                                    <Image
+                                        src="/images/Ramen-01.png"
+                                        alt="Signature Ramen Illustration"
+                                        fill
+                                        className="object-contain drop-shadow-2xl"
+                                        priority
+                                    />
+                                </motion.div>
+                            </motion.div>
 
-                        {/* Steam wisps — MUCH larger container & more wisps */}
-                        <div className="absolute -top-16 left-1/2 -translate-x-1/2 w-72 h-56 pointer-events-none">
-                            <div className="hero-steam hero-steam-1" />
-                            <div className="hero-steam hero-steam-2" />
-                            <div className="hero-steam hero-steam-3" />
-                            <div className="hero-steam hero-steam-4" />
-                            <div className="hero-steam hero-steam-5" />
-                        </div>
-                    </div>
-                </motion.div>
+                            {/* Faint subtle secondary drifting element from bg-1 package to maintain Japanese flavor */}
+                            <motion.div 
+                                animate={{ y: [0, 20, 0], opacity: [0.3, 0.6, 0.3] }}
+                                transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+                                className="absolute -bottom-10 right-0 w-32 h-32 pointer-events-none hidden md:block"
+                            >
+                                <Image src="/images/bg-1.webp" alt="pattern detail" fill className="object-cover rounded-full mix-blend-multiply" />
+                            </motion.div>
+                        </>
+                    )}
+                </div>
             </div>
-
-            {/* ── Bottom highlights bar — animated ── */}
-            <motion.div
-                className="absolute bottom-0 left-0 right-0 border-t border-light-border bg-warm-white/60 backdrop-blur-sm"
-                initial={{ y: 60, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ duration: 0.7, delay: 0.9, ease: "easeOut" }}
+            
+            {/* Minimalist Bottom Bar */}
+            <motion.div 
+                className="absolute bottom-0 left-0 right-0 py-6 border-t border-gray-100 bg-white/80 backdrop-blur-md z-10 hidden md:block"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.8, duration: 0.6 }}
             >
-                <div className="max-w-6xl mx-auto px-6 lg:px-8 py-5 flex justify-center gap-12 text-xs tracking-[0.2em] uppercase text-stone overflow-hidden">
-                    {highlights.map((text, i) => (
-                        <motion.span
-                            key={text}
-                            initial={{ y: 20, opacity: 0 }}
-                            animate={{ y: 0, opacity: 1 }}
-                            transition={{ duration: 0.5, delay: 1.1 + i * 0.15, ease: "easeOut" }}
-                        >
-                            {i > 0 && <span className="text-brand-red mr-12">·</span>}
-                            {text}
-                        </motion.span>
-                    ))}
+                <div className="max-w-6xl mx-auto flex justify-center gap-16 text-xs tracking-[0.2em] uppercase text-stone font-bold">
+                    <span>Fresh Prep Daily</span>
+                    <span className="text-brand-red opacity-50">·</span>
+                    <span>Signature Flavor</span>
+                    <span className="text-brand-red opacity-50">·</span>
+                    <span>Authentic Craft</span>
                 </div>
             </motion.div>
         </section>

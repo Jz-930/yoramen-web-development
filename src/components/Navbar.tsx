@@ -3,11 +3,20 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 
 export default function Navbar() {
     const [isScrolled, setIsScrolled] = useState(false);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const pathname = usePathname();
+
+    // Determine if the current page has a dark hero background initially
+    // Currently, all pages (including Home) use light backgrounds naturally.
+    const isDarkBackgroundPath = false; 
+    
+    // Switch logo dynamically
+    const logoSrc = (isDarkBackgroundPath && !isScrolled) ? "/images/logo-full-w.webp" : "/images/logo-full.webp";
 
     useEffect(() => {
         const handleScroll = () => {
@@ -38,7 +47,7 @@ export default function Navbar() {
                     {/* Logo */}
                     <Link href="/" className="flex items-center">
                         <Image
-                            src="/images/logo-full.webp"
+                            src={logoSrc}
                             alt="Yoramen Logo"
                             width={140}
                             height={48}
