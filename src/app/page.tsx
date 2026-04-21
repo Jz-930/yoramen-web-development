@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { MoveRight } from "lucide-react";
 import HeroSection from "@/components/HeroSection";
+import MangaCollage from "@/components/MangaCollage";
 
 export default function Home() {
   return (
@@ -15,16 +16,9 @@ export default function Home() {
         <div className="max-w-6xl mx-auto px-6 lg:px-8">
           <div className="flex flex-col lg:flex-row gap-16 lg:gap-24 items-center">
 
-            {/* Images - Clean, no overlays */}
-            <div className="w-full lg:w-1/2 relative">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="relative aspect-[3/4] rounded-2xl overflow-hidden shadow-sm">
-                  <Image src="/images/img-2.webp" alt="Chef preparing ramen" fill className="object-cover hover:scale-105 transition-transform duration-700" />
-                </div>
-                <div className="relative aspect-[3/4] rounded-2xl overflow-hidden mt-8 shadow-sm">
-                  <Image src="/images/img-2.webp" alt="Premium Bowl" fill className="object-cover hover:scale-105 transition-transform duration-700" />
-                </div>
-              </div>
+            {/* Images - Mixed Media Manga Collage with Parallax */}
+            <div className="w-full lg:w-1/2 relative min-h-[500px] lg:min-h-[600px] flex items-center justify-center -mt-10 lg:mt-0 z-0">
+                <MangaCollage />
             </div>
 
             {/* Text */}

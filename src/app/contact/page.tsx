@@ -40,17 +40,17 @@ export default function ContactPage() {
                         <div className="space-y-8">
                             <div className="flex flex-col gap-2">
                                 <span className="text-brand-red uppercase tracking-[0.15em] text-xs font-medium">General Inquiries</span>
-                                <a href="mailto:hello@yoramen.com" className="text-lg text-sumi hover:text-brand-red flex items-center gap-3 transition-colors">
+                                <a href="mailto:info@yoramen.ca" className="text-lg text-sumi hover:text-brand-red flex items-center gap-3 transition-colors">
                                     <Mail size={18} className="text-stone" />
-                                    hello@yoramen.com
+                                    info@yoramen.ca
                                 </a>
                             </div>
 
                             <div className="flex flex-col gap-2">
                                 <span className="text-brand-red uppercase tracking-[0.15em] text-xs font-medium">Partnerships & PR</span>
-                                <a href="mailto:press@yoramen.com" className="text-lg text-sumi hover:text-brand-red flex items-center gap-3 transition-colors">
+                                <a href="mailto:info@yoramen.ca" className="text-lg text-sumi hover:text-brand-red flex items-center gap-3 transition-colors">
                                     <MessageSquare size={18} className="text-stone" />
-                                    press@yoramen.com
+                                    info@yoramen.ca
                                 </a>
                             </div>
                         </div>

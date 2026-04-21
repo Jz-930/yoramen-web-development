@@ -4,11 +4,11 @@ import { useState } from "react";
 import Image from "next/image";
 
 const timelineData = [
-    { year: "2021", img: "/images/story/story-2021-clean.webp", align: "right", title: "Tokyo Inspiration", desc: "Inspired by a family member running a successful ramen shop in Tokyo, the idea of bringing authentic, high-quality Japanese flavor to our local town was born." },
-    { year: "2022", img: "/images/story/story-2022-clean.webp", align: "left", title: "Local Pop-ups", desc: "Started quietly by setting up local food stalls across Scarborough. The lines grew, and the feedback validated our obsession with proper tonkotsu broth." },
-    { year: "2024", img: "/images/story/story-2024-clean.webp", align: "right", title: "Scaling Operations", desc: "Expanded our reach to more community events and began building a serious following. Handcrafting noodles at this volume forced us to innovate." },
-    { year: "2025", title: "Engineering Consistency", img: "/images/story/story-2025-clean.webp", align: "left", desc: "Successfully developed and integrated specialized automated noodle machinery to ensure every single strand meets our exact texture and hydration requirements." },
-    { year: "2026", img: "/images/story/story-2026-clean.webp", align: "right", title: "Flagship Store Opens", desc: "Finally set down permanent roots. The first official Yoramen physical location opens, bringing the complete dining experience to life." }
+    { year: "2021", img: "/images/story/story-2021-clean.webp", align: "left", title: "Tokyo Inspiration", desc: "Inspired by a family member running a successful ramen shop in Tokyo, the idea of bringing authentic, high-quality Japanese flavor to our local town was born." },
+    { year: "2022", img: "/images/story/story-2022-clean.webp", align: "right", title: "Local Pop-ups", desc: "Started quietly by setting up local food stalls across Scarborough. The lines grew, and the feedback validated our obsession with proper tonkotsu broth." },
+    { year: "2024", img: "/images/story/story-2024-clean.webp", align: "left", title: "Scaling Operations", desc: "Expanded our reach to more community events and began building a serious following. Handcrafting noodles at this volume forced us to innovate." },
+    { year: "2025", title: "Engineering Consistency", img: "/images/story/story-2025-clean.webp", align: "right", desc: "Successfully developed and integrated specialized automated noodle machinery to ensure every single strand meets our exact texture and hydration requirements." },
+    { year: "2026", img: "/images/story/story-2026-clean.webp", align: "left", title: "Flagship Store Opens", desc: "Finally set down permanent roots. The first official Yoramen physical location opens, bringing the complete dining experience to life." }
 ];
 
 export default function StoryTimeline() {
@@ -20,10 +20,12 @@ export default function StoryTimeline() {
             {timelineData.map((milestone) => (
                 <div 
                     key={`bg-${milestone.year}`}
-                    className={`fixed top-1/2 -translate-y-1/2 w-[600px] h-[600px] lg:w-[1000px] lg:h-[1000px] pointer-events-none -z-10 transition-all duration-1000 ease-out ${
+                    className={`fixed top-1/2 -translate-y-1/2 w-[600px] h-[600px] lg:w-[1000px] lg:h-[1000px] pointer-events-none -z-10 transition-all ease-out ${
                         milestone.align === 'left' ? 'left-[-10%]' : 'right-[-10%]'
                     } ${
                         activeStory === milestone.year ? 'opacity-[0.65] scale-100' : 'opacity-0 scale-[0.85]'
+                    } ${
+                        activeStory !== null && activeStory !== milestone.year ? 'duration-0' : 'duration-1000'
                     }`}
                     style={{
                         WebkitMaskImage: 'radial-gradient(ellipse at center, rgba(0,0,0,1) 40%, rgba(0,0,0,0) 70%)',

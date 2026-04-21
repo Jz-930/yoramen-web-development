@@ -171,7 +171,7 @@ export default function HeroSection() {
             
             {/* Minimalist Bottom Bar */}
             <motion.div 
-                className="absolute bottom-0 left-0 right-0 py-6 border-t border-gray-100 bg-white/80 backdrop-blur-md z-10 hidden md:block"
+                className="absolute bottom-4 left-0 right-0 py-6 z-10 hidden md:block"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.8, duration: 0.6 }}
