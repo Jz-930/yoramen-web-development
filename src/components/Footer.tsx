@@ -8,17 +8,14 @@ export default function Footer() {
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
                     {/* Brand */}
                     <div className="col-span-1">
-                        <Link href="/" className="flex items-center gap-3 mb-6">
+                        <Link href="/" className="flex items-center mb-6">
                             <Image
-                                src="/images/logo/logo-64.webp"
+                                src="/images/logo-full.webp"
                                 alt="Yoramen Logo"
-                                width={40}
-                                height={40}
-                                className="object-contain"
+                                width={140}
+                                height={48}
+                                className="object-contain w-auto h-8 md:h-10"
                             />
-                            <span className="font-serif text-2xl font-semibold tracking-wider text-sumi">
-                                YORAMEN
-                            </span>
                         </Link>
                         <p className="text-stone text-sm leading-relaxed">
                             Our most important job is simple: make every bowl right, every day.
