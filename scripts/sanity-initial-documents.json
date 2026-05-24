@@ -1,0 +1,299 @@
+[
+  {
+    "_id": "siteSettings",
+    "_type": "siteSettings",
+    "title": "Yoramen",
+    "defaultSeo": {
+      "_type": "seo",
+      "metaTitle": "Yoramen | Japanese Ramen House",
+      "metaDescription": "Signature Japanese ramen and seasonal limited specials, with online ordering and dine-in available."
+    },
+    "navigation": [
+      { "_type": "linkItem", "label": "Home", "href": "/", "openInNewTab": false },
+      { "_type": "linkItem", "label": "Menu", "href": "/menu", "openInNewTab": false },
+      { "_type": "linkItem", "label": "Our Story", "href": "/about", "openInNewTab": false },
+      { "_type": "linkItem", "label": "Gallery", "href": "/gallery", "openInNewTab": false },
+      { "_type": "linkItem", "label": "Locations", "href": "/locations", "openInNewTab": false },
+      { "_type": "linkItem", "label": "Contact", "href": "/contact", "openInNewTab": false }
+    ],
+    "primaryCta": {
+      "_type": "cta",
+      "label": "Order Now",
+      "href": "/order",
+      "style": "primary",
+      "openInNewTab": false
+    },
+    "footer": {
+      "brandBlurb": "Our most important job is simple: make every bowl right, every day.",
+      "exploreLinks": [
+        { "_type": "linkItem", "label": "Menu", "href": "/menu", "openInNewTab": false },
+        { "_type": "linkItem", "label": "Our Story", "href": "/about", "openInNewTab": false },
+        { "_type": "linkItem", "label": "Gallery", "href": "/gallery", "openInNewTab": false }
+      ],
+      "visitLinks": [
+        { "_type": "linkItem", "label": "Locations", "href": "/locations", "openInNewTab": false },
+        { "_type": "linkItem", "label": "Contact Us", "href": "/contact", "openInNewTab": false },
+        { "_type": "linkItem", "label": "Order Now", "href": "/order", "openInNewTab": false }
+      ],
+      "socialLinks": [
+        { "_type": "linkItem", "label": "Instagram", "href": "#", "openInNewTab": true },
+        { "_type": "linkItem", "label": "Facebook", "href": "#", "openInNewTab": true }
+      ],
+      "legalLinks": [
+        { "_type": "linkItem", "label": "Privacy Policy", "href": "#", "openInNewTab": false },
+        { "_type": "linkItem", "label": "Terms of Service", "href": "#", "openInNewTab": false }
+      ]
+    },
+    "contact": {
+      "generalEmail": "info@yoramen.ca",
+      "partnershipsEmail": "info@yoramen.ca",
+      "phone": "506-898-1909"
+    }
+  },
+  {
+    "_id": "homePage",
+    "_type": "homePage",
+    "seo": {
+      "_type": "seo",
+      "metaTitle": "Yoramen | Japanese Ramen House",
+      "metaDescription": "Slow-simmered, made-to-order ramen with bold layered flavor."
+    },
+    "hero": {
+      "eyebrow": "Freshly Made - Boldly Flavored",
+      "headlineLine1": "A ramen bowl",
+      "headlineEmphasis": "with actual soul.",
+      "body": "Slow-simmered, made to order, and layered with flavor. We turned delicious into a daily standard.",
+      "primaryCta": { "_type": "cta", "label": "Order Now", "href": "/order", "style": "primary", "openInNewTab": false },
+      "secondaryCta": { "_type": "cta", "label": "View Menu", "href": "/menu", "style": "secondary", "openInNewTab": false },
+      "bottomBadges": ["Fresh Prep Daily", "Signature Flavor", "Authentic Craft"]
+    },
+    "philosophySection": {
+      "eyebrow": "Our Philosophy",
+      "title": "A ramen house built around flavor.",
+      "emphasis": "built around flavor.",
+      "paragraphs": [
+        "We believe a great ramen bowl should do more than fill you up. It should make you feel genuinely taken care of in the middle of a busy day.",
+        "From broth to noodles to toppings, we never cut corners. Every ingredient is deliberately chosen and meticulously prepared."
+      ],
+      "cta": { "_type": "cta", "label": "Discover Our Story", "href": "/about", "style": "text", "openInNewTab": false }
+    },
+    "promiseCards": [
+      {
+        "_type": "object",
+        "number": "01",
+        "title": "Layered Broth",
+        "description": "Rich up front, clean on the finish, never heavy. Simmered for 14 hours daily."
+      },
+      {
+        "_type": "object",
+        "number": "02",
+        "title": "Perfect Bite",
+        "description": "Springy texture in every mouthful. Custom-crafted noodles with exact hydration."
+      },
+      {
+        "_type": "object",
+        "number": "03",
+        "title": "Memorable Toppings",
+        "description": "Chashu, soft-boiled egg, and savory sauce build flavor in every layer."
+      }
+    ],
+    "newsletterSection": {
+      "title": "Join Our Exclusive Community",
+      "description": "Become a Yoramen member. Receive exclusive coupons, limited-time offers, and updates on our new locations.",
+      "inputPlaceholder": "Enter your email address",
+      "buttonLabel": "Sign Up"
+    }
+  },
+  {
+    "_id": "menuPage",
+    "_type": "menuPage",
+    "seo": {
+      "_type": "seo",
+      "metaTitle": "Menu | Yoramen",
+      "metaDescription": "Explore the full Yoramen menu, including signature ramen, sides, drinks, and seasonal limited offerings."
+    },
+    "eyebrow": "Explore",
+    "title": "Menu",
+    "description": "From classics to limited editions, find your perfect bowl.",
+    "categoryNavEnabled": true,
+    "comboCta": {
+      "title": "Better value with combos",
+      "description": "Bowl + side + drink. One set, fully satisfying. Built for your appetite.",
+      "buttonLabel": "View Combo Deals",
+      "buttonHref": "/order"
+    }
+  },
+  {
+    "_id": "orderPage",
+    "_type": "orderPage",
+    "seo": {
+      "_type": "seo",
+      "metaTitle": "Order Online | Yoramen",
+      "metaDescription": "Order your favorite ramen bowls directly."
+    },
+    "title": "Online Ordering",
+    "description": "Secure ordering powered by our POS partner",
+    "providerName": "POS partner",
+    "enabled": false,
+    "fallbackTitle": "Awaiting Integration",
+    "fallbackMessage": "Third-party ordering system URL is not yet provided."
+  },
+  {
+    "_id": "menuCategory-signature",
+    "_type": "menuCategory",
+    "title": "Signature Series",
+    "slug": { "_type": "slug", "current": "signature" },
+    "sortOrder": 10,
+    "visible": true
+  },
+  {
+    "_id": "menuCategory-spicy",
+    "_type": "menuCategory",
+    "title": "Spicy Series",
+    "slug": { "_type": "slug", "current": "spicy" },
+    "sortOrder": 20,
+    "visible": true
+  },
+  {
+    "_id": "menuCategory-sides",
+    "_type": "menuCategory",
+    "title": "Sides & Add-ons",
+    "slug": { "_type": "slug", "current": "sides" },
+    "sortOrder": 30,
+    "visible": true
+  },
+  {
+    "_id": "menuItem-yoramen-classic-tonkotsu",
+    "_type": "menuItem",
+    "name": "Yoramen Classic Tonkotsu",
+    "slug": { "_type": "slug", "current": "yoramen-classic-tonkotsu" },
+    "category": { "_type": "reference", "_ref": "menuCategory-signature" },
+    "description": "Rich tonkotsu broth with slow-roasted chashu and soft-boiled egg, full-bodied yet balanced.",
+    "price": "$16.50",
+    "tags": ["Popular", "Signature"],
+    "available": true,
+    "featured": true,
+    "sortOrder": 10
+  },
+  {
+    "_id": "menuItem-black-garlic-shio",
+    "_type": "menuItem",
+    "name": "Black Garlic Shio",
+    "slug": { "_type": "slug", "current": "black-garlic-shio" },
+    "category": { "_type": "reference", "_ref": "menuCategory-signature" },
+    "description": "Clear shio broth elevated with house-made black garlic oil. Complex, aromatic, and deep.",
+    "price": "$17.50",
+    "tags": ["Chef's Pick"],
+    "available": true,
+    "featured": false,
+    "sortOrder": 20
+  },
+  {
+    "_id": "menuItem-hellfire-miso",
+    "_type": "menuItem",
+    "name": "Hellfire Miso",
+    "slug": { "_type": "slug", "current": "hellfire-miso" },
+    "category": { "_type": "reference", "_ref": "menuCategory-spicy" },
+    "description": "Deep red miso base blended with five types of chili. Intensely spicy with an umami finish.",
+    "price": "$18.00",
+    "tags": ["Spicy", "Popular"],
+    "spiceLevel": 5,
+    "available": true,
+    "featured": true,
+    "sortOrder": 10
+  },
+  {
+    "_id": "menuItem-spicy-tantanmen",
+    "_type": "menuItem",
+    "name": "Spicy Tantanmen",
+    "slug": { "_type": "slug", "current": "spicy-tantanmen" },
+    "category": { "_type": "reference", "_ref": "menuCategory-spicy" },
+    "description": "Rich sesame and chili broth topped with spiced ground pork and fresh scallions.",
+    "price": "$17.00",
+    "tags": ["Spicy"],
+    "spiceLevel": 4,
+    "available": true,
+    "featured": false,
+    "sortOrder": 20
+  },
+  {
+    "_id": "menuItem-crispy-karaage",
+    "_type": "menuItem",
+    "name": "Crispy Karaage",
+    "slug": { "_type": "slug", "current": "crispy-karaage" },
+    "category": { "_type": "reference", "_ref": "menuCategory-sides" },
+    "description": "Japanese-style fried chicken bites, perfectly crisp outside and juicy inside. Served with yuzu mayo.",
+    "price": "$8.50",
+    "available": true,
+    "featured": false,
+    "sortOrder": 10
+  },
+  {
+    "_id": "menuItem-pork-gyoza",
+    "_type": "menuItem",
+    "name": "Pork Gyoza",
+    "slug": { "_type": "slug", "current": "pork-gyoza" },
+    "category": { "_type": "reference", "_ref": "menuCategory-sides" },
+    "description": "Pan-fried dumplings filled with seasoned pork and cabbage, crispy bottoms.",
+    "price": "$7.00",
+    "tags": ["Popular"],
+    "available": true,
+    "featured": true,
+    "sortOrder": 20
+  },
+  {
+    "_id": "promotion-lunch-power-combo",
+    "_type": "promotion",
+    "title": "Lunch Power Combo",
+    "priceOrBadge": "$14.99",
+    "description": "Signature Ramen + Edamame + Iced Tea. The perfect midday refuel.",
+    "availabilityText": "Available in-store",
+    "active": true,
+    "sortOrder": 10
+  },
+  {
+    "_id": "promotion-lucky-happy-hour",
+    "_type": "promotion",
+    "title": "Lucky Happy Hour",
+    "priceOrBadge": "$4.99",
+    "description": "Draft beer and gyoza appetizers every weekday from 4PM to 6PM.",
+    "availabilityText": "Available in-store",
+    "active": true,
+    "sortOrder": 20
+  },
+  {
+    "_id": "promotion-student-night",
+    "_type": "promotion",
+    "title": "Student Night",
+    "priceOrBadge": "20% OFF",
+    "description": "Show your valid student ID on Thursdays for 20% off all ramen bowls.",
+    "availabilityText": "Available in-store",
+    "active": true,
+    "sortOrder": 30
+  },
+  {
+    "_id": "promotion-weekend-treat",
+    "_type": "promotion",
+    "title": "Weekend Treat",
+    "priceOrBadge": "$22.99",
+    "description": "Any Ramen + Any Side + Matcha Cheesecake. Treat yourself.",
+    "availabilityText": "Available in-store",
+    "active": true,
+    "sortOrder": 40
+  },
+  {
+    "_id": "location-downtown-flagship",
+    "_type": "location",
+    "name": "Downtown Flagship",
+    "label": "Flagship Store",
+    "address": "36 Canterbury Street, Saint John, NB E2L 2C5",
+    "phone": "506-898-1909",
+    "hours": "Mon-Sun: 11:30 AM - 10:00 PM",
+    "waitNote": "* Peak hours 12PM-1PM & 6PM-8PM may involve a wait.",
+    "mapEmbedUrl": "https://maps.google.com/maps?q=36%20Canterbury%20Street,%20Saint%20John,%20NB%20E2L%202C5&t=&z=15&ie=UTF8&iwloc=&output=embed",
+    "directionsUrl": "https://maps.google.com/?q=36%20Canterbury%20Street%2C%20Saint%20John%2C%20NB%20E2L%202C5",
+    "isPrimary": true,
+    "sortOrder": 10,
+    "visible": true
+  }
+]

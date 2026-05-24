@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { Noto_Serif_JP, Inter } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+import SiteChrome from "@/components/SiteChrome";
 
 const notoSerifJP = Noto_Serif_JP({
   subsets: ["latin"],
@@ -34,10 +33,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${notoSerifJP.variable} ${inter.variable} min-h-screen flex flex-col`}>
-        <Navbar />
-        <main className="flex-grow">{children}</main>
-        <Footer />
-        {modal}
+        <SiteChrome modal={modal}>{children}</SiteChrome>
       </body>
     </html>
   );

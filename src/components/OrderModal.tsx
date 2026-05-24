@@ -3,10 +3,11 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import OrderIframe from "./OrderIframe";
+import type { OrderPageContent } from "@/sanity/types";
 import { X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
-export default function OrderModal() {
+export default function OrderModal({ order }: { order?: OrderPageContent | null }) {
     const router = useRouter();
     const overlayRef = useRef<HTMLDivElement>(null);
     const [isOpen, setIsOpen] = useState(true);
@@ -56,7 +57,7 @@ export default function OrderModal() {
                     >
                         {/* Header for Modal */}
                         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-white">
-                            <h2 className="text-xl font-serif text-sumi">Order Online</h2>
+                            <h2 className="text-xl font-serif text-sumi">{order?.title || "Order Online"}</h2>
                             <button 
                                 onClick={onDismiss}
                                 className="p-2 rounded-full hover:bg-gray-100 transition-colors text-stone hover:text-sumi"
@@ -68,7 +69,7 @@ export default function OrderModal() {
                         
                         {/* Content area: Iframe fills remaining space */}
                         <div className="flex-1 overflow-hidden relative">
-                            <OrderIframe />
+                            <OrderIframe order={order} />
                         </div>
                     </motion.div>
                 </motion.div>

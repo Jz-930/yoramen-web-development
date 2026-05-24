@@ -5,8 +5,15 @@ export const metadata = {
 
 import Image from "next/image";
 import OrderIframe from "@/components/OrderIframe";
+import { fetchOrderPage } from "@/sanity/fetchers";
 
-export default function OrderPage() {
+export const dynamic = "force-dynamic";
+
+export default async function OrderPage() {
+    const order = await fetchOrderPage();
+    const title = order?.title || "Online Ordering";
+    const description = order?.description || "Secure ordering powered by our POS partner";
+
     return (
         <div className="pt-24 min-h-screen bg-gray-50 flex flex-col relative overflow-hidden jp-pattern-geo">
             {/* ── Abstract Vector Watermarks ── */}
@@ -18,11 +25,11 @@ export default function OrderPage() {
             </div>
 
             <div className="text-center py-8 relative z-10">
-                <h1 className="text-3xl font-serif text-sumi">Online Ordering</h1>
-                <p className="text-stone mt-2 text-sm">Secure ordering powered by our POS partner</p>
+                <h1 className="text-3xl font-serif text-sumi">{title}</h1>
+                <p className="text-stone mt-2 text-sm">{description}</p>
             </div>
             
-            <OrderIframe />
+            <OrderIframe order={order} />
         </div>
     );
 }
