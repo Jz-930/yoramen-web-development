@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Noto_Serif_JP, Inter } from "next/font/google";
 import "./globals.css";
 import SiteChrome from "@/components/SiteChrome";
+import { fetchSiteSettings } from "@/sanity/fetchers";
 
 const notoSerifJP = Noto_Serif_JP({
   subsets: ["latin"],
@@ -23,17 +24,21 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export const dynamic = "force-dynamic";
+
+export default async function RootLayout({
   children,
   modal,
 }: Readonly<{
   children: React.ReactNode;
   modal: React.ReactNode;
 }>) {
+  const siteSettings = await fetchSiteSettings();
+
   return (
     <html lang="en">
       <body className={`${notoSerifJP.variable} ${inter.variable} min-h-screen flex flex-col`}>
-        <SiteChrome modal={modal}>{children}</SiteChrome>
+        <SiteChrome modal={modal} settings={siteSettings}>{children}</SiteChrome>
       </body>
     </html>
   );

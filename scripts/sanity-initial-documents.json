@@ -132,11 +132,13 @@
       "metaDescription": "Order your favorite ramen bowls directly."
     },
     "title": "Online Ordering",
-    "description": "Secure ordering powered by our POS partner",
-    "providerName": "POS partner",
-    "enabled": false,
-    "fallbackTitle": "Awaiting Integration",
-    "fallbackMessage": "Third-party ordering system URL is not yet provided."
+    "description": "Secure ordering powered by MealKeyWay",
+    "providerName": "MealKeyWay",
+    "enabled": true,
+    "iframeUrl": "https://order.mealkeyway.com/customer/release/index?mid=324b374b756a537145386a32333732614673364638513d3d",
+    "externalOrderUrl": "https://order.mealkeyway.com/customer/release/index?mid=324b374b756a537145386a32333732614673364638513d3d",
+    "fallbackTitle": "Open Online Ordering",
+    "fallbackMessage": "If the ordering screen does not load, open the secure ordering page in a new tab."
   },
   {
     "_id": "menuCategory-signature",

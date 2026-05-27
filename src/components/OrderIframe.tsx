@@ -1,24 +1,38 @@
 import type { OrderPageContent } from "@/sanity/types";
+import { boolOr, textOr } from "@/sanity/fallback";
 
 type OrderIframeProps = {
     order?: OrderPageContent | null;
 };
 
+const ORDERING_URL =
+    "https://order.mealkeyway.com/customer/release/index?mid=324b374b756a537145386a32333732614673364638513d3d";
+
 const fallbackOrder: Required<OrderPageContent> = {
     title: "Online Ordering",
-    description: "Secure ordering powered by our POS partner",
-    providerName: "POS partner",
-    iframeUrl: "",
-    externalOrderUrl: "",
-    fallbackTitle: "Awaiting Integration",
-    fallbackMessage: "Third-party ordering system URL is not yet provided.",
-    enabled: false,
+    description: "Secure ordering powered by MealKeyWay",
+    providerName: "MealKeyWay",
+    iframeUrl: ORDERING_URL,
+    externalOrderUrl: ORDERING_URL,
+    fallbackTitle: "Open Online Ordering",
+    fallbackMessage: "If the ordering screen does not load, open the secure ordering page in a new tab.",
+    enabled: true,
 };
 
 export default function OrderIframe({ order }: OrderIframeProps) {
+    const iframeUrl = textOr(order?.iframeUrl, fallbackOrder.iframeUrl);
+    const externalOrderUrl = textOr(order?.externalOrderUrl, fallbackOrder.externalOrderUrl);
+    const cmsHasOrderUrl = Boolean(order?.iframeUrl?.trim() || order?.externalOrderUrl?.trim());
+
     const content = {
-        ...fallbackOrder,
-        ...order,
+        title: textOr(order?.title, fallbackOrder.title),
+        description: cmsHasOrderUrl ? textOr(order?.description, fallbackOrder.description) : fallbackOrder.description,
+        providerName: cmsHasOrderUrl ? textOr(order?.providerName, fallbackOrder.providerName) : fallbackOrder.providerName,
+        iframeUrl,
+        externalOrderUrl,
+        fallbackTitle: cmsHasOrderUrl ? textOr(order?.fallbackTitle, fallbackOrder.fallbackTitle) : fallbackOrder.fallbackTitle,
+        fallbackMessage: cmsHasOrderUrl ? textOr(order?.fallbackMessage, fallbackOrder.fallbackMessage) : fallbackOrder.fallbackMessage,
+        enabled: cmsHasOrderUrl ? boolOr(order?.enabled, fallbackOrder.enabled) : fallbackOrder.enabled,
     };
     const canEmbed = content.enabled !== false && Boolean(content.iframeUrl);
     const canOpenExternal = content.enabled !== false && Boolean(content.externalOrderUrl);

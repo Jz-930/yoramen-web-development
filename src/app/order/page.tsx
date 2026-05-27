@@ -6,13 +6,17 @@ export const metadata = {
 import Image from "next/image";
 import OrderIframe from "@/components/OrderIframe";
 import { fetchOrderPage } from "@/sanity/fetchers";
+import { textOr } from "@/sanity/fallback";
 
 export const dynamic = "force-dynamic";
 
 export default async function OrderPage() {
     const order = await fetchOrderPage();
-    const title = order?.title || "Online Ordering";
-    const description = order?.description || "Secure ordering powered by our POS partner";
+    const cmsHasOrderUrl = Boolean(order?.iframeUrl?.trim() || order?.externalOrderUrl?.trim());
+    const title = textOr(order?.title, "Online Ordering");
+    const description = cmsHasOrderUrl
+        ? textOr(order?.description, "Secure ordering powered by MealKeyWay")
+        : "Secure ordering powered by MealKeyWay";
 
     return (
         <div className="pt-24 min-h-screen bg-gray-50 flex flex-col relative overflow-hidden jp-pattern-geo">

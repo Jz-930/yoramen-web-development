@@ -47,6 +47,16 @@ export const homePageType = defineType({
       ],
     }),
     defineField({
+      name: "promiseSection",
+      title: "Promise Section",
+      type: "object",
+      fields: [
+        defineField({ name: "eyebrow", title: "Eyebrow", type: "string" }),
+        defineField({ name: "title", title: "Title", type: "text", rows: 2 }),
+        defineField({ name: "cta", title: "CTA", type: "cta" }),
+      ],
+    }),
+    defineField({
       name: "promiseCards",
       title: "Promise Cards",
       type: "array",
@@ -61,6 +71,16 @@ export const homePageType = defineType({
           ],
           preview: { select: { title: "title", subtitle: "number", media: "image" } },
         }),
+      ],
+    }),
+    defineField({
+      name: "specialsSection",
+      title: "Special Offers Section",
+      type: "object",
+      fields: [
+        defineField({ name: "eyebrow", title: "Eyebrow", type: "string" }),
+        defineField({ name: "title", title: "Title", type: "string" }),
+        defineField({ name: "description", title: "Description", type: "text", rows: 3 }),
       ],
     }),
     defineField({

@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import OrderIframe from "./OrderIframe";
 import type { OrderPageContent } from "@/sanity/types";
+import { textOr } from "@/sanity/fallback";
 import { X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -57,7 +58,7 @@ export default function OrderModal({ order }: { order?: OrderPageContent | null 
                     >
                         {/* Header for Modal */}
                         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-white">
-                            <h2 className="text-xl font-serif text-sumi">{order?.title || "Order Online"}</h2>
+                            <h2 className="text-xl font-serif text-sumi">{textOr(order?.title, "Order Online")}</h2>
                             <button 
                                 onClick={onDismiss}
                                 className="p-2 rounded-full hover:bg-gray-100 transition-colors text-stone hover:text-sumi"

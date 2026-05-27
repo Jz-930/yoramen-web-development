@@ -1,105 +1,72 @@
-"use client";
+import ContactContent from "./ContactContent";
+import { textOr } from "@/sanity/fallback";
+import { fetchContactPage, fetchSiteSettings } from "@/sanity/fetchers";
 
-import { useState } from "react";
-import { Mail, MessageSquare } from "lucide-react";
+export const dynamic = "force-dynamic";
 
-export default function ContactPage() {
-    const [formStatus, setFormStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
+const fallbackContact = {
+  header: {
+    eyebrow: "Reach Out",
+    title: "Contact Us",
+    description: "Partnerships, feedback, and suggestions are all welcome. We read every message carefully.",
+  },
+  infoCard: {
+    title: "Get in Touch",
+    description: "Whether you want to share your dining experience, inquire about catering, or just say hello, drop us a line.",
+    generalLabel: "General Inquiries",
+    partnershipsLabel: "Partnerships & PR",
+    generalEmail: "info@yoramen.ca",
+    partnershipsEmail: "info@yoramen.ca",
+  },
+  form: {
+    nameLabel: "Name",
+    namePlaceholder: "Your name",
+    phoneLabel: "Phone",
+    phonePlaceholder: "(optional)",
+    emailLabel: "Email",
+    emailPlaceholder: "you@example.com",
+    messageLabel: "Message",
+    messagePlaceholder: "What's on your mind?",
+    buttonLabel: "Send Message",
+    submittingLabel: "Sending...",
+    successMessage: "Message sent successfully. We will get back to you soon.",
+  },
+};
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        setFormStatus("submitting");
-        setTimeout(() => {
-            setFormStatus("success");
-        }, 1500);
-    };
+export default async function ContactPage() {
+  const [page, settings] = await Promise.all([
+    fetchContactPage(),
+    fetchSiteSettings(),
+  ]);
 
-    return (
-        <div className="pt-28 pb-24 min-h-screen bg-rice-paper">
-            <div className="max-w-6xl mx-auto px-6 lg:px-8">
+  const content = {
+    header: {
+      eyebrow: textOr(page?.header?.eyebrow, fallbackContact.header.eyebrow),
+      title: textOr(page?.header?.title, fallbackContact.header.title),
+      description: textOr(page?.header?.description, fallbackContact.header.description),
+    },
+    infoCard: {
+      title: textOr(page?.infoCard?.title, fallbackContact.infoCard.title),
+      description: textOr(page?.infoCard?.description, fallbackContact.infoCard.description),
+      generalLabel: textOr(page?.infoCard?.generalLabel, fallbackContact.infoCard.generalLabel),
+      partnershipsLabel: textOr(page?.infoCard?.partnershipsLabel, fallbackContact.infoCard.partnershipsLabel),
+      generalEmail: textOr(settings?.contact?.generalEmail, fallbackContact.infoCard.generalEmail),
+      partnershipsEmail: textOr(settings?.contact?.partnershipsEmail, settings?.contact?.generalEmail || fallbackContact.infoCard.partnershipsEmail),
+    },
+    form: {
+      nameLabel: textOr(page?.form?.nameLabel, fallbackContact.form.nameLabel),
+      namePlaceholder: textOr(page?.form?.namePlaceholder, fallbackContact.form.namePlaceholder),
+      phoneLabel: textOr(page?.form?.phoneLabel, fallbackContact.form.phoneLabel),
+      phonePlaceholder: textOr(page?.form?.phonePlaceholder, fallbackContact.form.phonePlaceholder),
+      emailLabel: textOr(page?.form?.emailLabel, fallbackContact.form.emailLabel),
+      emailPlaceholder: textOr(page?.form?.emailPlaceholder, fallbackContact.form.emailPlaceholder),
+      messageLabel: textOr(page?.form?.messageLabel, fallbackContact.form.messageLabel),
+      messagePlaceholder: textOr(page?.form?.messagePlaceholder, fallbackContact.form.messagePlaceholder),
+      buttonLabel: textOr(page?.form?.buttonLabel, fallbackContact.form.buttonLabel),
+      submittingLabel: textOr(page?.form?.submittingLabel, fallbackContact.form.submittingLabel),
+      successMessage: textOr(page?.form?.successMessage, fallbackContact.form.successMessage),
+    },
+  };
 
-                {/* Page Header */}
-                <div className="text-center mb-16 max-w-3xl mx-auto">
-                    <span className="text-brand-red text-xs tracking-[0.25em] uppercase font-medium block mb-4">Reach Out</span>
-                    <h1 className="text-4xl md:text-6xl font-serif text-sumi mb-4">Contact Us</h1>
-                    <div className="jp-divider mb-6"></div>
-                    <p className="text-base text-stone leading-relaxed">
-                        Partnerships, feedback, and suggestions are all welcome. We read every message carefully.
-                    </p>
-                </div>
-
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-5xl mx-auto items-start">
-
-                    {/* Contact Info Side */}
-                    <div className="bg-warm-white rounded-2xl p-10 md:p-12 border border-light-border">
-                        <h2 className="text-2xl font-serif text-sumi mb-6">Get in Touch</h2>
-                        <p className="text-stone text-sm mb-10 leading-relaxed">
-                            Whether you want to share your dining experience, inquire about catering, or just say hello, drop us a line.
-                        </p>
-
-                        <div className="space-y-8">
-                            <div className="flex flex-col gap-2">
-                                <span className="text-brand-red uppercase tracking-[0.15em] text-xs font-medium">General Inquiries</span>
-                                <a href="mailto:info@yoramen.ca" className="text-lg text-sumi hover:text-brand-red flex items-center gap-3 transition-colors">
-                                    <Mail size={18} className="text-stone" />
-                                    info@yoramen.ca
-                                </a>
-                            </div>
-
-                            <div className="flex flex-col gap-2">
-                                <span className="text-brand-red uppercase tracking-[0.15em] text-xs font-medium">Partnerships & PR</span>
-                                <a href="mailto:info@yoramen.ca" className="text-lg text-sumi hover:text-brand-red flex items-center gap-3 transition-colors">
-                                    <MessageSquare size={18} className="text-stone" />
-                                    info@yoramen.ca
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Form Side */}
-                    <div>
-                        <form onSubmit={handleSubmit} className="space-y-5">
-
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                                <div className="space-y-2">
-                                    <label htmlFor="name" className="text-xs uppercase tracking-[0.12em] text-stone font-medium block">Name</label>
-                                    <input required id="name" type="text" className="w-full bg-warm-white border border-light-border rounded-xl px-5 py-3.5 text-sumi focus:outline-none focus:border-brand-red/50 transition-colors placeholder:text-stone/40" placeholder="Your name" />
-                                </div>
-
-                                <div className="space-y-2">
-                                    <label htmlFor="phone" className="text-xs uppercase tracking-[0.12em] text-stone font-medium block">Phone</label>
-                                    <input id="phone" type="tel" className="w-full bg-warm-white border border-light-border rounded-xl px-5 py-3.5 text-sumi focus:outline-none focus:border-brand-red/50 transition-colors placeholder:text-stone/40" placeholder="(optional)" />
-                                </div>
-                            </div>
-
-                            <div className="space-y-2">
-                                <label htmlFor="email" className="text-xs uppercase tracking-[0.12em] text-stone font-medium block">Email</label>
-                                <input required id="email" type="email" className="w-full bg-warm-white border border-light-border rounded-xl px-5 py-3.5 text-sumi focus:outline-none focus:border-brand-red/50 transition-colors placeholder:text-stone/40" placeholder="you@example.com" />
-                            </div>
-
-                            <div className="space-y-2">
-                                <label htmlFor="message" className="text-xs uppercase tracking-[0.12em] text-stone font-medium block">Message</label>
-                                <textarea required id="message" rows={5} className="w-full bg-warm-white border border-light-border rounded-xl px-5 py-3.5 text-sumi focus:outline-none focus:border-brand-red/50 transition-colors resize-none placeholder:text-stone/40" placeholder="What's on your mind?"></textarea>
-                            </div>
-
-                            <button
-                                type="submit"
-                                disabled={formStatus !== "idle"}
-                                className="w-full bg-brand-red hover:bg-brand-red-hover disabled:bg-stone/30 disabled:cursor-not-allowed text-white py-4 rounded-full text-sm uppercase tracking-[0.12em] font-medium transition-all mt-2"
-                            >
-                                {formStatus === "submitting" ? "Sending..." : "Send Message"}
-                            </button>
-
-                            {formStatus === "success" && (
-                                <div className="p-4 bg-green-50 border border-green-200 rounded-xl text-green-700 text-sm text-center">
-                                    Message sent successfully. We will get back to you soon.
-                                </div>
-                            )}
-                        </form>
-                    </div>
-
-                </div>
-            </div>
-        </div>
-    );
+  return <ContactContent content={content} />;
 }

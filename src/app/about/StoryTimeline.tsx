@@ -3,7 +3,15 @@
 import { useState } from "react";
 import Image from "next/image";
 
-const timelineData = [
+export type StoryTimelineItem = {
+    year: string;
+    img: string;
+    align: "left" | "right";
+    title: string;
+    desc: string;
+};
+
+const timelineData: StoryTimelineItem[] = [
     { year: "2021", img: "/images/story/story-2021-clean.webp", align: "left", title: "Tokyo Inspiration", desc: "Inspired by a family member running a successful ramen shop in Tokyo, the idea of bringing authentic, high-quality Japanese flavor to our local town was born." },
     { year: "2022", img: "/images/story/story-2022-clean.webp", align: "right", title: "Local Pop-ups", desc: "Started quietly by setting up local food stalls across Scarborough. The lines grew, and the feedback validated our obsession with proper tonkotsu broth." },
     { year: "2024", img: "/images/story/story-2024-clean.webp", align: "left", title: "Scaling Operations", desc: "Expanded our reach to more community events and began building a serious following. Handcrafting noodles at this volume forced us to innovate." },
@@ -11,13 +19,13 @@ const timelineData = [
     { year: "2026", img: "/images/story/story-2026-clean.webp", align: "left", title: "Flagship Store Opens", desc: "Finally set down permanent roots. The first official Yoramen physical location opens, bringing the complete dining experience to life." }
 ];
 
-export default function StoryTimeline() {
+export default function StoryTimeline({ items = timelineData }: { items?: StoryTimelineItem[] }) {
     const [activeStory, setActiveStory] = useState<string | null>(null);
 
     return (
         <>
             {/* ── Cinematic Fixed Background Hover Images ── */}
-            {timelineData.map((milestone) => (
+            {items.map((milestone) => (
                 <div 
                     key={`bg-${milestone.year}`}
                     className={`fixed top-1/2 -translate-y-1/2 w-[600px] h-[600px] lg:w-[1000px] lg:h-[1000px] pointer-events-none -z-10 transition-all ease-out ${
@@ -44,7 +52,7 @@ export default function StoryTimeline() {
 
             {/* ── Timeline Interactive Nodes ── */}
             <div className="space-y-0 relative before:absolute before:inset-0 before:ml-2 before:-translate-x-1/2 md:before:mx-auto md:before:translate-x-0 before:h-full before:w-px before:bg-gradient-to-b before:from-transparent before:via-gray-200 before:to-transparent z-10 w-full">
-                {timelineData.map((milestone) => (
+                {items.map((milestone) => (
                     <div 
                         key={milestone.year} 
                         className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group py-16"

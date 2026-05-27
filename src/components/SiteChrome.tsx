@@ -3,13 +3,16 @@
 import { usePathname } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import type { SiteSettingsContent } from "@/sanity/types";
 
 export default function SiteChrome({
   children,
   modal,
+  settings,
 }: {
   children: React.ReactNode;
   modal: React.ReactNode;
+  settings?: SiteSettingsContent | null;
 }) {
   const pathname = usePathname();
   const isStudio = pathname?.startsWith("/studio");
@@ -20,9 +23,9 @@ export default function SiteChrome({
 
   return (
     <>
-      <Navbar />
+      <Navbar settings={settings} />
       <main className="flex-grow">{children}</main>
-      <Footer />
+      <Footer settings={settings} />
       {modal}
     </>
   );

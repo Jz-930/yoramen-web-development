@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Plus } from "lucide-react";
 import { fetchMenuCmsContent } from "@/sanity/fetchers";
+import { boolOr, textOr } from "@/sanity/fallback";
 import { resolveImageUrl } from "@/sanity/image";
 import type { MenuCategoryContent, MenuPageContent } from "@/sanity/types";
 
@@ -23,6 +24,13 @@ const fallbackMenuPage: Required<MenuPageContent> = {
         buttonLabel: "View Combo Deals",
         buttonHref: "/order",
     },
+};
+
+const fallbackComboCta = {
+    title: "Better value with combos",
+    description: "Bowl + side + drink. One set, fully satisfying. Built for your appetite.",
+    buttonLabel: "View Combo Deals",
+    buttonHref: "/order",
 };
 
 const fallbackMenuCategories: MenuCategoryContent[] = [
@@ -91,20 +99,22 @@ const fallbackMenuCategories: MenuCategoryContent[] = [
 export default async function MenuPage() {
     const cmsContent = await fetchMenuCmsContent();
     const pageContent = {
-        ...fallbackMenuPage,
-        ...cmsContent.page,
+        eyebrow: textOr(cmsContent.page?.eyebrow, fallbackMenuPage.eyebrow),
+        title: textOr(cmsContent.page?.title, fallbackMenuPage.title),
+        description: textOr(cmsContent.page?.description, fallbackMenuPage.description),
+        categoryNavEnabled: boolOr(cmsContent.page?.categoryNavEnabled, fallbackMenuPage.categoryNavEnabled),
         comboCta: {
-            ...fallbackMenuPage.comboCta,
-            ...cmsContent.page?.comboCta,
+            title: textOr(cmsContent.page?.comboCta?.title, fallbackComboCta.title),
+            description: textOr(cmsContent.page?.comboCta?.description, fallbackComboCta.description),
+            buttonLabel: textOr(cmsContent.page?.comboCta?.buttonLabel, fallbackComboCta.buttonLabel),
+            buttonHref: textOr(cmsContent.page?.comboCta?.buttonHref, fallbackComboCta.buttonHref),
         },
     };
     const comboCta = {
-        title: pageContent.comboCta.title || "Better value with combos",
-        description:
-            pageContent.comboCta.description ||
-            "Bowl + side + drink. One set, fully satisfying. Built for your appetite.",
-        buttonLabel: pageContent.comboCta.buttonLabel || "View Combo Deals",
-        buttonHref: pageContent.comboCta.buttonHref || "/order",
+        title: textOr(pageContent.comboCta.title, fallbackComboCta.title),
+        description: textOr(pageContent.comboCta.description, fallbackComboCta.description),
+        buttonLabel: textOr(pageContent.comboCta.buttonLabel, fallbackComboCta.buttonLabel),
+        buttonHref: textOr(pageContent.comboCta.buttonHref, fallbackComboCta.buttonHref),
     };
 
     const cmsCategoriesWithItems = cmsContent.categories.filter(

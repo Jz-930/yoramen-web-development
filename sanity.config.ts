@@ -6,6 +6,9 @@ import { schemaTypes } from "@/sanity/schemaTypes";
 const singletonTypes = new Set([
   "siteSettings",
   "homePage",
+  "aboutPage",
+  "galleryPage",
+  "contactPage",
   "menuPage",
   "orderPage",
 ]);
@@ -37,6 +40,9 @@ export default defineConfig({
                   .items([
                     singletonListItem(S, "siteSettings", "Site Settings"),
                     singletonListItem(S, "homePage", "Home Page"),
+                    singletonListItem(S, "aboutPage", "About Page"),
+                    singletonListItem(S, "galleryPage", "Gallery Page"),
+                    singletonListItem(S, "contactPage", "Contact Page"),
                     singletonListItem(S, "menuPage", "Menu Page"),
                     singletonListItem(S, "orderPage", "Order Page"),
                   ])
