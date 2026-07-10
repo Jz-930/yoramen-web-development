@@ -17,33 +17,48 @@ export type GalleryTestimonial = {
   color: string;
 };
 
+export type GalleryCategory = {
+  id: string;
+  label: string;
+};
+
 export default function GalleryContent({
   header,
   categories,
   galleryItems,
   testimonials,
+  communityLabel,
+  testimonialsTitle,
+  decorativeAlts,
 }: {
   header: {
     eyebrow: string;
     title: string;
     description: string;
   };
-  categories: string[];
+  categories: GalleryCategory[];
   galleryItems: GalleryItem[];
   testimonials: GalleryTestimonial[];
+  communityLabel: string;
+  testimonialsTitle: string;
+  decorativeAlts: {
+    bento: string;
+    matcha: string;
+    brush: string;
+  };
 }) {
-  const [activeTab, setActiveTab] = useState("All");
-  const filteredImages = activeTab === "All"
+  const [activeTab, setActiveTab] = useState("all");
+  const filteredImages = activeTab === "all"
     ? galleryItems
     : galleryItems.filter((img) => img.category === activeTab);
 
   return (
     <div className="pt-28 pb-24 min-h-screen bg-white relative overflow-hidden">
       <div className="absolute -top-10 -right-20 w-[500px] h-[500px] opacity-[0.02] pointer-events-none z-0 transform rotate-12">
-        <Image src="/images/icons/bento, lunch, box, japanese, food.svg" alt="bento" fill className="object-contain" />
+        <Image src="/images/icons/bento, lunch, box, japanese, food.svg" alt={decorativeAlts.bento} fill className="object-contain" />
       </div>
       <div className="absolute top-1/2 -left-20 w-[500px] h-[500px] opacity-[0.02] pointer-events-none z-0 transform -rotate-12">
-        <Image src="/images/icons/matcha, tea, green, japanese, drink.svg" alt="matcha" fill className="object-contain" />
+        <Image src="/images/icons/matcha, tea, green, japanese, drink.svg" alt={decorativeAlts.matcha} fill className="object-contain" />
       </div>
 
       <div className="max-w-6xl mx-auto px-6 lg:px-8 relative z-10">
@@ -51,7 +66,7 @@ export default function GalleryContent({
           <span className="text-brand-red text-xs tracking-[0.25em] uppercase font-medium block mb-4">{header.eyebrow}</span>
           <h1 className="text-4xl md:text-6xl font-serif text-sumi mb-6">{header.title}</h1>
           <div className="relative w-20 h-5 mx-auto mb-8 -ml-4 md:ml-auto">
-            <Image src="/images/Asset 20.png" alt="brush" fill className="object-contain opacity-80" style={{ filter: "invert(32%) sepia(85%) saturate(3015%) hue-rotate(346deg) brightness(88%) contrast(92%)" }} />
+            <Image src="/images/Asset 20.png" alt={decorativeAlts.brush} fill className="object-contain opacity-80" style={{ filter: "invert(32%) sepia(85%) saturate(3015%) hue-rotate(346deg) brightness(88%) contrast(92%)" }} />
           </div>
           <p className="text-base text-stone max-w-xl mx-auto mb-4">
             {header.description}
@@ -61,15 +76,15 @@ export default function GalleryContent({
         <div className="flex flex-wrap justify-center gap-2 md:gap-4 mb-16">
           {categories.map((cat) => (
             <button
-              key={cat}
-              onClick={() => setActiveTab(cat)}
+              key={cat.id}
+              onClick={() => setActiveTab(cat.id)}
               className={`px-6 py-2 rounded-full text-sm font-medium transition-all ${
-                activeTab === cat
+                activeTab === cat.id
                   ? "bg-sumi text-white shadow-md"
                   : "bg-gray-50 text-stone hover:bg-gray-100"
               }`}
             >
-              {cat}
+              {cat.label}
             </button>
           ))}
         </div>
@@ -94,8 +109,8 @@ export default function GalleryContent({
 
         <div className="pt-24 border-t border-gray-100">
           <div className="text-center mb-16">
-            <span className="text-brand-red text-xs tracking-[0.25em] uppercase font-medium block mb-4">Community</span>
-            <h2 className="text-3xl md:text-4xl font-serif text-sumi mb-4">What people are saying</h2>
+            <span className="text-brand-red text-xs tracking-[0.25em] uppercase font-medium block mb-4">{communityLabel}</span>
+            <h2 className="text-3xl md:text-4xl font-serif text-sumi mb-4">{testimonialsTitle}</h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">

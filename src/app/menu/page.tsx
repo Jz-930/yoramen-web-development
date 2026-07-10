@@ -1,19 +1,29 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Plus } from "lucide-react";
+import { SOURCE_LOCALE, localizeInternalHref } from "@/i18n";
+import { buildLocalizedMetadata, ENGLISH_PAGE_METADATA } from "@/i18n/metadata";
+import { createServerTextTranslator, getRequestLocale } from "@/i18n/server";
 import { fetchMenuCmsContent } from "@/sanity/fetchers";
 import { boolOr, textOr } from "@/sanity/fallback";
 import { resolveImageUrl } from "@/sanity/image";
 import type { MenuCategoryContent, MenuPageContent } from "@/sanity/types";
 
-export const metadata = {
-    title: "Menu | Yoramen",
-    description: "Explore the full Yoramen menu, including signature ramen, sides, drinks, and seasonal limited offerings.",
-};
-
 export const dynamic = "force-dynamic";
 
+export async function generateMetadata() {
+    const { page } = await fetchMenuCmsContent();
+    return buildLocalizedMetadata({
+        locale: SOURCE_LOCALE,
+        englishPathname: "/menu",
+        englishTitle: ENGLISH_PAGE_METADATA.menu.title,
+        englishDescription: ENGLISH_PAGE_METADATA.menu.description,
+        seo: page?.seo,
+    });
+}
+
 const fallbackMenuPage: Required<MenuPageContent> = {
+    seo: {},
     eyebrow: "Explore",
     title: "Menu",
     description: "From classics to limited editions, find your perfect bowl.",
@@ -97,17 +107,19 @@ const fallbackMenuCategories: MenuCategoryContent[] = [
 ];
 
 export default async function MenuPage() {
+    const locale = await getRequestLocale();
+    const t = (await createServerTextTranslator(locale)).text;
     const cmsContent = await fetchMenuCmsContent();
     const pageContent = {
-        eyebrow: textOr(cmsContent.page?.eyebrow, fallbackMenuPage.eyebrow),
-        title: textOr(cmsContent.page?.title, fallbackMenuPage.title),
-        description: textOr(cmsContent.page?.description, fallbackMenuPage.description),
+        eyebrow: t(textOr(cmsContent.page?.eyebrow, fallbackMenuPage.eyebrow)),
+        title: t(textOr(cmsContent.page?.title, fallbackMenuPage.title)),
+        description: t(textOr(cmsContent.page?.description, fallbackMenuPage.description)),
         categoryNavEnabled: boolOr(cmsContent.page?.categoryNavEnabled, fallbackMenuPage.categoryNavEnabled),
         comboCta: {
-            title: textOr(cmsContent.page?.comboCta?.title, fallbackComboCta.title),
-            description: textOr(cmsContent.page?.comboCta?.description, fallbackComboCta.description),
-            buttonLabel: textOr(cmsContent.page?.comboCta?.buttonLabel, fallbackComboCta.buttonLabel),
-            buttonHref: textOr(cmsContent.page?.comboCta?.buttonHref, fallbackComboCta.buttonHref),
+            title: t(textOr(cmsContent.page?.comboCta?.title, fallbackComboCta.title)),
+            description: t(textOr(cmsContent.page?.comboCta?.description, fallbackComboCta.description)),
+            buttonLabel: t(textOr(cmsContent.page?.comboCta?.buttonLabel, fallbackComboCta.buttonLabel)),
+            buttonHref: localizeInternalHref(textOr(cmsContent.page?.comboCta?.buttonHref, fallbackComboCta.buttonHref), locale),
         },
     };
     const comboCta = {
@@ -120,8 +132,20 @@ export default async function MenuPage() {
     const cmsCategoriesWithItems = cmsContent.categories.filter(
         (category) => Array.isArray(category.items) && category.items.length > 0
     );
-    const menuCategories =
+    const sourceMenuCategories =
         cmsCategoriesWithItems.length > 0 ? cmsCategoriesWithItems : fallbackMenuCategories;
+    const menuCategories = sourceMenuCategories.map((category) => ({
+        ...category,
+        name: t(category.name),
+        description: category.description ? t(category.description) : category.description,
+        items: category.items.map((item) => ({
+            ...item,
+            name: t(item.name),
+            desc: item.desc ? t(item.desc) : item.desc,
+            price: item.price ? t(item.price) : item.price,
+            tags: item.tags?.map(t),
+        })),
+    }));
 
     return (
         <div className="pt-28 min-h-screen bg-section-warm">
@@ -195,8 +219,8 @@ export default async function MenuPage() {
                                                 </p>
                                             )}
 
-                                            <Link href="/order" className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.12em] text-sumi hover:text-brand-red transition-colors w-max font-medium">
-                                                <Plus size={14} /> Add to Order
+                                            <Link href={localizeInternalHref("/order", locale)} className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.12em] text-sumi hover:text-brand-red transition-colors w-max font-medium">
+                                                <Plus size={14} /> {t("Add to Order")}
                                             </Link>
                                         </div>
                                     </div>

@@ -1,15 +1,24 @@
 import Image from "next/image";
 import StoryTimeline, { type StoryTimelineItem } from "./StoryTimeline";
+import { SOURCE_LOCALE } from "@/i18n";
+import { buildLocalizedMetadata, ENGLISH_PAGE_METADATA } from "@/i18n/metadata";
+import { createServerTextTranslator, getRequestLocale } from "@/i18n/server";
 import { arrayOr, textOr } from "@/sanity/fallback";
 import { fetchAboutPage } from "@/sanity/fetchers";
 import { resolveImageUrl } from "@/sanity/image";
 
-export const metadata = {
-  title: "Our Story | Yoramen",
-  description: "It started with an obsession for flavor. Learn about the craft and history behind Yoramen.",
-};
-
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata() {
+  const page = await fetchAboutPage();
+  return buildLocalizedMetadata({
+    locale: SOURCE_LOCALE,
+    englishPathname: "/about",
+    englishTitle: ENGLISH_PAGE_METADATA.about.title,
+    englishDescription: ENGLISH_PAGE_METADATA.about.description,
+    seo: page?.seo,
+  });
+}
 
 const fallbackAbout = {
   header: {
@@ -42,8 +51,10 @@ function normalizeAlign(value: string | undefined, fallback: "left" | "right") {
 }
 
 export default async function AboutPage() {
+  const locale = await getRequestLocale();
+  const t = (await createServerTextTranslator(locale)).text;
   const page = await fetchAboutPage();
-  const introParagraphs = arrayOr(page?.introSection?.paragraphs, fallbackAbout.introSection.paragraphs);
+  const introParagraphs = arrayOr(page?.introSection?.paragraphs, fallbackAbout.introSection.paragraphs).map(t);
   const timelineCount = Math.max(fallbackAbout.timelineItems.length, page?.timelineItems?.length || 0);
   const timelineItems = Array.from({ length: timelineCount }, (_, index) => {
     const fallback = fallbackAbout.timelineItems[index] || fallbackAbout.timelineItems[fallbackAbout.timelineItems.length - 1];
@@ -51,29 +62,29 @@ export default async function AboutPage() {
 
     return {
       year: textOr(item?.year, fallback.year),
-      title: textOr(item?.title, fallback.title),
-      desc: textOr(item?.description, fallback.desc),
+      title: t(textOr(item?.title, fallback.title)),
+      desc: t(textOr(item?.description, fallback.desc)),
       img: resolveImageUrl(item?.image, fallback.img),
       align: normalizeAlign(item?.align, fallback.align),
     };
   });
 
   const header = {
-    eyebrow: textOr(page?.header?.eyebrow, fallbackAbout.header.eyebrow),
-    title: textOr(page?.header?.title, fallbackAbout.header.title),
-    intro: textOr(page?.header?.intro, fallbackAbout.header.intro),
+    eyebrow: t(textOr(page?.header?.eyebrow, fallbackAbout.header.eyebrow)),
+    title: t(textOr(page?.header?.title, fallbackAbout.header.title)),
+    intro: t(textOr(page?.header?.intro, fallbackAbout.header.intro)),
   };
   const introImage = resolveImageUrl(page?.introSection?.image, fallbackAbout.introSection.image);
-  const quote = textOr(page?.introSection?.quote, fallbackAbout.introSection.quote);
-  const timelineTitle = textOr(page?.timelineSection?.title, fallbackAbout.timelineSection.title);
+  const quote = t(textOr(page?.introSection?.quote, fallbackAbout.introSection.quote));
+  const timelineTitle = t(textOr(page?.timelineSection?.title, fallbackAbout.timelineSection.title));
 
   return (
     <div className="pt-28 pb-24 min-h-screen bg-white relative overflow-hidden">
       <div className="absolute top-[10%] left-[-20%] w-[600px] h-[600px] opacity-[0.02] pointer-events-none z-30 transform rotate-[15deg]">
-        <Image src="/images/icons/mochi, dessert, rice, japanese, sweet.svg" alt="mochi" fill className="object-contain" style={{ filter: "invert(32%) sepia(85%) saturate(3015%) hue-rotate(346deg)" }} />
+        <Image src="/images/icons/mochi, dessert, rice, japanese, sweet.svg" alt={t("mochi")} fill className="object-contain" style={{ filter: "invert(32%) sepia(85%) saturate(3015%) hue-rotate(346deg)" }} />
       </div>
       <div className="absolute top-[60%] right-[-15%] w-[700px] h-[700px] opacity-[0.02] pointer-events-none z-30 transform -rotate-[25deg]">
-        <Image src="/images/icons/yakitori, chicken, skewer, grilled, japanese.svg" alt="yakitori" fill className="object-contain" style={{ filter: "invert(32%) sepia(85%) saturate(3015%) hue-rotate(346deg)" }} />
+        <Image src="/images/icons/yakitori, chicken, skewer, grilled, japanese.svg" alt={t("yakitori")} fill className="object-contain" style={{ filter: "invert(32%) sepia(85%) saturate(3015%) hue-rotate(346deg)" }} />
       </div>
 
       <div className="relative z-20 bg-white shadow-[0_-50px_50px_0_white] w-full">
@@ -82,7 +93,7 @@ export default async function AboutPage() {
             <span className="text-brand-red text-xs tracking-[0.25em] uppercase font-medium block mb-4">{header.eyebrow}</span>
             <h1 className="text-4xl md:text-6xl font-serif text-sumi mb-6">{header.title}</h1>
             <div className="relative w-20 h-5 mx-auto mb-8 -ml-4 md:ml-auto">
-              <Image src="/images/Asset 20.png" alt="brush" fill className="object-contain opacity-80" style={{ filter: "invert(32%) sepia(85%) saturate(3015%) hue-rotate(346deg) brightness(88%) contrast(92%)" }} />
+              <Image src="/images/Asset 20.png" alt={t("brush")} fill className="object-contain opacity-80" style={{ filter: "invert(32%) sepia(85%) saturate(3015%) hue-rotate(346deg) brightness(88%) contrast(92%)" }} />
             </div>
             <p className="text-lg text-stone font-serif italic">
               {header.intro}
@@ -93,7 +104,7 @@ export default async function AboutPage() {
             <div className="relative aspect-square rounded-2xl overflow-hidden group border border-gray-100 shadow-sm">
               <Image
                 src={introImage}
-                alt="Ramen Prep"
+                alt={t("Ramen Prep")}
                 fill
                 className="object-cover group-hover:scale-[1.03] transition-transform duration-1000"
               />
@@ -119,7 +130,7 @@ export default async function AboutPage() {
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-serif text-sumi mb-4">{timelineTitle}</h2>
             <div className="relative w-20 h-5 mx-auto mb-2 -ml-4 md:ml-auto">
-              <Image src="/images/Asset 20.png" alt="brush" fill className="object-contain opacity-80" style={{ filter: "invert(32%) sepia(85%) saturate(3015%) hue-rotate(346deg) brightness(88%) contrast(92%)" }} />
+              <Image src="/images/Asset 20.png" alt={t("brush")} fill className="object-contain opacity-80" style={{ filter: "invert(32%) sepia(85%) saturate(3015%) hue-rotate(346deg) brightness(88%) contrast(92%)" }} />
             </div>
           </div>
 

@@ -11,8 +11,16 @@ export type LinkItemContent = {
   openInNewTab?: boolean;
 };
 
+export type SeoContent = {
+  metaTitle?: string;
+  metaDescription?: string;
+  ogImage?: unknown;
+  noIndex?: boolean;
+};
+
 export type SiteSettingsContent = {
   title?: string;
+  defaultSeo?: SeoContent;
   brand?: {
     logoDark?: unknown;
     logoLight?: unknown;
@@ -35,6 +43,7 @@ export type SiteSettingsContent = {
 };
 
 export type HomePageContent = {
+  seo?: SeoContent;
   hero?: {
     eyebrow?: string;
     headlineLine1?: string;
@@ -91,6 +100,7 @@ export type PromotionContent = {
 };
 
 export type MenuPageContent = {
+  seo?: SeoContent;
   eyebrow?: string;
   title?: string;
   description?: string;
@@ -119,6 +129,7 @@ export type MenuCategoryContent = {
 };
 
 export type OrderPageContent = {
+  seo?: SeoContent;
   title?: string;
   description?: string;
   providerName?: string;
@@ -143,6 +154,7 @@ export type LocationContent = {
 };
 
 export type AboutPageContent = {
+  seo?: SeoContent;
   header?: {
     eyebrow?: string;
     title?: string;
@@ -168,6 +180,7 @@ export type TimelineItemContent = {
 };
 
 export type GalleryPageContent = {
+  seo?: SeoContent;
   header?: {
     eyebrow?: string;
     title?: string;
@@ -193,6 +206,7 @@ export type TestimonialContent = {
 };
 
 export type ContactPageContent = {
+  seo?: SeoContent;
   header?: {
     eyebrow?: string;
     title?: string;

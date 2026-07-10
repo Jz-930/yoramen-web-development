@@ -1,4 +1,5 @@
 import { client } from "./client";
+import { cache } from "react";
 import {
   ABOUT_PAGE_QUERY,
   ACTIVE_PROMOTIONS_QUERY,
@@ -26,16 +27,16 @@ import type {
 
 const fetchOptions = { cache: "no-store" as const };
 
-export async function fetchSiteSettings() {
+export const fetchSiteSettings = cache(async function fetchSiteSettings() {
   try {
     return await client.fetch<SiteSettingsContent | null>(SITE_SETTINGS_QUERY, {}, fetchOptions);
   } catch (error) {
     console.warn("Sanity site settings fetch failed. Falling back to local content.", error);
     return null;
   }
-}
+});
 
-export async function fetchHomeCmsContent() {
+export const fetchHomeCmsContent = cache(async function fetchHomeCmsContent() {
   try {
     const [page, promotions] = await Promise.all([
       client.fetch<HomePageContent | null>(HOME_PAGE_QUERY, {}, fetchOptions),
@@ -53,9 +54,9 @@ export async function fetchHomeCmsContent() {
       promotions: [],
     };
   }
-}
+});
 
-export async function fetchMenuCmsContent() {
+export const fetchMenuCmsContent = cache(async function fetchMenuCmsContent() {
   try {
     const [page, categories] = await Promise.all([
       client.fetch<MenuPageContent | null>(MENU_PAGE_QUERY, {}, fetchOptions),
@@ -73,18 +74,18 @@ export async function fetchMenuCmsContent() {
       categories: [],
     };
   }
-}
+});
 
-export async function fetchOrderPage() {
+export const fetchOrderPage = cache(async function fetchOrderPage() {
   try {
     return await client.fetch<OrderPageContent | null>(ORDER_PAGE_QUERY, {}, fetchOptions);
   } catch (error) {
     console.warn("Sanity order page fetch failed. Falling back to local content.", error);
     return null;
   }
-}
+});
 
-export async function fetchLocations() {
+export const fetchLocations = cache(async function fetchLocations() {
   try {
     const locations = await client.fetch<LocationContent[]>(LOCATIONS_QUERY, {}, fetchOptions);
     return Array.isArray(locations) ? locations : [];
@@ -92,31 +93,31 @@ export async function fetchLocations() {
     console.warn("Sanity locations fetch failed. Falling back to local content.", error);
     return [];
   }
-}
+});
 
-export async function fetchAboutPage() {
+export const fetchAboutPage = cache(async function fetchAboutPage() {
   try {
     return await client.fetch<AboutPageContent | null>(ABOUT_PAGE_QUERY, {}, fetchOptions);
   } catch (error) {
     console.warn("Sanity about page fetch failed. Falling back to local content.", error);
     return null;
   }
-}
+});
 
-export async function fetchGalleryPage() {
+export const fetchGalleryPage = cache(async function fetchGalleryPage() {
   try {
     return await client.fetch<GalleryPageContent | null>(GALLERY_PAGE_QUERY, {}, fetchOptions);
   } catch (error) {
     console.warn("Sanity gallery page fetch failed. Falling back to local content.", error);
     return null;
   }
-}
+});
 
-export async function fetchContactPage() {
+export const fetchContactPage = cache(async function fetchContactPage() {
   try {
     return await client.fetch<ContactPageContent | null>(CONTACT_PAGE_QUERY, {}, fetchOptions);
   } catch (error) {
     console.warn("Sanity contact page fetch failed. Falling back to local content.", error);
     return null;
   }
-}
+});

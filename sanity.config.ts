@@ -1,6 +1,7 @@
 import { defineConfig } from "sanity";
-import { structureTool } from "sanity/structure";
+import { structureTool, type StructureBuilder } from "sanity/structure";
 import { visionTool } from "@sanity/vision";
+import { localizationTool } from "@/sanity/localization";
 import { schemaTypes } from "@/sanity/schemaTypes";
 
 const singletonTypes = new Set([
@@ -11,9 +12,11 @@ const singletonTypes = new Set([
   "contactPage",
   "menuPage",
   "orderPage",
+  "translationBundle",
+  "localizationConfig",
 ]);
 
-const singletonListItem = (S: any, typeName: string, title: string) =>
+const singletonListItem = (S: StructureBuilder, typeName: string, title: string) =>
   S.listItem()
     .title(title)
     .id(typeName)
@@ -74,10 +77,11 @@ export default defineConfig({
               ),
             S.divider(),
             ...S.documentTypeListItems().filter(
-              (item: any) => !singletonTypes.has(item.getId())
+              (item) => !singletonTypes.has(item.getId() || "")
             ),
           ]),
     }),
+    localizationTool(),
     visionTool(),
   ],
   schema: {

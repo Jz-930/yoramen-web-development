@@ -4,11 +4,29 @@ import { MoveRight } from "lucide-react";
 import HeroSection from "@/components/HeroSection";
 import MangaCollage from "@/components/MangaCollage";
 import SpecialOffersCarousel from "@/components/SpecialOffersCarousel";
+import { SOURCE_LOCALE, localizeInternalHref } from "@/i18n";
+import { buildTextDictionary, HERO_UI_SOURCE_STRINGS } from "@/i18n/client-copy";
+import { buildLocalizedMetadata, ENGLISH_PAGE_METADATA } from "@/i18n/metadata";
+import { createServerTextTranslator, getRequestLocale } from "@/i18n/server";
 import { arrayOr, textOr } from "@/sanity/fallback";
-import { fetchHomeCmsContent } from "@/sanity/fetchers";
+import { fetchHomeCmsContent, fetchSiteSettings } from "@/sanity/fetchers";
 import { resolveImageUrl } from "@/sanity/image";
 
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata() {
+  const [{ page }, settings] = await Promise.all([
+    fetchHomeCmsContent(),
+    fetchSiteSettings(),
+  ]);
+  return buildLocalizedMetadata({
+    locale: SOURCE_LOCALE,
+    englishPathname: "/",
+    englishTitle: ENGLISH_PAGE_METADATA.home.title,
+    englishDescription: ENGLISH_PAGE_METADATA.home.description,
+    seo: page?.seo ?? settings?.defaultSeo,
+  });
+}
 
 const fallbackPhilosophy = {
   eyebrow: "Our Philosophy",
@@ -103,6 +121,10 @@ function renderLineBreaks(text: string) {
 }
 
 export default async function Home() {
+  const locale = await getRequestLocale();
+  const translator = await createServerTextTranslator(locale);
+  const t = translator.text;
+  const heroCopy = buildTextDictionary(HERO_UI_SOURCE_STRINGS, t);
   const { page, promotions } = await fetchHomeCmsContent();
   const cmsPhilosophyTitle = page?.philosophySection?.title?.trim();
   const cmsPhilosophyEmphasis = page?.philosophySection?.emphasis?.trim();
@@ -112,25 +134,25 @@ export default async function Home() {
     Boolean(cmsPhilosophyTitle && cmsPhilosophyEmphasis) && cmsPhilosophyTitle!.includes(cmsPhilosophyEmphasis!);
 
   const philosophy = {
-    eyebrow: textOr(page?.philosophySection?.eyebrow, fallbackPhilosophy.eyebrow),
-    title: textOr(cmsPhilosophyTitle, fallbackPhilosophy.title),
+    eyebrow: t(textOr(page?.philosophySection?.eyebrow, fallbackPhilosophy.eyebrow)),
+    title: t(textOr(cmsPhilosophyTitle, fallbackPhilosophy.title)),
     emphasis: cmsEmphasisAlreadyInTitle
       ? ""
-      : textOr(cmsPhilosophyEmphasis, fallbackEmphasisAlreadyInTitle ? "" : fallbackPhilosophy.emphasis),
-    paragraphs: arrayOr(page?.philosophySection?.paragraphs, fallbackPhilosophy.paragraphs),
+      : t(textOr(cmsPhilosophyEmphasis, fallbackEmphasisAlreadyInTitle ? "" : fallbackPhilosophy.emphasis)),
+    paragraphs: arrayOr(page?.philosophySection?.paragraphs, fallbackPhilosophy.paragraphs).map(t),
     cta: {
-      label: textOr(page?.philosophySection?.cta?.label, fallbackPhilosophy.cta.label),
-      href: textOr(page?.philosophySection?.cta?.href, fallbackPhilosophy.cta.href),
+      label: t(textOr(page?.philosophySection?.cta?.label, fallbackPhilosophy.cta.label)),
+      href: localizeInternalHref(textOr(page?.philosophySection?.cta?.href, fallbackPhilosophy.cta.href), locale),
       openInNewTab: page?.philosophySection?.cta?.openInNewTab,
     },
   };
 
   const promiseSection = {
-    eyebrow: textOr(page?.promiseSection?.eyebrow, fallbackPromiseSection.eyebrow),
-    title: textOr(page?.promiseSection?.title, fallbackPromiseSection.title),
+    eyebrow: t(textOr(page?.promiseSection?.eyebrow, fallbackPromiseSection.eyebrow)),
+    title: t(textOr(page?.promiseSection?.title, fallbackPromiseSection.title)),
     cta: {
-      label: textOr(page?.promiseSection?.cta?.label, fallbackPromiseSection.cta.label),
-      href: textOr(page?.promiseSection?.cta?.href, fallbackPromiseSection.cta.href),
+      label: t(textOr(page?.promiseSection?.cta?.label, fallbackPromiseSection.cta.label)),
+      href: localizeInternalHref(textOr(page?.promiseSection?.cta?.href, fallbackPromiseSection.cta.href), locale),
       openInNewTab: page?.promiseSection?.cta?.openInNewTab,
     },
   };
@@ -143,16 +165,16 @@ export default async function Home() {
 
     return {
       num: textOr(cmsCard?.number, fallback.num),
-      title: textOr(cmsCard?.title, fallback.title),
-      desc: textOr(cmsCard?.description, fallback.desc),
+      title: t(textOr(cmsCard?.title, fallback.title)),
+      desc: t(textOr(cmsCard?.description, fallback.desc)),
       img: resolveImageUrl(cmsCard?.image, fallback.img),
     };
   });
 
   const specialsSection = {
-    eyebrow: textOr(page?.specialsSection?.eyebrow, fallbackSpecialsSection.eyebrow),
-    title: textOr(page?.specialsSection?.title, fallbackSpecialsSection.title),
-    description: textOr(page?.specialsSection?.description, fallbackSpecialsSection.description),
+    eyebrow: t(textOr(page?.specialsSection?.eyebrow, fallbackSpecialsSection.eyebrow)),
+    title: t(textOr(page?.specialsSection?.title, fallbackSpecialsSection.title)),
+    description: t(textOr(page?.specialsSection?.description, fallbackSpecialsSection.description)),
   };
 
   const offerCount = Math.max(fallbackOffers.length, promotions.length);
@@ -161,37 +183,40 @@ export default async function Home() {
     const cmsOffer = promotions[index];
 
     return {
-      title: textOr(cmsOffer?.title, fallback.title),
-      price: textOr(cmsOffer?.priceOrBadge, fallback.price),
-      desc: textOr(cmsOffer?.description, fallback.desc),
+      title: t(textOr(cmsOffer?.title, fallback.title)),
+      price: t(textOr(cmsOffer?.priceOrBadge, fallback.price)),
+      desc: t(textOr(cmsOffer?.description, fallback.desc)),
       img: resolveImageUrl(cmsOffer?.image, fallback.img),
-      availabilityText: textOr(cmsOffer?.availabilityText || cmsOffer?.ctaLabel, fallback.availabilityText),
-      href: cmsOffer?.ctaHref,
+      availabilityText: t(textOr(cmsOffer?.availabilityText || cmsOffer?.ctaLabel, fallback.availabilityText)),
+      href: cmsOffer?.ctaHref ? localizeInternalHref(cmsOffer.ctaHref, locale) : undefined,
     };
   });
 
   const newsletter = {
-    title: textOr(page?.newsletterSection?.title, fallbackNewsletter.title),
-    description: textOr(page?.newsletterSection?.description, fallbackNewsletter.description),
-    inputPlaceholder: textOr(page?.newsletterSection?.inputPlaceholder, fallbackNewsletter.inputPlaceholder),
-    buttonLabel: textOr(page?.newsletterSection?.buttonLabel, fallbackNewsletter.buttonLabel),
+    title: t(textOr(page?.newsletterSection?.title, fallbackNewsletter.title)),
+    description: t(textOr(page?.newsletterSection?.description, fallbackNewsletter.description)),
+    inputPlaceholder: t(textOr(page?.newsletterSection?.inputPlaceholder, fallbackNewsletter.inputPlaceholder)),
+    buttonLabel: t(textOr(page?.newsletterSection?.buttonLabel, fallbackNewsletter.buttonLabel)),
   };
 
   return (
     <div className="flex flex-col min-h-screen overflow-x-hidden bg-white">
-      <HeroSection content={page?.hero} />
+      <HeroSection content={translator.deep(page?.hero)} locale={locale} copy={heroCopy} />
 
       <section className="py-24 md:py-32 bg-white relative overflow-hidden text-sumi">
         <div className="max-w-6xl mx-auto px-6 lg:px-8">
           <div className="flex flex-col lg:flex-row gap-16 lg:gap-24 items-center">
             <div className="w-full lg:w-1/2 relative min-h-[500px] lg:min-h-[600px] flex items-center justify-center -mt-10 lg:mt-0 z-0">
-              <MangaCollage />
+              <MangaCollage
+                alt2022={t("Ramen Manga Art 2022")}
+                alt2024={t("Ramen Manga Art 2024")}
+              />
             </div>
 
             <div className="w-full lg:w-1/2">
               <span className="text-brand-red text-xs tracking-[0.25em] uppercase font-medium block mb-4">{philosophy.eyebrow}</span>
               <div className="relative w-16 h-4 mb-8">
-                <Image src="/images/Asset 20.png" alt="brush" fill className="object-contain object-left opacity-80" style={{ filter: "invert(32%) sepia(85%) saturate(3015%) hue-rotate(346deg) brightness(88%) contrast(92%)" }} />
+                <Image src="/images/Asset 20.png" alt={t("brush")} fill className="object-contain object-left opacity-80" style={{ filter: "invert(32%) sepia(85%) saturate(3015%) hue-rotate(346deg) brightness(88%) contrast(92%)" }} />
               </div>
 
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-serif text-sumi mb-8 leading-[1.2]">
@@ -271,13 +296,13 @@ export default async function Home() {
         </div>
 
         <div className="absolute top-0 right-[-10%] w-[500px] h-[500px] opacity-[0.02] pointer-events-none z-0 transform rotate-12">
-          <Image src="/images/icons/ramen, noodles, soup, japanese, food.svg" alt="Ramen" fill className="object-contain" />
+          <Image src="/images/icons/ramen, noodles, soup, japanese, food.svg" alt={t("Ramen")} fill className="object-contain" />
         </div>
         <div className="absolute bottom-[-15%] left-[-15%] w-[800px] h-[800px] opacity-[0.015] pointer-events-none z-0 transform -rotate-[15deg]">
-          <Image src="/images/icons/sushi, roll, japanese, food, rice.svg" alt="Sushi" fill className="object-contain" />
+          <Image src="/images/icons/sushi, roll, japanese, food, rice.svg" alt={t("Sushi")} fill className="object-contain" />
         </div>
 
-        <SpecialOffersCarousel offers={offers} />
+        <SpecialOffersCarousel offers={offers} ariaLabel={t("Special offers")} />
       </section>
 
       <section className="py-20 bg-white border-t border-gray-100 relative">

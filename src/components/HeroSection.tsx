@@ -4,12 +4,18 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { motion, useMotionValue, useTransform, useSpring } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useSyncExternalStore } from "react";
+import { SOURCE_LOCALE, localizeInternalHref, type SupportedLocale } from "@/i18n";
+import { textFromDictionary, type TextDictionary } from "@/i18n/client-copy";
 import { arrayOr, textOr } from "@/sanity/fallback";
 import { resolveImageUrl } from "@/sanity/image";
 import type { HomePageContent } from "@/sanity/types";
 
 const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
+const subscribeToHydration = () => () => undefined;
+const getClientHydrationSnapshot = () => true;
+const getServerHydrationSnapshot = () => false;
+
 const fadeSlideUp = (delay: number) => ({
   initial: { opacity: 0, y: 30 },
   animate: { opacity: 1, y: 0 },
@@ -18,10 +24,12 @@ const fadeSlideUp = (delay: number) => ({
 
 type HeroSectionProps = {
   content?: HomePageContent["hero"] | null;
+  locale?: SupportedLocale;
+  copy?: TextDictionary;
 };
 
 const fallbackHero = {
-  eyebrow: "Freshly Made 路 Boldly Flavored",
+  eyebrow: "Freshly Made · Boldly Flavored",
   headlineLine1: "A ramen bowl",
   headlineEmphasis: "with actual soul.",
   body: 'Slow-simmered, made to order, and layered with flavor. We turned "delicious" into a daily standard.',
@@ -33,9 +41,17 @@ const fallbackHero = {
   patternImage: "/images/bg-1.webp",
 };
 
-export default function HeroSection({ content }: HeroSectionProps) {
+export default function HeroSection({
+  content,
+  locale = SOURCE_LOCALE,
+  copy,
+}: HeroSectionProps) {
   const heroRef = useRef<HTMLElement>(null);
-  const [isMounted, setIsMounted] = useState(false);
+  const isMounted = useSyncExternalStore(
+    subscribeToHydration,
+    getClientHydrationSnapshot,
+    getServerHydrationSnapshot,
+  );
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
   const springConfig = { damping: 20, stiffness: 80 };
@@ -44,28 +60,28 @@ export default function HeroSection({ content }: HeroSectionProps) {
   const imgY = useSpring(useTransform(mouseY, [-0.5, 0.5], [40, -40]), springConfig);
   const bgArtX = useSpring(useTransform(mouseX, [-0.5, 0.5], [-20, 20]), springConfig);
   const bgArtY = useSpring(useTransform(mouseY, [-0.5, 0.5], [-20, 20]), springConfig);
+  const t = (source: string) => textFromDictionary(copy, source);
 
-  const eyebrow = textOr(content?.eyebrow, fallbackHero.eyebrow);
-  const headlineLine1 = textOr(content?.headlineLine1, fallbackHero.headlineLine1);
-  const headlineEmphasis = textOr(content?.headlineEmphasis, fallbackHero.headlineEmphasis);
-  const body = textOr(content?.body, fallbackHero.body);
+  const eyebrow = t(textOr(content?.eyebrow, fallbackHero.eyebrow));
+  const headlineLine1 = t(textOr(content?.headlineLine1, fallbackHero.headlineLine1));
+  const headlineEmphasis = t(textOr(content?.headlineEmphasis, fallbackHero.headlineEmphasis));
+  const body = t(textOr(content?.body, fallbackHero.body));
   const primaryCta = {
-    label: textOr(content?.primaryCta?.label, fallbackHero.primaryCta.label),
-    href: textOr(content?.primaryCta?.href, fallbackHero.primaryCta.href),
+    label: t(textOr(content?.primaryCta?.label, fallbackHero.primaryCta.label)),
+    href: localizeInternalHref(textOr(content?.primaryCta?.href, fallbackHero.primaryCta.href), locale),
     openInNewTab: content?.primaryCta?.openInNewTab,
   };
   const secondaryCta = {
-    label: textOr(content?.secondaryCta?.label, fallbackHero.secondaryCta.label),
-    href: textOr(content?.secondaryCta?.href, fallbackHero.secondaryCta.href),
+    label: t(textOr(content?.secondaryCta?.label, fallbackHero.secondaryCta.label)),
+    href: localizeInternalHref(textOr(content?.secondaryCta?.href, fallbackHero.secondaryCta.href), locale),
     openInNewTab: content?.secondaryCta?.openInNewTab,
   };
-  const bottomBadges = arrayOr(content?.bottomBadges, fallbackHero.bottomBadges);
+  const bottomBadges = arrayOr(content?.bottomBadges, fallbackHero.bottomBadges).map(t);
   const backgroundImage = resolveImageUrl(content?.backgroundImage, fallbackHero.backgroundImage);
   const bowlImage = resolveImageUrl(content?.bowlImage, fallbackHero.bowlImage);
   const patternImage = resolveImageUrl(content?.patternImage, fallbackHero.patternImage);
 
   useEffect(() => {
-    setIsMounted(true);
     const handleMouse = (event: MouseEvent) => {
       if (!heroRef.current) return;
       const rect = heroRef.current.getBoundingClientRect();
@@ -79,7 +95,9 @@ export default function HeroSection({ content }: HeroSectionProps) {
   return (
     <section
       ref={heroRef}
-      className="relative min-h-[95vh] flex items-center justify-center bg-white pt-24 overflow-hidden"
+      className={`relative min-h-[95vh] flex items-center justify-center bg-white pt-24 overflow-hidden ${
+        locale === "fr-CA" ? "md:min-h-[820px]" : ""
+      }`}
     >
       <motion.div
         className="absolute inset-[-5%] pointer-events-none opacity-[0.35]"
@@ -87,7 +105,7 @@ export default function HeroSection({ content }: HeroSectionProps) {
       >
         <Image
           src={backgroundImage}
-          alt="Ramen Chef Background"
+          alt={t("Ramen Chef Background")}
           fill
           className="object-cover mix-blend-multiply"
           priority
@@ -113,7 +131,7 @@ export default function HeroSection({ content }: HeroSectionProps) {
             <div className="relative w-12 h-4 overflow-hidden">
               <Image
                 src="/images/Asset 20.png"
-                alt="brush"
+                alt={t("brush")}
                 fill
                 className="object-contain object-left opacity-80"
                 style={{ filter: "invert(32%) sepia(85%) saturate(3015%) hue-rotate(346deg) brightness(88%) contrast(92%)" }}
@@ -168,7 +186,7 @@ export default function HeroSection({ content }: HeroSectionProps) {
                 className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150%] h-[150%] opacity-[0.12] pointer-events-none"
                 style={{ x: bgArtX, y: bgArtY, rotate: bgArtX }}
               >
-                <Image src={patternImage} alt="Japanese Pattern Background" fill className="object-contain mix-blend-multiply" priority />
+                <Image src={patternImage} alt={t("Japanese Pattern Background")} fill className="object-contain mix-blend-multiply" priority />
               </motion.div>
 
               <motion.div
@@ -185,7 +203,7 @@ export default function HeroSection({ content }: HeroSectionProps) {
                 >
                   <Image
                     src={bowlImage}
-                    alt="Signature Ramen Illustration"
+                    alt={t("Signature Ramen Illustration")}
                     fill
                     className="object-contain drop-shadow-2xl"
                     priority
@@ -198,7 +216,7 @@ export default function HeroSection({ content }: HeroSectionProps) {
                 transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
                 className="absolute -bottom-10 right-0 w-32 h-32 pointer-events-none hidden md:block"
               >
-                <Image src={patternImage} alt="pattern detail" fill className="object-cover rounded-full mix-blend-multiply" />
+                <Image src={patternImage} alt={t("pattern detail")} fill className="object-cover rounded-full mix-blend-multiply" />
               </motion.div>
             </>
           )}
@@ -214,7 +232,7 @@ export default function HeroSection({ content }: HeroSectionProps) {
         <div className="max-w-6xl mx-auto flex justify-center gap-10 text-xs tracking-[0.2em] uppercase text-stone font-bold">
           {bottomBadges.map((badge, index) => (
             <span key={`${badge}-${index}`} className="inline-flex items-center gap-10">
-              {index > 0 && <span className="text-brand-red opacity-50">路</span>}
+              {index > 0 && <span className="text-brand-red opacity-50">·</span>}
               {badge}
             </span>
           ))}

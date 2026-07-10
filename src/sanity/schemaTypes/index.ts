@@ -7,12 +7,14 @@ import { contactPageType } from "./documents/contactPage";
 import { galleryPageType } from "./documents/galleryPage";
 import { homePageType } from "./documents/homePage";
 import { locationType } from "./documents/location";
+import { localizationConfigType } from "./documents/localizationConfig";
 import { menuCategoryType } from "./documents/menuCategory";
 import { menuItemType } from "./documents/menuItem";
 import { menuPageType } from "./documents/menuPage";
 import { orderPageType } from "./documents/orderPage";
 import { promotionType } from "./documents/promotion";
 import { siteSettingsType } from "./documents/siteSettings";
+import { translationBundleType } from "./documents/translationBundle";
 
 export const schemaTypes = [
   seoType,
@@ -30,4 +32,6 @@ export const schemaTypes = [
   menuItemType,
   promotionType,
   locationType,
+  translationBundleType,
+  localizationConfigType,
 ];

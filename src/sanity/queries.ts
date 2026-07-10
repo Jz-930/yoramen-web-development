@@ -1,9 +1,10 @@
-export const MENU_PAGE_QUERY = `*[_type == "menuPage"][0]{
+export const MENU_PAGE_QUERY = `*[_type == "menuPage" && _id == "menuPage"][0]{
   eyebrow,
   title,
   description,
   categoryNavEnabled,
-  comboCta
+  comboCta,
+  seo
 }`;
 
 export const MENU_CATEGORIES_WITH_ITEMS_QUERY = `*[_type == "menuCategory" && visible != false] | order(sortOrder asc, title asc) {
@@ -20,7 +21,7 @@ export const MENU_CATEGORIES_WITH_ITEMS_QUERY = `*[_type == "menuCategory" && vi
   }
 }`;
 
-export const ORDER_PAGE_QUERY = `*[_type == "orderPage"][0]{
+export const ORDER_PAGE_QUERY = `*[_type == "orderPage" && _id == "orderPage"][0]{
   title,
   description,
   providerName,
@@ -28,10 +29,11 @@ export const ORDER_PAGE_QUERY = `*[_type == "orderPage"][0]{
   externalOrderUrl,
   fallbackTitle,
   fallbackMessage,
-  enabled
+  enabled,
+  seo
 }`;
 
-export const HOME_PAGE_QUERY = `*[_type == "homePage"][0]{
+export const HOME_PAGE_QUERY = `*[_type == "homePage" && _id == "homePage"][0]{
   hero{
     eyebrow,
     headlineLine1,
@@ -72,7 +74,8 @@ export const HOME_PAGE_QUERY = `*[_type == "homePage"][0]{
     description,
     inputPlaceholder,
     buttonLabel
-  }
+  },
+  seo
 }`;
 
 export const ACTIVE_PROMOTIONS_QUERY = `*[
@@ -90,8 +93,9 @@ export const ACTIVE_PROMOTIONS_QUERY = `*[
   availabilityText
 }`;
 
-export const SITE_SETTINGS_QUERY = `*[_type == "siteSettings"][0]{
+export const SITE_SETTINGS_QUERY = `*[_type == "siteSettings" && _id == "siteSettings"][0]{
   title,
+  defaultSeo,
   brand{
     logoDark,
     logoLight,
@@ -130,7 +134,7 @@ export const LOCATIONS_QUERY = `*[_type == "location" && visible != false] | ord
   isPrimary
 }`;
 
-export const ABOUT_PAGE_QUERY = `*[_type == "aboutPage"][0]{
+export const ABOUT_PAGE_QUERY = `*[_type == "aboutPage" && _id == "aboutPage"][0]{
   header{
     eyebrow,
     title,
@@ -150,10 +154,11 @@ export const ABOUT_PAGE_QUERY = `*[_type == "aboutPage"][0]{
     description,
     image,
     align
-  }
+  },
+  seo
 }`;
 
-export const GALLERY_PAGE_QUERY = `*[_type == "galleryPage"][0]{
+export const GALLERY_PAGE_QUERY = `*[_type == "galleryPage" && _id == "galleryPage"][0]{
   header{
     eyebrow,
     title,
@@ -171,10 +176,11 @@ export const GALLERY_PAGE_QUERY = `*[_type == "galleryPage"][0]{
     author,
     date,
     style
-  }
+  },
+  seo
 }`;
 
-export const CONTACT_PAGE_QUERY = `*[_type == "contactPage"][0]{
+export const CONTACT_PAGE_QUERY = `*[_type == "contactPage" && _id == "contactPage"][0]{
   header{
     eyebrow,
     title,
@@ -198,5 +204,6 @@ export const CONTACT_PAGE_QUERY = `*[_type == "contactPage"][0]{
     buttonLabel,
     submittingLabel,
     successMessage
-  }
+  },
+  seo
 }`;

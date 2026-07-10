@@ -1,9 +1,23 @@
 import GalleryContent, { type GalleryItem, type GalleryTestimonial } from "./GalleryContent";
+import { SOURCE_LOCALE } from "@/i18n";
+import { buildLocalizedMetadata, ENGLISH_PAGE_METADATA } from "@/i18n/metadata";
+import { createServerTextTranslator, getRequestLocale } from "@/i18n/server";
 import { arrayOr, textOr } from "@/sanity/fallback";
 import { fetchGalleryPage } from "@/sanity/fetchers";
 import { resolveImageUrl } from "@/sanity/image";
 
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata() {
+  const page = await fetchGalleryPage();
+  return buildLocalizedMetadata({
+    locale: SOURCE_LOCALE,
+    englishPathname: "/gallery",
+    englishTitle: ENGLISH_PAGE_METADATA.gallery.title,
+    englishDescription: ENGLISH_PAGE_METADATA.gallery.description,
+    seo: page?.seo,
+  });
+}
 
 const fallbackGallery = {
   header: {
@@ -42,10 +56,16 @@ function normalizeStyle(value: string | undefined, fallback: string) {
 }
 
 export default async function GalleryPage() {
+  const locale = await getRequestLocale();
+  const t = (await createServerTextTranslator(locale)).text;
   const page = await fetchGalleryPage();
-  const categories = arrayOr(page?.categories, fallbackGallery.categories).includes("All")
+  const sourceCategories = arrayOr(page?.categories, fallbackGallery.categories).includes("All")
     ? arrayOr(page?.categories, fallbackGallery.categories)
     : ["All", ...arrayOr(page?.categories, fallbackGallery.categories)];
+  const categories = sourceCategories.map((category) => ({
+    id: category === "All" ? "all" : category,
+    label: t(category),
+  }));
 
   const galleryCount = Math.max(fallbackGallery.galleryItems.length, page?.galleryItems?.length || 0);
   const galleryItems = Array.from({ length: galleryCount }, (_, index) => {
@@ -54,7 +74,7 @@ export default async function GalleryPage() {
 
     return {
       category: textOr(item?.category, fallback.category),
-      title: textOr(item?.title, fallback.title),
+      title: t(textOr(item?.title, fallback.title)),
       url: resolveImageUrl(item?.image, fallback.url),
       aspect: normalizeAspect(item?.aspect, fallback.aspect),
     };
@@ -66,9 +86,9 @@ export default async function GalleryPage() {
     const testimonial = page?.testimonials?.[index];
 
     return {
-      quote: textOr(testimonial?.quote, fallback.quote),
-      author: textOr(testimonial?.author, fallback.author),
-      date: textOr(testimonial?.date, fallback.date),
+      quote: t(textOr(testimonial?.quote, fallback.quote)),
+      author: t(textOr(testimonial?.author, fallback.author)),
+      date: t(textOr(testimonial?.date, fallback.date)),
       color: normalizeStyle(testimonial?.style, fallback.color),
     };
   });
@@ -76,13 +96,20 @@ export default async function GalleryPage() {
   return (
     <GalleryContent
       header={{
-        eyebrow: textOr(page?.header?.eyebrow, fallbackGallery.header.eyebrow),
-        title: textOr(page?.header?.title, fallbackGallery.header.title),
-        description: textOr(page?.header?.description, fallbackGallery.header.description),
+        eyebrow: t(textOr(page?.header?.eyebrow, fallbackGallery.header.eyebrow)),
+        title: t(textOr(page?.header?.title, fallbackGallery.header.title)),
+        description: t(textOr(page?.header?.description, fallbackGallery.header.description)),
       }}
       categories={categories}
       galleryItems={galleryItems}
       testimonials={testimonials}
+      communityLabel={t("Community")}
+      testimonialsTitle={t("What people are saying")}
+      decorativeAlts={{
+        bento: t("bento"),
+        matcha: t("matcha"),
+        brush: t("brush"),
+      }}
     />
   );
 }

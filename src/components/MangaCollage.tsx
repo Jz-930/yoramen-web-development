@@ -4,7 +4,13 @@ import Image from "next/image";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 
-export default function MangaCollage() {
+export default function MangaCollage({
+    alt2022 = "Ramen Manga Art 2022",
+    alt2024 = "Ramen Manga Art 2024",
+}: {
+    alt2022?: string;
+    alt2024?: string;
+}) {
     const containerRef = useRef<HTMLDivElement>(null);
     const { scrollYProgress } = useScroll({
         target: containerRef,
@@ -33,7 +39,7 @@ export default function MangaCollage() {
                     WebkitMaskImage: 'radial-gradient(ellipse at 35% 50%, rgba(0,0,0,1) 30%, rgba(0,0,0,0) 70%)',
                     maskImage: 'radial-gradient(ellipse at 35% 50%, rgba(0,0,0,1) 30%, rgba(0,0,0,0) 70%)'
                 }}>
-                    <Image src="/images/story/story-2022-clean.webp" alt="Ramen Manga Art 2022" fill className="object-contain grayscale contrast-125 mix-blend-multiply" />
+                    <Image src="/images/story/story-2022-clean.webp" alt={alt2022} fill className="object-contain grayscale contrast-125 mix-blend-multiply" />
                 </div>
             </motion.div>
 
@@ -46,7 +52,7 @@ export default function MangaCollage() {
                     WebkitMaskImage: 'radial-gradient(ellipse at 60% 40%, rgba(0,0,0,1) 35%, rgba(0,0,0,0) 75%)',
                     maskImage: 'radial-gradient(ellipse at 60% 40%, rgba(0,0,0,1) 35%, rgba(0,0,0,0) 75%)'
                 }}>
-                    <Image src="/images/story/story-2024-clean.webp" alt="Ramen Manga Art 2024" fill className="object-contain grayscale contrast-125 mix-blend-multiply" />
+                    <Image src="/images/story/story-2024-clean.webp" alt={alt2024} fill className="object-contain grayscale contrast-125 mix-blend-multiply" />
                 </div>
             </motion.div>
 
