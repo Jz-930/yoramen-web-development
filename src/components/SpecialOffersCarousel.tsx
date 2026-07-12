@@ -218,20 +218,24 @@ export default function SpecialOffersCarousel({ offers, ariaLabel = "Special off
       <div className="p-8 flex flex-col flex-1">
         <div className="flex justify-between items-start gap-4 mb-4">
           <h3 className="text-xl font-serif text-sumi font-medium min-w-0">{offer.title}</h3>
-          <span className="text-brand-red font-semibold text-lg shrink-0">{offer.price}</span>
-        </div>
-        <p className="text-stone text-sm leading-relaxed mb-6">{offer.desc}</p>
-        <div className="mt-auto">
-          {offer.href && !isClone ? (
-            <Link href={offer.href} className="inline-block border-b border-black text-xs tracking-widest uppercase pb-1 font-medium hover:text-brand-red hover:border-brand-red transition-colors">
-              {offer.availabilityText}
-            </Link>
-          ) : (
-            <span className="inline-block border-b border-black text-xs tracking-widest uppercase pb-1 font-medium">
-              {offer.availabilityText}
-            </span>
+          {offer.price && (
+            <span className="text-brand-red font-semibold text-lg shrink-0">{offer.price}</span>
           )}
         </div>
+        {offer.desc && <p className="text-stone text-sm leading-relaxed mb-6">{offer.desc}</p>}
+        {offer.availabilityText && (
+          <div className="mt-auto">
+            {offer.href && !isClone ? (
+              <Link href={offer.href} className="inline-block border-b border-black text-xs tracking-widest uppercase pb-1 font-medium hover:text-brand-red hover:border-brand-red transition-colors">
+                {offer.availabilityText}
+              </Link>
+            ) : (
+              <span className="inline-block border-b border-black text-xs tracking-widest uppercase pb-1 font-medium">
+                {offer.availabilityText}
+              </span>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

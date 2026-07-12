@@ -67,7 +67,10 @@ export const HOME_PAGE_QUERY = `*[_type == "homePage" && _id == "homePage"][0]{
   specialsSection{
     eyebrow,
     title,
-    description
+    description,
+    emptyStateEyebrow,
+    emptyStateTitle,
+    emptyStateDescription
   },
   newsletterSection{
     title,

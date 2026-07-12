@@ -97,6 +97,14 @@
         "description": "Chashu, soft-boiled egg, and savory sauce build flavor in every layer."
       }
     ],
+    "specialsSection": {
+      "eyebrow": "Limited Time",
+      "title": "Special Offers",
+      "description": "Swipe to see our currently running specials. Great taste, exceptional value.",
+      "emptyStateEyebrow": "Something special is simmering.",
+      "emptyStateTitle": "Coming Soon",
+      "emptyStateDescription": "We're preparing our next special offer. Please check back soon."
+    },
     "newsletterSection": {
       "title": "Join Our Exclusive Community",
       "description": "Become a Yoramen member. Receive exclusive coupons, limited-time offers, and updates on our new locations.",

@@ -2,7 +2,7 @@ import { BASELINE_UI_SOURCE_STRINGS } from "@/i18n/baseline";
 import type { UiSourceString } from "./types";
 
 /** Bump this whenever user-visible code copy in the UI catalog changes. */
-export const UI_CATALOG_UPDATED_AT = "2026-07-11T00:00:00.000Z";
+export const UI_CATALOG_UPDATED_AT = "2026-07-13T00:00:00.000Z";
 
 const NAVIGATION_COPY = new Set([
   "Home",

@@ -73,6 +73,9 @@ export type HomePageContent = {
     eyebrow?: string;
     title?: string;
     description?: string;
+    emptyStateEyebrow?: string;
+    emptyStateTitle?: string;
+    emptyStateDescription?: string;
   };
   newsletterSection?: {
     title?: string;

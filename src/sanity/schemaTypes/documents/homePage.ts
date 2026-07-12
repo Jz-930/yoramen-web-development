@@ -81,6 +81,25 @@ export const homePageType = defineType({
         defineField({ name: "eyebrow", title: "Eyebrow", type: "string" }),
         defineField({ name: "title", title: "Title", type: "string" }),
         defineField({ name: "description", title: "Description", type: "text", rows: 3 }),
+        defineField({
+          name: "emptyStateEyebrow",
+          title: "Empty State Eyebrow",
+          type: "string",
+          description: "Shown when there are no active promotions.",
+        }),
+        defineField({
+          name: "emptyStateTitle",
+          title: "Empty State Title",
+          type: "string",
+          description: "Main message shown when there are no active promotions.",
+        }),
+        defineField({
+          name: "emptyStateDescription",
+          title: "Empty State Description",
+          type: "text",
+          rows: 2,
+          description: "Supporting message shown when there are no active promotions.",
+        }),
       ],
     }),
     defineField({

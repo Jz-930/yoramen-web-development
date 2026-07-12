@@ -60,7 +60,14 @@ export const PUBLISHED_LOCALIZATION_SOURCE_QUERY = `*[
     philosophySection{eyebrow, title, emphasis, paragraphs, cta{label}},
     promiseSection{eyebrow, title, cta{label}},
     promiseCards[]{_key, number, title, description},
-    specialsSection{eyebrow, title, description},
+    specialsSection{
+      eyebrow,
+      title,
+      description,
+      emptyStateEyebrow,
+      emptyStateTitle,
+      emptyStateDescription
+    },
     newsletterSection{title, description, inputPlaceholder, buttonLabel},
     seo{metaTitle, metaDescription}
   },

@@ -4,6 +4,7 @@ import { MoveRight } from "lucide-react";
 import HeroSection from "@/components/HeroSection";
 import MangaCollage from "@/components/MangaCollage";
 import SpecialOffersCarousel from "@/components/SpecialOffersCarousel";
+import SpecialOffersEmptyState from "@/components/SpecialOffersEmptyState";
 import { SOURCE_LOCALE, localizeInternalHref } from "@/i18n";
 import { buildTextDictionary, HERO_UI_SOURCE_STRINGS } from "@/i18n/client-copy";
 import { buildLocalizedMetadata, ENGLISH_PAGE_METADATA } from "@/i18n/metadata";
@@ -71,37 +72,6 @@ const fallbackSpecialsSection = {
   title: "Special Offers",
   description: "Swipe to see our currently running specials. Great taste, exceptional value.",
 };
-
-const fallbackOffers = [
-  {
-    title: "Lunch Power Combo",
-    price: "$14.99",
-    desc: "Signature Ramen + Edamame + Iced Tea. The perfect midday refuel.",
-    img: "/images/img-2.webp",
-    availabilityText: "Available in-store",
-  },
-  {
-    title: "Lucky Happy Hour",
-    price: "$4.99",
-    desc: "Draft beer and gyoza appetizers every weekday from 4PM to 6PM.",
-    img: "/images/img-2.webp",
-    availabilityText: "Available in-store",
-  },
-  {
-    title: "Student Night",
-    price: "20% OFF",
-    desc: "Show your valid student ID on Thursdays for 20% off all ramen bowls.",
-    img: "/images/img-2.webp",
-    availabilityText: "Available in-store",
-  },
-  {
-    title: "Weekend Treat",
-    price: "$22.99",
-    desc: "Any Ramen + Any Side + Matcha Cheesecake. Treat yourself.",
-    img: "/images/img-2.webp",
-    availabilityText: "Available in-store",
-  },
-];
 
 const fallbackNewsletter = {
   title: "Join Our Exclusive Community",
@@ -177,20 +147,31 @@ export default async function Home() {
     description: t(textOr(page?.specialsSection?.description, fallbackSpecialsSection.description)),
   };
 
-  const offerCount = Math.max(fallbackOffers.length, promotions.length);
-  const offers = Array.from({ length: offerCount }, (_, index) => {
-    const fallback = fallbackOffers[index] || fallbackOffers[fallbackOffers.length - 1];
-    const cmsOffer = promotions[index];
+  const translateOptional = (value?: string) => value?.trim() ? t(value.trim()) : "";
+  const offers = promotions
+    .filter((promotion) => Boolean(promotion.title?.trim()))
+    .map((promotion) => {
+      const availabilityText = textOr(promotion.availabilityText, promotion.ctaLabel ?? "");
+      const href = promotion.ctaHref?.trim();
 
-    return {
-      title: t(textOr(cmsOffer?.title, fallback.title)),
-      price: t(textOr(cmsOffer?.priceOrBadge, fallback.price)),
-      desc: t(textOr(cmsOffer?.description, fallback.desc)),
-      img: resolveImageUrl(cmsOffer?.image, fallback.img),
-      availabilityText: t(textOr(cmsOffer?.availabilityText || cmsOffer?.ctaLabel, fallback.availabilityText)),
-      href: cmsOffer?.ctaHref ? localizeInternalHref(cmsOffer.ctaHref, locale) : undefined,
-    };
-  });
+      return {
+        title: t(promotion.title!.trim()),
+        price: translateOptional(promotion.priceOrBadge),
+        desc: translateOptional(promotion.description),
+        img: resolveImageUrl(promotion.image, "/images/img-2.webp"),
+        availabilityText: translateOptional(availabilityText),
+        href: href ? localizeInternalHref(href, locale) : undefined,
+      };
+    });
+
+  const emptySpecials = {
+    kicker: t(textOr(page?.specialsSection?.emptyStateEyebrow, "Something special is simmering.")),
+    title: t(textOr(page?.specialsSection?.emptyStateTitle, "Coming Soon")),
+    description: t(textOr(
+      page?.specialsSection?.emptyStateDescription,
+      "We're preparing our next special offer. Please check back soon.",
+    )),
+  };
 
   const newsletter = {
     title: t(textOr(page?.newsletterSection?.title, fallbackNewsletter.title)),
@@ -290,9 +271,11 @@ export default async function Home() {
           <h2 className="text-3xl md:text-5xl font-serif text-sumi leading-[1.15]">
             {specialsSection.title}
           </h2>
-          <p className="text-stone mt-4 max-w-xl">
-            {specialsSection.description}
-          </p>
+          {offers.length > 0 && (
+            <p className="text-stone mt-4 max-w-xl">
+              {specialsSection.description}
+            </p>
+          )}
         </div>
 
         <div className="absolute top-0 right-[-10%] w-[500px] h-[500px] opacity-[0.02] pointer-events-none z-0 transform rotate-12">
@@ -302,7 +285,11 @@ export default async function Home() {
           <Image src="/images/icons/sushi, roll, japanese, food, rice.svg" alt={t("Sushi")} fill className="object-contain" />
         </div>
 
-        <SpecialOffersCarousel offers={offers} ariaLabel={t("Special offers")} />
+        {offers.length > 0 ? (
+          <SpecialOffersCarousel offers={offers} ariaLabel={t("Special offers")} />
+        ) : (
+          <SpecialOffersEmptyState {...emptySpecials} />
+        )}
       </section>
 
       <section className="py-20 bg-white border-t border-gray-100 relative">
