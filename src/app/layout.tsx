@@ -3,6 +3,9 @@ import { Noto_Serif_JP, Inter } from "next/font/google";
 import "./globals.css";
 import SiteChrome from "@/components/SiteChrome";
 import { fetchSiteSettings } from "@/sanity/fetchers";
+import { localeOptions } from "@/i18n/config";
+import { getRequestLocale } from "@/i18n/request";
+import { localizeContent } from "@/i18n/translate";
 
 const notoSerifJP = Noto_Serif_JP({
   subsets: ["latin"],
@@ -33,12 +36,14 @@ export default async function RootLayout({
   children: React.ReactNode;
   modal: React.ReactNode;
 }>) {
+  const locale = await getRequestLocale();
   const siteSettings = await fetchSiteSettings();
+  const localizedSiteSettings = await localizeContent(siteSettings, locale);
 
   return (
-    <html lang="en">
+    <html lang={localeOptions[locale].htmlLang}>
       <body className={`${notoSerifJP.variable} ${inter.variable} min-h-screen flex flex-col`}>
-        <SiteChrome modal={modal} settings={siteSettings}>{children}</SiteChrome>
+        <SiteChrome modal={modal} settings={localizedSiteSettings} locale={locale}>{children}</SiteChrome>
       </body>
     </html>
   );

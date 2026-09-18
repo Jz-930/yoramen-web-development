@@ -1,6 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Plus } from "lucide-react";
+import { localizePath } from "@/i18n/config";
+import { t } from "@/i18n/dictionary";
+import { getRequestLocale } from "@/i18n/request";
+import { localizeContent } from "@/i18n/translate";
 import { fetchMenuCmsContent } from "@/sanity/fetchers";
 import { boolOr, textOr } from "@/sanity/fallback";
 import { resolveImageUrl } from "@/sanity/image";
@@ -97,8 +101,9 @@ const fallbackMenuCategories: MenuCategoryContent[] = [
 ];
 
 export default async function MenuPage() {
+    const locale = await getRequestLocale();
     const cmsContent = await fetchMenuCmsContent();
-    const pageContent = {
+    let pageContent = {
         eyebrow: textOr(cmsContent.page?.eyebrow, fallbackMenuPage.eyebrow),
         title: textOr(cmsContent.page?.title, fallbackMenuPage.title),
         description: textOr(cmsContent.page?.description, fallbackMenuPage.description),
@@ -110,7 +115,7 @@ export default async function MenuPage() {
             buttonHref: textOr(cmsContent.page?.comboCta?.buttonHref, fallbackComboCta.buttonHref),
         },
     };
-    const comboCta = {
+    let comboCta = {
         title: textOr(pageContent.comboCta.title, fallbackComboCta.title),
         description: textOr(pageContent.comboCta.description, fallbackComboCta.description),
         buttonLabel: textOr(pageContent.comboCta.buttonLabel, fallbackComboCta.buttonLabel),
@@ -120,8 +125,13 @@ export default async function MenuPage() {
     const cmsCategoriesWithItems = cmsContent.categories.filter(
         (category) => Array.isArray(category.items) && category.items.length > 0
     );
-    const menuCategories =
+    let menuCategories =
         cmsCategoriesWithItems.length > 0 ? cmsCategoriesWithItems : fallbackMenuCategories;
+
+    ({ pageContent, comboCta, menuCategories } = await localizeContent(
+        { pageContent, comboCta, menuCategories },
+        locale
+    ));
 
     return (
         <div className="pt-28 min-h-screen bg-section-warm">
@@ -195,8 +205,8 @@ export default async function MenuPage() {
                                                 </p>
                                             )}
 
-                                            <Link href="/order" className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.12em] text-sumi hover:text-brand-red transition-colors w-max font-medium">
-                                                <Plus size={14} /> Add to Order
+                                            <Link href={localizePath("/order", locale)} className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.12em] text-sumi hover:text-brand-red transition-colors w-max font-medium">
+                                                <Plus size={14} /> {t(locale, "menu.addToOrder")}
                                             </Link>
                                         </div>
                                     </div>
@@ -214,7 +224,7 @@ export default async function MenuPage() {
                             {comboCta.description}
                         </p>
                         <Link
-                            href={comboCta.buttonHref}
+                            href={localizePath(comboCta.buttonHref, locale)}
                             className="bg-brand-red hover:bg-brand-red-hover text-white px-8 py-3.5 rounded-full text-sm uppercase tracking-[0.12em] font-medium transition-all hover-rise inline-block"
                         >
                             {comboCta.buttonLabel}

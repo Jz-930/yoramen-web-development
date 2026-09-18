@@ -4,7 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { motion, useMotionValue, useTransform, useSpring } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
+import { localizePath, type Locale } from "@/i18n/config";
 import { arrayOr, textOr } from "@/sanity/fallback";
 import { resolveImageUrl } from "@/sanity/image";
 import type { HomePageContent } from "@/sanity/types";
@@ -18,10 +19,11 @@ const fadeSlideUp = (delay: number) => ({
 
 type HeroSectionProps = {
   content?: HomePageContent["hero"] | null;
+  locale: Locale;
 };
 
 const fallbackHero = {
-  eyebrow: "Freshly Made 路 Boldly Flavored",
+  eyebrow: "Freshly Made - Boldly Flavored",
   headlineLine1: "A ramen bowl",
   headlineEmphasis: "with actual soul.",
   body: 'Slow-simmered, made to order, and layered with flavor. We turned "delicious" into a daily standard.',
@@ -33,9 +35,8 @@ const fallbackHero = {
   patternImage: "/images/bg-1.webp",
 };
 
-export default function HeroSection({ content }: HeroSectionProps) {
+export default function HeroSection({ content, locale }: HeroSectionProps) {
   const heroRef = useRef<HTMLElement>(null);
-  const [isMounted, setIsMounted] = useState(false);
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
   const springConfig = { damping: 20, stiffness: 80 };
@@ -65,7 +66,6 @@ export default function HeroSection({ content }: HeroSectionProps) {
   const patternImage = resolveImageUrl(content?.patternImage, fallbackHero.patternImage);
 
   useEffect(() => {
-    setIsMounted(true);
     const handleMouse = (event: MouseEvent) => {
       if (!heroRef.current) return;
       const rect = heroRef.current.getBoundingClientRect();
@@ -144,7 +144,7 @@ export default function HeroSection({ content }: HeroSectionProps) {
             {...fadeSlideUp(0.55)}
           >
             <Link
-              href={primaryCta.href}
+              href={localizePath(primaryCta.href, locale)}
               target={primaryCta.openInNewTab ? "_blank" : undefined}
               className="bg-brand-red hover:bg-brand-red-hover text-white px-8 py-4 rounded-full text-sm tracking-[0.15em] uppercase font-bold transition-all hover:-translate-y-1 shadow-md flex items-center gap-3 group"
             >
@@ -152,7 +152,7 @@ export default function HeroSection({ content }: HeroSectionProps) {
               <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
             </Link>
             <Link
-              href={secondaryCta.href}
+              href={localizePath(secondaryCta.href, locale)}
               target={secondaryCta.openInNewTab ? "_blank" : undefined}
               className="border-2 border-stone/20 hover:border-sumi text-sumi px-8 py-4 rounded-full text-sm tracking-[0.15em] uppercase font-bold transition-all hover:bg-gray-50"
             >
@@ -162,46 +162,42 @@ export default function HeroSection({ content }: HeroSectionProps) {
         </div>
 
         <div className="lg:w-1/2 flex justify-center items-center relative h-[400px] md:h-[550px] w-full">
-          {isMounted && (
-            <>
-              <motion.div
-                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150%] h-[150%] opacity-[0.12] pointer-events-none"
-                style={{ x: bgArtX, y: bgArtY, rotate: bgArtX }}
-              >
-                <Image src={patternImage} alt="Japanese Pattern Background" fill className="object-contain mix-blend-multiply" priority />
-              </motion.div>
+          <motion.div
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150%] h-[150%] opacity-[0.12] pointer-events-none"
+            style={{ x: bgArtX, y: bgArtY, rotate: bgArtX }}
+          >
+            <Image src={patternImage} alt="Japanese Pattern Background" fill className="object-contain mix-blend-multiply" priority />
+          </motion.div>
 
-              <motion.div
-                className="relative w-[300px] h-[300px] md:w-[450px] md:h-[450px] z-10"
-                style={{ x: imgX, y: imgY }}
-                initial={{ opacity: 0, scale: 0.8, rotate: -5 }}
-                animate={{ opacity: 1, scale: 1, rotate: 0 }}
-                transition={{ duration: 1.2, ease: "easeOut" }}
-              >
-                <motion.div
-                  animate={{ y: [0, -15, 0] }}
-                  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                  className="w-full h-full relative"
-                >
-                  <Image
-                    src={bowlImage}
-                    alt="Signature Ramen Illustration"
-                    fill
-                    className="object-contain drop-shadow-2xl"
-                    priority
-                  />
-                </motion.div>
-              </motion.div>
+          <motion.div
+            className="relative w-[300px] h-[300px] md:w-[450px] md:h-[450px] z-10"
+            style={{ x: imgX, y: imgY }}
+            initial={{ opacity: 0, scale: 0.8, rotate: -5 }}
+            animate={{ opacity: 1, scale: 1, rotate: 0 }}
+            transition={{ duration: 1.2, ease: "easeOut" }}
+          >
+            <motion.div
+              animate={{ y: [0, -15, 0] }}
+              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+              className="w-full h-full relative"
+            >
+              <Image
+                src={bowlImage}
+                alt="Signature Ramen Illustration"
+                fill
+                className="object-contain drop-shadow-2xl"
+                priority
+              />
+            </motion.div>
+          </motion.div>
 
-              <motion.div
-                animate={{ y: [0, 20, 0], opacity: [0.3, 0.6, 0.3] }}
-                transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-                className="absolute -bottom-10 right-0 w-32 h-32 pointer-events-none hidden md:block"
-              >
-                <Image src={patternImage} alt="pattern detail" fill className="object-cover rounded-full mix-blend-multiply" />
-              </motion.div>
-            </>
-          )}
+          <motion.div
+            animate={{ y: [0, 20, 0], opacity: [0.3, 0.6, 0.3] }}
+            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute -bottom-10 right-0 w-32 h-32 pointer-events-none hidden md:block"
+          >
+            <Image src={patternImage} alt="pattern detail" fill className="object-cover rounded-full mix-blend-multiply" />
+          </motion.div>
         </div>
       </div>
 
@@ -214,7 +210,7 @@ export default function HeroSection({ content }: HeroSectionProps) {
         <div className="max-w-6xl mx-auto flex justify-center gap-10 text-xs tracking-[0.2em] uppercase text-stone font-bold">
           {bottomBadges.map((badge, index) => (
             <span key={`${badge}-${index}`} className="inline-flex items-center gap-10">
-              {index > 0 && <span className="text-brand-red opacity-50">路</span>}
+              {index > 0 && <span className="text-brand-red opacity-50">/</span>}
               {badge}
             </span>
           ))}

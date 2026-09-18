@@ -4,11 +4,27 @@ import { MoveRight } from "lucide-react";
 import HeroSection from "@/components/HeroSection";
 import MangaCollage from "@/components/MangaCollage";
 import SpecialOffersCarousel from "@/components/SpecialOffersCarousel";
+import { localizePath } from "@/i18n/config";
+import { getRequestLocale } from "@/i18n/request";
+import { localizeContent } from "@/i18n/translate";
 import { arrayOr, textOr } from "@/sanity/fallback";
 import { fetchHomeCmsContent } from "@/sanity/fetchers";
 import { resolveImageUrl } from "@/sanity/image";
 
 export const dynamic = "force-dynamic";
+
+const fallbackHero = {
+  eyebrow: "Freshly Made - Boldly Flavored",
+  headlineLine1: "A ramen bowl",
+  headlineEmphasis: "with actual soul.",
+  body: 'Slow-simmered, made to order, and layered with flavor. We turned "delicious" into a daily standard.',
+  primaryCta: { label: "Order Now", href: "/order" },
+  secondaryCta: { label: "View Menu", href: "/menu" },
+  bottomBadges: ["Fresh Prep Daily", "Signature Flavor", "Authentic Craft"],
+  backgroundImage: "/images/bg-3.webp",
+  bowlImage: "/images/Ramen-01.png",
+  patternImage: "/images/bg-1.webp",
+};
 
 const fallbackPhilosophy = {
   eyebrow: "Our Philosophy",
@@ -103,6 +119,7 @@ function renderLineBreaks(text: string) {
 }
 
 export default async function Home() {
+  const locale = await getRequestLocale();
   const { page, promotions } = await fetchHomeCmsContent();
   const cmsPhilosophyTitle = page?.philosophySection?.title?.trim();
   const cmsPhilosophyEmphasis = page?.philosophySection?.emphasis?.trim();
@@ -111,7 +128,28 @@ export default async function Home() {
   const cmsEmphasisAlreadyInTitle =
     Boolean(cmsPhilosophyTitle && cmsPhilosophyEmphasis) && cmsPhilosophyTitle!.includes(cmsPhilosophyEmphasis!);
 
-  const philosophy = {
+  let hero = {
+    eyebrow: textOr(page?.hero?.eyebrow, fallbackHero.eyebrow),
+    headlineLine1: textOr(page?.hero?.headlineLine1, fallbackHero.headlineLine1),
+    headlineEmphasis: textOr(page?.hero?.headlineEmphasis, fallbackHero.headlineEmphasis),
+    body: textOr(page?.hero?.body, fallbackHero.body),
+    primaryCta: {
+      label: textOr(page?.hero?.primaryCta?.label, fallbackHero.primaryCta.label),
+      href: textOr(page?.hero?.primaryCta?.href, fallbackHero.primaryCta.href),
+      openInNewTab: page?.hero?.primaryCta?.openInNewTab,
+    },
+    secondaryCta: {
+      label: textOr(page?.hero?.secondaryCta?.label, fallbackHero.secondaryCta.label),
+      href: textOr(page?.hero?.secondaryCta?.href, fallbackHero.secondaryCta.href),
+      openInNewTab: page?.hero?.secondaryCta?.openInNewTab,
+    },
+    bottomBadges: arrayOr(page?.hero?.bottomBadges, fallbackHero.bottomBadges),
+    backgroundImage: page?.hero?.backgroundImage || fallbackHero.backgroundImage,
+    bowlImage: page?.hero?.bowlImage || fallbackHero.bowlImage,
+    patternImage: page?.hero?.patternImage || fallbackHero.patternImage,
+  };
+
+  let philosophy = {
     eyebrow: textOr(page?.philosophySection?.eyebrow, fallbackPhilosophy.eyebrow),
     title: textOr(cmsPhilosophyTitle, fallbackPhilosophy.title),
     emphasis: cmsEmphasisAlreadyInTitle
@@ -125,7 +163,7 @@ export default async function Home() {
     },
   };
 
-  const promiseSection = {
+  let promiseSection = {
     eyebrow: textOr(page?.promiseSection?.eyebrow, fallbackPromiseSection.eyebrow),
     title: textOr(page?.promiseSection?.title, fallbackPromiseSection.title),
     cta: {
@@ -137,7 +175,7 @@ export default async function Home() {
 
   const cmsPromiseCards = page?.promiseCards || [];
   const promiseCardCount = Math.max(fallbackPromiseCards.length, cmsPromiseCards.length);
-  const promiseCards = Array.from({ length: promiseCardCount }, (_, index) => {
+  let promiseCards = Array.from({ length: promiseCardCount }, (_, index) => {
     const fallback = fallbackPromiseCards[index] || fallbackPromiseCards[fallbackPromiseCards.length - 1];
     const cmsCard = cmsPromiseCards[index];
 
@@ -149,14 +187,14 @@ export default async function Home() {
     };
   });
 
-  const specialsSection = {
+  let specialsSection = {
     eyebrow: textOr(page?.specialsSection?.eyebrow, fallbackSpecialsSection.eyebrow),
     title: textOr(page?.specialsSection?.title, fallbackSpecialsSection.title),
     description: textOr(page?.specialsSection?.description, fallbackSpecialsSection.description),
   };
 
   const offerCount = Math.max(fallbackOffers.length, promotions.length);
-  const offers = Array.from({ length: offerCount }, (_, index) => {
+  let offers = Array.from({ length: offerCount }, (_, index) => {
     const fallback = fallbackOffers[index] || fallbackOffers[fallbackOffers.length - 1];
     const cmsOffer = promotions[index];
 
@@ -170,16 +208,21 @@ export default async function Home() {
     };
   });
 
-  const newsletter = {
+  let newsletter = {
     title: textOr(page?.newsletterSection?.title, fallbackNewsletter.title),
     description: textOr(page?.newsletterSection?.description, fallbackNewsletter.description),
     inputPlaceholder: textOr(page?.newsletterSection?.inputPlaceholder, fallbackNewsletter.inputPlaceholder),
     buttonLabel: textOr(page?.newsletterSection?.buttonLabel, fallbackNewsletter.buttonLabel),
   };
 
+  ({ hero, philosophy, promiseSection, promiseCards, specialsSection, offers, newsletter } = await localizeContent(
+    { hero, philosophy, promiseSection, promiseCards, specialsSection, offers, newsletter },
+    locale
+  ));
+
   return (
     <div className="flex flex-col min-h-screen overflow-x-hidden bg-white">
-      <HeroSection content={page?.hero} />
+      <HeroSection content={hero} locale={locale} />
 
       <section className="py-24 md:py-32 bg-white relative overflow-hidden text-sumi">
         <div className="max-w-6xl mx-auto px-6 lg:px-8">
@@ -213,7 +256,7 @@ export default async function Home() {
               </div>
 
               <div className="flex items-center gap-6">
-                <Link href={philosophy.cta.href} target={philosophy.cta.openInNewTab ? "_blank" : undefined} className="inline-flex items-center gap-3 text-sumi hover:text-brand-red text-sm tracking-[0.15em] uppercase font-medium transition-colors group">
+                <Link href={localizePath(philosophy.cta.href, locale)} target={philosophy.cta.openInNewTab ? "_blank" : undefined} className="inline-flex items-center gap-3 text-sumi hover:text-brand-red text-sm tracking-[0.15em] uppercase font-medium transition-colors group">
                   <span className="w-8 h-px bg-sumi group-hover:bg-brand-red group-hover:w-12 transition-all"></span>
                   {philosophy.cta.label}
                 </Link>
@@ -232,7 +275,7 @@ export default async function Home() {
                 {renderLineBreaks(promiseSection.title)}
               </h2>
             </div>
-            <Link href={promiseSection.cta.href} target={promiseSection.cta.openInNewTab ? "_blank" : undefined} className="shrink-0 flex items-center gap-3 text-stone hover:text-sumi text-xs tracking-[0.15em] uppercase font-medium transition-colors group">
+            <Link href={localizePath(promiseSection.cta.href, locale)} target={promiseSection.cta.openInNewTab ? "_blank" : undefined} className="shrink-0 flex items-center gap-3 text-stone hover:text-sumi text-xs tracking-[0.15em] uppercase font-medium transition-colors group">
               {promiseSection.cta.label}
               <div className="w-8 h-8 rounded-full border border-stone/30 group-hover:border-sumi flex items-center justify-center transition-colors">
                 <MoveRight size={14} />
@@ -277,7 +320,7 @@ export default async function Home() {
           <Image src="/images/icons/sushi, roll, japanese, food, rice.svg" alt="Sushi" fill className="object-contain" />
         </div>
 
-        <SpecialOffersCarousel offers={offers} />
+        <SpecialOffersCarousel offers={offers} locale={locale} />
       </section>
 
       <section className="py-20 bg-white border-t border-gray-100 relative">

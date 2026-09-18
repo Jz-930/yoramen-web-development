@@ -2,6 +2,8 @@
 
 import Image from "next/image";
 import { useState } from "react";
+import type { Locale } from "@/i18n/config";
+import { t } from "@/i18n/dictionary";
 
 export type GalleryItem = {
   category: string;
@@ -22,6 +24,7 @@ export default function GalleryContent({
   categories,
   galleryItems,
   testimonials,
+  locale,
 }: {
   header: {
     eyebrow: string;
@@ -31,11 +34,15 @@ export default function GalleryContent({
   categories: string[];
   galleryItems: GalleryItem[];
   testimonials: GalleryTestimonial[];
+  locale: Locale;
 }) {
-  const [activeTab, setActiveTab] = useState("All");
-  const filteredImages = activeTab === "All"
+  const allCategory = categories[0] || "All";
+  const [activeTab, setActiveTab] = useState(allCategory);
+  const selectedTab = categories.includes(activeTab) ? activeTab : allCategory;
+
+  const filteredImages = selectedTab === allCategory
     ? galleryItems
-    : galleryItems.filter((img) => img.category === activeTab);
+    : galleryItems.filter((img) => img.category === selectedTab);
 
   return (
     <div className="pt-28 pb-24 min-h-screen bg-white relative overflow-hidden">
@@ -64,7 +71,7 @@ export default function GalleryContent({
               key={cat}
               onClick={() => setActiveTab(cat)}
               className={`px-6 py-2 rounded-full text-sm font-medium transition-all ${
-                activeTab === cat
+                selectedTab === cat
                   ? "bg-sumi text-white shadow-md"
                   : "bg-gray-50 text-stone hover:bg-gray-100"
               }`}
@@ -94,8 +101,8 @@ export default function GalleryContent({
 
         <div className="pt-24 border-t border-gray-100">
           <div className="text-center mb-16">
-            <span className="text-brand-red text-xs tracking-[0.25em] uppercase font-medium block mb-4">Community</span>
-            <h2 className="text-3xl md:text-4xl font-serif text-sumi mb-4">What people are saying</h2>
+            <span className="text-brand-red text-xs tracking-[0.25em] uppercase font-medium block mb-4">{t(locale, "gallery.community")}</span>
+            <h2 className="text-3xl md:text-4xl font-serif text-sumi mb-4">{t(locale, "gallery.whatPeopleSay")}</h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">

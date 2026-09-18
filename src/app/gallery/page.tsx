@@ -1,4 +1,6 @@
 import GalleryContent, { type GalleryItem, type GalleryTestimonial } from "./GalleryContent";
+import { getRequestLocale } from "@/i18n/request";
+import { localizeContent } from "@/i18n/translate";
 import { arrayOr, textOr } from "@/sanity/fallback";
 import { fetchGalleryPage } from "@/sanity/fetchers";
 import { resolveImageUrl } from "@/sanity/image";
@@ -42,13 +44,14 @@ function normalizeStyle(value: string | undefined, fallback: string) {
 }
 
 export default async function GalleryPage() {
+  const locale = await getRequestLocale();
   const page = await fetchGalleryPage();
-  const categories = arrayOr(page?.categories, fallbackGallery.categories).includes("All")
+  let categories = arrayOr(page?.categories, fallbackGallery.categories).includes("All")
     ? arrayOr(page?.categories, fallbackGallery.categories)
     : ["All", ...arrayOr(page?.categories, fallbackGallery.categories)];
 
   const galleryCount = Math.max(fallbackGallery.galleryItems.length, page?.galleryItems?.length || 0);
-  const galleryItems = Array.from({ length: galleryCount }, (_, index) => {
+  let galleryItems = Array.from({ length: galleryCount }, (_, index) => {
     const fallback = fallbackGallery.galleryItems[index] || fallbackGallery.galleryItems[fallbackGallery.galleryItems.length - 1];
     const item = page?.galleryItems?.[index];
 
@@ -61,7 +64,7 @@ export default async function GalleryPage() {
   });
 
   const testimonialCount = Math.max(fallbackGallery.testimonials.length, page?.testimonials?.length || 0);
-  const testimonials = Array.from({ length: testimonialCount }, (_, index) => {
+  let testimonials = Array.from({ length: testimonialCount }, (_, index) => {
     const fallback = fallbackGallery.testimonials[index] || fallbackGallery.testimonials[fallbackGallery.testimonials.length - 1];
     const testimonial = page?.testimonials?.[index];
 
@@ -73,16 +76,24 @@ export default async function GalleryPage() {
     };
   });
 
+  let header = {
+    eyebrow: textOr(page?.header?.eyebrow, fallbackGallery.header.eyebrow),
+    title: textOr(page?.header?.title, fallbackGallery.header.title),
+    description: textOr(page?.header?.description, fallbackGallery.header.description),
+  };
+
+  ({ header, categories, galleryItems, testimonials } = await localizeContent(
+    { header, categories, galleryItems, testimonials },
+    locale
+  ));
+
   return (
     <GalleryContent
-      header={{
-        eyebrow: textOr(page?.header?.eyebrow, fallbackGallery.header.eyebrow),
-        title: textOr(page?.header?.title, fallbackGallery.header.title),
-        description: textOr(page?.header?.description, fallbackGallery.header.description),
-      }}
+      header={header}
       categories={categories}
       galleryItems={galleryItems}
       testimonials={testimonials}
+      locale={locale}
     />
   );
 }

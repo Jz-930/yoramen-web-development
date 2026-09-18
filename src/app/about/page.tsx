@@ -1,5 +1,7 @@
 import Image from "next/image";
 import StoryTimeline, { type StoryTimelineItem } from "./StoryTimeline";
+import { getRequestLocale } from "@/i18n/request";
+import { localizeContent } from "@/i18n/translate";
 import { arrayOr, textOr } from "@/sanity/fallback";
 import { fetchAboutPage } from "@/sanity/fetchers";
 import { resolveImageUrl } from "@/sanity/image";
@@ -42,10 +44,11 @@ function normalizeAlign(value: string | undefined, fallback: "left" | "right") {
 }
 
 export default async function AboutPage() {
+  const locale = await getRequestLocale();
   const page = await fetchAboutPage();
-  const introParagraphs = arrayOr(page?.introSection?.paragraphs, fallbackAbout.introSection.paragraphs);
+  let introParagraphs = arrayOr(page?.introSection?.paragraphs, fallbackAbout.introSection.paragraphs);
   const timelineCount = Math.max(fallbackAbout.timelineItems.length, page?.timelineItems?.length || 0);
-  const timelineItems = Array.from({ length: timelineCount }, (_, index) => {
+  let timelineItems = Array.from({ length: timelineCount }, (_, index) => {
     const fallback = fallbackAbout.timelineItems[index] || fallbackAbout.timelineItems[fallbackAbout.timelineItems.length - 1];
     const item = page?.timelineItems?.[index];
 
@@ -58,14 +61,19 @@ export default async function AboutPage() {
     };
   });
 
-  const header = {
+  let header = {
     eyebrow: textOr(page?.header?.eyebrow, fallbackAbout.header.eyebrow),
     title: textOr(page?.header?.title, fallbackAbout.header.title),
     intro: textOr(page?.header?.intro, fallbackAbout.header.intro),
   };
   const introImage = resolveImageUrl(page?.introSection?.image, fallbackAbout.introSection.image);
-  const quote = textOr(page?.introSection?.quote, fallbackAbout.introSection.quote);
-  const timelineTitle = textOr(page?.timelineSection?.title, fallbackAbout.timelineSection.title);
+  let quote = textOr(page?.introSection?.quote, fallbackAbout.introSection.quote);
+  let timelineTitle = textOr(page?.timelineSection?.title, fallbackAbout.timelineSection.title);
+
+  ({ introParagraphs, timelineItems, header, quote, timelineTitle } = await localizeContent(
+    { introParagraphs, timelineItems, header, quote, timelineTitle },
+    locale
+  ));
 
   return (
     <div className="pt-28 pb-24 min-h-screen bg-white relative overflow-hidden">

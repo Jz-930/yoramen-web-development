@@ -3,25 +3,18 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Menu, X } from "lucide-react";
+import { Languages, Menu, X } from "lucide-react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { getLocaleFromPathname, isLocale, localeOptions, localizePath, stripLocaleFromPathname, type Locale } from "@/i18n/config";
+import { t } from "@/i18n/dictionary";
 import { textOr } from "@/sanity/fallback";
 import { resolveImageUrl } from "@/sanity/image";
 import type { LinkItemContent, SiteSettingsContent } from "@/sanity/types";
 
 type NavbarProps = {
   settings?: SiteSettingsContent | null;
+  locale: Locale;
 };
-
-const fallbackNavLinks = [
-  { label: "Home", href: "/" },
-  { label: "Menu", href: "/menu" },
-  { label: "Our Story", href: "/about" },
-  { label: "Gallery", href: "/gallery" },
-  { label: "Locations", href: "/locations" },
-  { label: "Contact", href: "/contact" },
-];
-
-const fallbackCta = { label: "Order Now", href: "/order" };
 
 function mergeLinks(cmsLinks: LinkItemContent[] | undefined, fallbackLinks: LinkItemContent[]) {
   if (!Array.isArray(cmsLinks) || cmsLinks.length === 0) return fallbackLinks;
@@ -39,7 +32,53 @@ function mergeLinks(cmsLinks: LinkItemContent[] | undefined, fallbackLinks: Link
   }).filter((link) => link.label && link.href);
 }
 
-export default function Navbar({ settings }: NavbarProps) {
+function getFallbackNavLinks(locale: Locale) {
+  return [
+    { label: t(locale, "nav.home"), href: "/" },
+    { label: t(locale, "nav.menu"), href: "/menu" },
+    { label: t(locale, "nav.ourStory"), href: "/about" },
+    { label: t(locale, "nav.gallery"), href: "/gallery" },
+    { label: t(locale, "nav.locations"), href: "/locations" },
+    { label: t(locale, "nav.contact"), href: "/contact" },
+  ];
+}
+
+function LanguageSwitcher({ locale, className = "" }: { locale: Locale; className?: string }) {
+  const pathname = usePathname() || "/";
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const firstSegment = pathname.split("/").filter(Boolean)[0]?.toLowerCase();
+  const activeLocale = isLocale(firstSegment) ? getLocaleFromPathname(pathname) : locale;
+  const basePathname = stripLocaleFromPathname(pathname);
+  const query = searchParams.toString();
+
+  return (
+    <label
+      className={`inline-flex items-center gap-2 rounded-full border border-stone/15 bg-white/70 px-3 py-2 text-xs uppercase tracking-[0.12em] text-stone transition-colors hover:border-brand-red/40 hover:text-sumi ${className}`}
+    >
+      <Languages size={14} aria-hidden="true" />
+      <span className="sr-only">{t(locale, "language.select")}</span>
+      <select
+        value={activeLocale}
+        aria-label={t(locale, "language.select")}
+        onChange={(event) => {
+          const nextLocale = event.target.value as Locale;
+          const nextHref = localizePath(`${basePathname}${query ? `?${query}` : ""}`, nextLocale);
+          router.push(nextHref);
+        }}
+        className="bg-transparent text-xs font-medium uppercase tracking-[0.12em] outline-none"
+      >
+        {Object.entries(localeOptions).map(([code, option]) => (
+          <option key={code} value={code}>
+            {option.shortLabel}
+          </option>
+        ))}
+      </select>
+    </label>
+  );
+}
+
+export default function Navbar({ settings, locale }: NavbarProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -48,10 +87,10 @@ export default function Navbar({ settings }: NavbarProps) {
   const logoSource = isDarkBackgroundPath && !isScrolled ? settings?.brand?.logoLight : settings?.brand?.logoDark;
   const logoSrc = resolveImageUrl(logoSource, fallbackLogoSrc);
   const logoAlt = textOr(settings?.brand?.altText, "Yoramen Logo");
-  const navLinks = mergeLinks(settings?.navigation, fallbackNavLinks);
+  const navLinks = mergeLinks(settings?.navigation, getFallbackNavLinks(locale));
   const primaryCta = {
-    label: textOr(settings?.primaryCta?.label, fallbackCta.label),
-    href: textOr(settings?.primaryCta?.href, fallbackCta.href),
+    label: textOr(settings?.primaryCta?.label, t(locale, "nav.orderNow")),
+    href: textOr(settings?.primaryCta?.href, "/order"),
     openInNewTab: settings?.primaryCta?.openInNewTab,
   };
 
@@ -71,7 +110,7 @@ export default function Navbar({ settings }: NavbarProps) {
     >
       <div className="max-w-6xl mx-auto px-6 lg:px-8">
         <div className="flex justify-between items-center">
-          <Link href="/" className="flex items-center">
+          <Link href={localizePath("/", locale)} className="flex items-center">
             <Image
               src={logoSrc}
               alt={logoAlt}
@@ -86,7 +125,7 @@ export default function Navbar({ settings }: NavbarProps) {
             {navLinks.map((link, index) => (
               <Link
                 key={`${link.href}-${index}`}
-                href={link.href || "#"}
+                href={localizePath(link.href || "#", locale)}
                 target={link.openInNewTab ? "_blank" : undefined}
                 rel={link.openInNewTab ? "noreferrer" : undefined}
                 className="text-[13px] tracking-[0.12em] text-stone hover:text-sumi transition-colors duration-300 uppercase"
@@ -95,19 +134,20 @@ export default function Navbar({ settings }: NavbarProps) {
               </Link>
             ))}
             <Link
-              href={primaryCta.href}
+              href={localizePath(primaryCta.href, locale)}
               target={primaryCta.openInNewTab ? "_blank" : undefined}
               rel={primaryCta.openInNewTab ? "noreferrer" : undefined}
               className="bg-brand-red hover:bg-brand-red-hover text-white px-6 py-2.5 rounded-full text-[13px] tracking-[0.12em] uppercase transition-all hover-rise"
             >
               {primaryCta.label}
             </Link>
+            <LanguageSwitcher locale={locale} />
           </nav>
 
           <button
             className="md:hidden text-sumi"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            aria-label="Toggle navigation menu"
+            aria-label={t(locale, "a11y.toggleNavigation")}
           >
             {mobileMenuOpen ? <X size={26} /> : <Menu size={26} />}
           </button>
@@ -119,7 +159,7 @@ export default function Navbar({ settings }: NavbarProps) {
           {navLinks.map((link, index) => (
             <Link
               key={`${link.href}-${index}`}
-              href={link.href || "#"}
+              href={localizePath(link.href || "#", locale)}
               target={link.openInNewTab ? "_blank" : undefined}
               rel={link.openInNewTab ? "noreferrer" : undefined}
               className="text-lg tracking-[0.15em] text-sumi hover:text-brand-red transition-colors"
@@ -129,7 +169,7 @@ export default function Navbar({ settings }: NavbarProps) {
             </Link>
           ))}
           <Link
-            href={primaryCta.href}
+            href={localizePath(primaryCta.href, locale)}
             target={primaryCta.openInNewTab ? "_blank" : undefined}
             rel={primaryCta.openInNewTab ? "noreferrer" : undefined}
             className="bg-brand-red hover:bg-brand-red-hover text-white px-8 py-3 mt-4 rounded-full text-base tracking-[0.12em] uppercase transition-all"
@@ -137,6 +177,7 @@ export default function Navbar({ settings }: NavbarProps) {
           >
             {primaryCta.label}
           </Link>
+          <LanguageSwitcher locale={locale} className="mt-1 bg-white" />
         </div>
       )}
     </header>

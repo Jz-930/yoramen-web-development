@@ -1,5 +1,8 @@
 import Image from "next/image";
 import { Clock, MapPin, Phone } from "lucide-react";
+import { t } from "@/i18n/dictionary";
+import { getRequestLocale } from "@/i18n/request";
+import { localizeContent } from "@/i18n/translate";
 import { textOr } from "@/sanity/fallback";
 import { fetchLocations } from "@/sanity/fetchers";
 import { resolveImageUrl } from "@/sanity/image";
@@ -25,9 +28,10 @@ const fallbackLocations = [
 ];
 
 export default async function LocationsPage() {
+  const locale = await getRequestLocale();
   const cmsLocations = await fetchLocations();
   const count = Math.max(fallbackLocations.length, cmsLocations.length);
-  const locations = Array.from({ length: count }, (_, index) => {
+  let locations = Array.from({ length: count }, (_, index) => {
     const fallback = fallbackLocations[index] || fallbackLocations[fallbackLocations.length - 1];
     const cmsLocation = cmsLocations[index];
     const address = textOr(cmsLocation?.address, fallback.address);
@@ -45,15 +49,17 @@ export default async function LocationsPage() {
     };
   });
 
+  locations = await localizeContent(locations, locale);
+
   return (
     <div className="pt-28 pb-24 min-h-screen bg-section-warm">
       <div className="max-w-6xl mx-auto px-6 lg:px-8">
         <div className="text-center mb-16">
-          <span className="text-brand-red text-xs tracking-[0.25em] uppercase font-medium block mb-4">Visit</span>
-          <h1 className="text-4xl md:text-6xl font-serif text-sumi mb-4">Locations</h1>
+          <span className="text-brand-red text-xs tracking-[0.25em] uppercase font-medium block mb-4">{t(locale, "locations.eyebrow")}</span>
+          <h1 className="text-4xl md:text-6xl font-serif text-sumi mb-4">{t(locale, "locations.title")}</h1>
           <div className="jp-divider mb-6"></div>
           <p className="text-base text-stone max-w-xl mx-auto leading-relaxed">
-            Visit us in person and enjoy your bowl at its best, right out of the kitchen.
+            {t(locale, "locations.description")}
           </p>
         </div>
 
@@ -76,7 +82,7 @@ export default async function LocationsPage() {
                         <MapPin className="text-brand-red" size={18} />
                       </div>
                       <div>
-                        <h4 className="text-xs uppercase tracking-[0.15em] text-stone mb-1.5 font-medium">Address</h4>
+                        <h4 className="text-xs uppercase tracking-[0.15em] text-stone mb-1.5 font-medium">{t(locale, "locations.address")}</h4>
                         <span className="block text-sumi text-base">{location.address}</span>
                       </div>
                     </div>
@@ -86,7 +92,7 @@ export default async function LocationsPage() {
                         <Clock className="text-brand-red" size={18} />
                       </div>
                       <div>
-                        <h4 className="text-xs uppercase tracking-[0.15em] text-stone mb-1.5 font-medium">Hours</h4>
+                        <h4 className="text-xs uppercase tracking-[0.15em] text-stone mb-1.5 font-medium">{t(locale, "locations.hours")}</h4>
                         <span className="block text-sumi text-base">{location.hours}</span>
                         <p className="text-xs text-brand-red mt-1.5 italic">{location.waitNote}</p>
                       </div>
@@ -97,14 +103,14 @@ export default async function LocationsPage() {
                         <Phone className="text-brand-red" size={18} />
                       </div>
                       <div>
-                        <h4 className="text-xs uppercase tracking-[0.15em] text-stone mb-1.5 font-medium">Phone</h4>
+                        <h4 className="text-xs uppercase tracking-[0.15em] text-stone mb-1.5 font-medium">{t(locale, "locations.phone")}</h4>
                         <span className="block text-sumi text-base">{location.phone}</span>
                       </div>
                     </div>
                   </div>
 
                   <a href={location.directionsUrl} target="_blank" rel="noreferrer" className="w-full text-center bg-brand-red hover:bg-brand-red-hover text-white py-3.5 rounded-full text-sm uppercase tracking-[0.12em] font-medium transition-all hover-rise">
-                    Get Directions
+                    {t(locale, "locations.directions")}
                   </a>
                 </div>
 

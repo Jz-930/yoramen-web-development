@@ -1,8 +1,11 @@
 import type { OrderPageContent } from "@/sanity/types";
 import { boolOr, textOr } from "@/sanity/fallback";
+import type { Locale } from "@/i18n/config";
+import { t } from "@/i18n/dictionary";
 
 type OrderIframeProps = {
     order?: OrderPageContent | null;
+    locale: Locale;
 };
 
 const ORDERING_URL =
@@ -19,19 +22,19 @@ const fallbackOrder: Required<OrderPageContent> = {
     enabled: true,
 };
 
-export default function OrderIframe({ order }: OrderIframeProps) {
+export default function OrderIframe({ order, locale }: OrderIframeProps) {
     const iframeUrl = textOr(order?.iframeUrl, fallbackOrder.iframeUrl);
     const externalOrderUrl = textOr(order?.externalOrderUrl, fallbackOrder.externalOrderUrl);
     const cmsHasOrderUrl = Boolean(order?.iframeUrl?.trim() || order?.externalOrderUrl?.trim());
 
     const content = {
-        title: textOr(order?.title, fallbackOrder.title),
-        description: cmsHasOrderUrl ? textOr(order?.description, fallbackOrder.description) : fallbackOrder.description,
+        title: textOr(order?.title, t(locale, "order.onlineOrdering")),
+        description: cmsHasOrderUrl ? textOr(order?.description, t(locale, "order.secure")) : t(locale, "order.secure"),
         providerName: cmsHasOrderUrl ? textOr(order?.providerName, fallbackOrder.providerName) : fallbackOrder.providerName,
         iframeUrl,
         externalOrderUrl,
-        fallbackTitle: cmsHasOrderUrl ? textOr(order?.fallbackTitle, fallbackOrder.fallbackTitle) : fallbackOrder.fallbackTitle,
-        fallbackMessage: cmsHasOrderUrl ? textOr(order?.fallbackMessage, fallbackOrder.fallbackMessage) : fallbackOrder.fallbackMessage,
+        fallbackTitle: cmsHasOrderUrl ? textOr(order?.fallbackTitle, t(locale, "order.fallbackTitle")) : t(locale, "order.fallbackTitle"),
+        fallbackMessage: cmsHasOrderUrl ? textOr(order?.fallbackMessage, t(locale, "order.fallbackMessage")) : t(locale, "order.fallbackMessage"),
         enabled: cmsHasOrderUrl ? boolOr(order?.enabled, fallbackOrder.enabled) : fallbackOrder.enabled,
     };
     const canEmbed = content.enabled !== false && Boolean(content.iframeUrl);
@@ -43,7 +46,7 @@ export default function OrderIframe({ order }: OrderIframeProps) {
                 <iframe
                     src={content.iframeUrl}
                     className="absolute inset-0 w-full h-full border-0"
-                    title="Yoramen Online Ordering"
+                    title={t(locale, "order.iframeTitle")}
                     allow="geolocation; payment"
                 />
             )}
@@ -67,7 +70,7 @@ export default function OrderIframe({ order }: OrderIframeProps) {
                             rel="noreferrer"
                             className="mt-6 inline-flex rounded-full bg-brand-red px-6 py-3 text-sm font-medium uppercase tracking-[0.12em] text-white transition-colors hover:bg-brand-red-hover"
                         >
-                            Open Ordering
+                            {t(locale, "order.openOrdering")}
                         </a>
                     )}
                 </div>

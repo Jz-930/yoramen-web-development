@@ -1,4 +1,6 @@
 import ContactContent from "./ContactContent";
+import { getRequestLocale } from "@/i18n/request";
+import { localizeContent } from "@/i18n/translate";
 import { textOr } from "@/sanity/fallback";
 import { fetchContactPage, fetchSiteSettings } from "@/sanity/fetchers";
 
@@ -34,12 +36,13 @@ const fallbackContact = {
 };
 
 export default async function ContactPage() {
+  const locale = await getRequestLocale();
   const [page, settings] = await Promise.all([
     fetchContactPage(),
     fetchSiteSettings(),
   ]);
 
-  const content = {
+  let content = {
     header: {
       eyebrow: textOr(page?.header?.eyebrow, fallbackContact.header.eyebrow),
       title: textOr(page?.header?.title, fallbackContact.header.title),
@@ -67,6 +70,8 @@ export default async function ContactPage() {
       successMessage: textOr(page?.form?.successMessage, fallbackContact.form.successMessage),
     },
   };
+
+  content = await localizeContent(content, locale);
 
   return <ContactContent content={content} />;
 }

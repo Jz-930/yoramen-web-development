@@ -1,34 +1,39 @@
 import Link from "next/link";
 import Image from "next/image";
+import { localizePath, type Locale } from "@/i18n/config";
+import { t } from "@/i18n/dictionary";
 import { textOr } from "@/sanity/fallback";
 import { resolveImageUrl } from "@/sanity/image";
 import type { LinkItemContent, SiteSettingsContent } from "@/sanity/types";
 
 type FooterProps = {
   settings?: SiteSettingsContent | null;
+  locale: Locale;
 };
 
-const fallbackFooter = {
-  brandBlurb: "Our most important job is simple: make every bowl right, every day.",
-  exploreLinks: [
-    { label: "Menu", href: "/menu" },
-    { label: "Our Story", href: "/about" },
-    { label: "Gallery", href: "/gallery" },
-  ],
-  visitLinks: [
-    { label: "Locations", href: "/locations" },
-    { label: "Contact Us", href: "/contact" },
-    { label: "Order Now", href: "/order" },
-  ],
-  socialLinks: [
-    { label: "Instagram", href: "#" },
-    { label: "Facebook", href: "#" },
-  ],
-  legalLinks: [
-    { label: "Privacy Policy", href: "#" },
-    { label: "Terms of Service", href: "#" },
-  ],
-};
+function getFallbackFooter(locale: Locale) {
+  return {
+    brandBlurb: t(locale, "footer.brandBlurb"),
+    exploreLinks: [
+      { label: t(locale, "nav.menu"), href: "/menu" },
+      { label: t(locale, "nav.ourStory"), href: "/about" },
+      { label: t(locale, "nav.gallery"), href: "/gallery" },
+    ],
+    visitLinks: [
+      { label: t(locale, "nav.locations"), href: "/locations" },
+      { label: t(locale, "nav.contact"), href: "/contact" },
+      { label: t(locale, "nav.orderNow"), href: "/order" },
+    ],
+    socialLinks: [
+      { label: "Instagram", href: "#" },
+      { label: "Facebook", href: "#" },
+    ],
+    legalLinks: [
+      { label: "Privacy Policy", href: "#" },
+      { label: "Terms of Service", href: "#" },
+    ],
+  };
+}
 
 function mergeLinks(cmsLinks: LinkItemContent[] | undefined, fallbackLinks: LinkItemContent[]) {
   if (!Array.isArray(cmsLinks) || cmsLinks.length === 0) return fallbackLinks;
@@ -46,13 +51,13 @@ function mergeLinks(cmsLinks: LinkItemContent[] | undefined, fallbackLinks: Link
   }).filter((link) => link.label && link.href);
 }
 
-function FooterLinks({ links }: { links: LinkItemContent[] }) {
+function FooterLinks({ links, locale }: { links: LinkItemContent[]; locale: Locale }) {
   return (
     <ul className="space-y-4 text-sm text-stone">
       {links.map((link, index) => (
         <li key={`${link.href}-${index}`}>
           <Link
-            href={link.href || "#"}
+            href={localizePath(link.href || "#", locale)}
             target={link.openInNewTab ? "_blank" : undefined}
             rel={link.openInNewTab ? "noreferrer" : undefined}
             className="hover:text-brand-red transition-colors"
@@ -65,7 +70,8 @@ function FooterLinks({ links }: { links: LinkItemContent[] }) {
   );
 }
 
-export default function Footer({ settings }: FooterProps) {
+export default function Footer({ settings, locale }: FooterProps) {
+  const fallbackFooter = getFallbackFooter(locale);
   const logoSrc = resolveImageUrl(settings?.brand?.logoDark, "/images/logo-full.webp");
   const logoAlt = textOr(settings?.brand?.altText, "Yoramen Logo");
   const brandBlurb = textOr(settings?.footer?.brandBlurb, fallbackFooter.brandBlurb);
@@ -79,7 +85,7 @@ export default function Footer({ settings }: FooterProps) {
       <div className="max-w-6xl mx-auto px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
           <div className="col-span-1">
-            <Link href="/" className="flex items-center mb-6">
+            <Link href={localizePath("/", locale)} className="flex items-center mb-6">
               <Image
                 src={logoSrc}
                 alt={logoAlt}
@@ -94,18 +100,18 @@ export default function Footer({ settings }: FooterProps) {
           </div>
 
           <div>
-            <h4 className="font-serif text-base mb-6 text-sumi font-semibold">Explore</h4>
-            <FooterLinks links={exploreLinks} />
+            <h4 className="font-serif text-base mb-6 text-sumi font-semibold">{t(locale, "footer.explore")}</h4>
+            <FooterLinks links={exploreLinks} locale={locale} />
           </div>
 
           <div>
-            <h4 className="font-serif text-base mb-6 text-sumi font-semibold">Visit Us</h4>
-            <FooterLinks links={visitLinks} />
+            <h4 className="font-serif text-base mb-6 text-sumi font-semibold">{t(locale, "footer.visitUs")}</h4>
+            <FooterLinks links={visitLinks} locale={locale} />
           </div>
 
           <div>
-            <h4 className="font-serif text-base mb-6 text-sumi font-semibold">Connect</h4>
-            <FooterLinks links={socialLinks} />
+            <h4 className="font-serif text-base mb-6 text-sumi font-semibold">{t(locale, "footer.connect")}</h4>
+            <FooterLinks links={socialLinks} locale={locale} />
           </div>
         </div>
 
@@ -116,12 +122,12 @@ export default function Footer({ settings }: FooterProps) {
         </div>
 
         <div className="flex flex-col md:flex-row justify-between items-center text-xs text-stone">
-          <p>&copy; {new Date().getFullYear()} Yoramen. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} Yoramen. {t(locale, "footer.allRights")}</p>
           <div className="flex space-x-6 mt-4 md:mt-0">
             {legalLinks.map((link, index) => (
               <Link
                 key={`${link.href}-${index}`}
-                href={link.href || "#"}
+                href={localizePath(link.href || "#", locale)}
                 target={link.openInNewTab ? "_blank" : undefined}
                 rel={link.openInNewTab ? "noreferrer" : undefined}
                 className="hover:text-sumi transition-colors"

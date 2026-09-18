@@ -5,18 +5,22 @@ export const metadata = {
 
 import Image from "next/image";
 import OrderIframe from "@/components/OrderIframe";
+import { t } from "@/i18n/dictionary";
+import { getRequestLocale } from "@/i18n/request";
+import { localizeContent } from "@/i18n/translate";
 import { fetchOrderPage } from "@/sanity/fetchers";
 import { textOr } from "@/sanity/fallback";
 
 export const dynamic = "force-dynamic";
 
 export default async function OrderPage() {
-    const order = await fetchOrderPage();
+    const locale = await getRequestLocale();
+    const order = await localizeContent(await fetchOrderPage(), locale);
     const cmsHasOrderUrl = Boolean(order?.iframeUrl?.trim() || order?.externalOrderUrl?.trim());
-    const title = textOr(order?.title, "Online Ordering");
+    const title = textOr(order?.title, t(locale, "order.onlineOrdering"));
     const description = cmsHasOrderUrl
-        ? textOr(order?.description, "Secure ordering powered by MealKeyWay")
-        : "Secure ordering powered by MealKeyWay";
+        ? textOr(order?.description, t(locale, "order.secure"))
+        : t(locale, "order.secure");
 
     return (
         <div className="pt-24 min-h-screen bg-gray-50 flex flex-col relative overflow-hidden jp-pattern-geo">
@@ -33,7 +37,7 @@ export default async function OrderPage() {
                 <p className="text-stone mt-2 text-sm">{description}</p>
             </div>
             
-            <OrderIframe order={order} />
+            <OrderIframe order={order} locale={locale} />
         </div>
     );
 }

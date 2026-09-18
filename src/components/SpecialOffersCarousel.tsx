@@ -1,8 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useState, type MouseEvent, type PointerEvent } from "react";
+import { useCallback, useEffect, useRef, useState, type MouseEvent, type PointerEvent } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { localizePath, type Locale } from "@/i18n/config";
+import { t } from "@/i18n/dictionary";
 
 export type SpecialOffer = {
   title: string;
@@ -15,12 +17,13 @@ export type SpecialOffer = {
 
 type SpecialOffersCarouselProps = {
   offers: SpecialOffer[];
+  locale: Locale;
 };
 
 const AUTO_SCROLL_PIXELS_PER_SECOND = 24;
 const AUTO_SCROLL_RESUME_DELAY = 1200;
 
-export default function SpecialOffersCarousel({ offers }: SpecialOffersCarouselProps) {
+export default function SpecialOffersCarousel({ offers, locale }: SpecialOffersCarouselProps) {
   const trackRef = useRef<HTMLDivElement>(null);
   const firstSetRef = useRef<HTMLDivElement>(null);
   const loopWidthRef = useRef(0);
@@ -37,6 +40,24 @@ export default function SpecialOffersCarousel({ offers }: SpecialOffersCarouselP
   });
   const preventClickRef = useRef(false);
   const [isDragging, setIsDragging] = useState(false);
+
+  const normalizeTargetScrollLeft = useCallback((scrollLeft: number) => {
+    const loopWidth = loopWidthRef.current;
+    if (loopWidth <= 0) return scrollLeft;
+
+    return ((scrollLeft % loopWidth) + loopWidth) % loopWidth;
+  }, []);
+
+  const normalizeScrollPosition = useCallback(() => {
+    const track = trackRef.current;
+    const loopWidth = loopWidthRef.current;
+    if (!track || loopWidth <= 0) return;
+
+    autoScrollLeftRef.current = normalizeTargetScrollLeft(autoScrollLeftRef.current || track.scrollLeft);
+    if (Math.abs(track.scrollLeft - autoScrollLeftRef.current) > 1) {
+      track.scrollLeft = autoScrollLeftRef.current;
+    }
+  }, [normalizeTargetScrollLeft]);
 
   useEffect(() => {
     const track = trackRef.current;
@@ -57,7 +78,7 @@ export default function SpecialOffersCarousel({ offers }: SpecialOffersCarouselP
     return () => {
       resizeObserver.disconnect();
     };
-  }, [offers.length]);
+  }, [offers.length, normalizeScrollPosition]);
 
   useEffect(() => {
     const track = trackRef.current;
@@ -95,25 +116,7 @@ export default function SpecialOffersCarousel({ offers }: SpecialOffersCarouselP
       animationFrameRef.current = null;
       lastFrameTimeRef.current = null;
     };
-  }, [offers.length]);
-
-  const normalizeScrollPosition = () => {
-    const track = trackRef.current;
-    const loopWidth = loopWidthRef.current;
-    if (!track || loopWidth <= 0) return;
-
-    autoScrollLeftRef.current = normalizeTargetScrollLeft(autoScrollLeftRef.current || track.scrollLeft);
-    if (Math.abs(track.scrollLeft - autoScrollLeftRef.current) > 1) {
-      track.scrollLeft = autoScrollLeftRef.current;
-    }
-  };
-
-  const normalizeTargetScrollLeft = (scrollLeft: number) => {
-    const loopWidth = loopWidthRef.current;
-    if (loopWidth <= 0) return scrollLeft;
-
-    return ((scrollLeft % loopWidth) + loopWidth) % loopWidth;
-  };
+  }, [offers.length, normalizeScrollPosition]);
 
   const pauseAutoScroll = () => {
     autoPausedRef.current = true;
@@ -213,7 +216,7 @@ export default function SpecialOffersCarousel({ offers }: SpecialOffersCarouselP
         <p className="text-stone text-sm leading-relaxed mb-6">{offer.desc}</p>
         <div className="mt-auto">
           {offer.href && !isClone ? (
-            <Link href={offer.href} className="inline-block border-b border-black text-xs tracking-widest uppercase pb-1 font-medium hover:text-brand-red hover:border-brand-red transition-colors">
+            <Link href={localizePath(offer.href, locale)} className="inline-block border-b border-black text-xs tracking-widest uppercase pb-1 font-medium hover:text-brand-red hover:border-brand-red transition-colors">
               {offer.availabilityText}
             </Link>
           ) : (
@@ -233,7 +236,7 @@ export default function SpecialOffersCarousel({ offers }: SpecialOffersCarouselP
         <div className="pointer-events-none absolute inset-y-0 right-0 z-20 w-10 bg-gradient-to-l from-gray-50 to-transparent" />
         <div
           ref={trackRef}
-          aria-label="Special offers"
+          aria-label={t(locale, "specialOffers.aria")}
           onPointerDown={handlePointerDown}
           onPointerMove={handlePointerMove}
           onPointerUp={endDrag}
