@@ -39,7 +39,7 @@ const fallbackAbout = {
   },
   timelineItems: [
     { year: "2021", img: "/images/story/story-2021-clean.webp", align: "left", title: "Tokyo Inspiration", desc: "Inspired by a family member running a successful ramen shop in Tokyo, the idea of bringing authentic, high-quality Japanese flavor to our local town was born." },
-    { year: "2022", img: "/images/story/story-2022-clean.webp", align: "right", title: "Local Pop-ups", desc: "Started quietly by setting up local food stalls across Scarborough. The lines grew, and the feedback validated our obsession with proper tonkotsu broth." },
+    { year: "2022", img: "/images/story/story-2022-clean.webp", align: "right", title: "Local Pop-ups", desc: "Started quietly by setting up food stalls at Queen Square Farmers Market in Saint John, New Brunswick. The lines grew, and the feedback validated our obsession with proper tonkotsu broth." },
     { year: "2024", img: "/images/story/story-2024-clean.webp", align: "left", title: "Scaling Operations", desc: "Expanded our reach to more community events and began building a serious following. Handcrafting noodles at this volume forced us to innovate." },
     { year: "2025", img: "/images/story/story-2025-clean.webp", align: "right", title: "Engineering Consistency", desc: "Successfully developed and integrated specialized automated noodle machinery to ensure every single strand meets our exact texture and hydration requirements." },
     { year: "2026", img: "/images/story/story-2026-clean.webp", align: "left", title: "Flagship Store Opens", desc: "Finally set down permanent roots. The first official Yoramen physical location opens, bringing the complete dining experience to life." },
