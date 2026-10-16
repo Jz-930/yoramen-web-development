@@ -44,6 +44,8 @@ const fallbackContact = {
     buttonLabel: "Send Message",
     submittingLabel: "Sending...",
     successMessage: "Message sent successfully. We will get back to you soon.",
+    errorMessage: "We couldn't confirm your message was sent. Please try again or email us at",
+    reservationNote: "Reservation requests are only confirmed after the restaurant replies.",
   },
 };
 
@@ -81,6 +83,8 @@ export default async function ContactPage() {
       buttonLabel: t(textOr(page?.form?.buttonLabel, fallbackContact.form.buttonLabel)),
       submittingLabel: t(textOr(page?.form?.submittingLabel, fallbackContact.form.submittingLabel)),
       successMessage: t(textOr(page?.form?.successMessage, fallbackContact.form.successMessage)),
+      errorMessage: t(fallbackContact.form.errorMessage),
+      reservationNote: t(fallbackContact.form.reservationNote),
     },
   };
 

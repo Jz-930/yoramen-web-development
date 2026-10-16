@@ -1,5 +1,30 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Contact form email delivery
+
+The contact form posts to `/api/contact`. The website is configured to send only to **info@yoramen.ca**, with the customer's email as `Reply-To`. The browser cannot choose the recipient. The server supports a comma-separated `CONTACT_TO_EMAILS` list, but production should contain this single address to conserve the email quota. A successful form submission is a message/reservation request, not a confirmed reservation.
+
+### Setup
+
+1. Create a free [Resend account](https://resend.com) and [verify a sending subdomain](https://resend.com/docs/dashboard/domains/introduction), such as `notifications.yoramen.ca`, using the DNS records Resend provides. Keep the existing inbound mailbox DNS records intact. No additional mailbox purchase is required for the sender address.
+2. Create a Resend API key with Sending Access. Copy `.env.example` to `.env.local` if a local file does not already exist. Set `RESEND_API_KEY`, a bare verified `CONTACT_FROM_EMAIL`, and `CONTACT_TO_EMAILS=info@yoramen.ca`. Never commit `.env.local` or put these values in public client environment variables.
+3. Set the same three variables in the Vercel project's Production environment and deploy the change. Restart the local dev server after local configuration changes. Preview environments should use test recipients or leave sending unconfigured.
+4. Submit an explicitly identified test request after configuration and check the **info@yoramen.ca inbox**, its spam folder, and Resend delivery status before treating the feature as live. API acceptance does not guarantee inbox delivery.
+
+At the time of implementation, [Resend Free](https://resend.com/pricing) includes 3,000 emails/month and 100/day. [Each recipient counts separately](https://resend.com/docs/knowledge-base/account-quotas-and-limits): with one recipient, that is up to 3,000 submissions/month and 100/day, assuming no other email usage. No paid plan or extra database is required for this implementation.
+
+Unconfigured delivery, exhausted provider quota, provider errors, and network failures show a retry/email fallback instead of success; entered text stays in the form. Unchanged retries reuse a provider idempotency key for 24 hours to avoid duplicate mail. There is no separate message database or automatic background retry. Resend's dashboard and the destination mailboxes provide delivery visibility. The endpoint includes input/body limits, a honeypot and same-origin browser checks; these are basic spam defenses, not a distributed rate limiter.
+
+### Local checks
+
+```bash
+node --test scripts/test-contact-email.mjs
+npm run lint
+npm run build
+```
+
+The email tests mock the provider; they never send real mail. They require Node 22.18+ or Node 24 for native TypeScript support. On this Windows workspace, use PowerShell 7 for dependency lifecycle scripts if the parent path's `&` interferes with npm's default shell: `npm ci --script-shell=pwsh.exe`.
+
 ## Getting Started
 
 First, run the development server:

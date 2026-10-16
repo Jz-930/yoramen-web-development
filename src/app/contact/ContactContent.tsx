@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Mail, MessageSquare } from "lucide-react";
 
 export type ContactContentProps = {
@@ -30,19 +30,60 @@ export type ContactContentProps = {
       buttonLabel: string;
       submittingLabel: string;
       successMessage: string;
+      errorMessage: string;
+      reservationNote: string;
     };
   };
 };
 
 export default function ContactContent({ content }: ContactContentProps) {
   const [formStatus, setFormStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
+  const submissionInFlight = useRef(false);
+  const lastSubmission = useRef<{ payloadKey: string; submissionId: string } | null>(null);
+  const formLocked = formStatus === "submitting" || formStatus === "success";
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (submissionInFlight.current || formStatus === "success") return;
+
+    const formData = new FormData(event.currentTarget);
+    const payload = {
+      name: String(formData.get("name") ?? "").trim(),
+      email: String(formData.get("email") ?? "").trim(),
+      phone: String(formData.get("phone") ?? "").trim(),
+      message: String(formData.get("message") ?? "").trim(),
+      website: String(formData.get("website") ?? ""),
+    };
+    const payloadKey = JSON.stringify(payload);
+
+    submissionInFlight.current = true;
     setFormStatus("submitting");
-    setTimeout(() => {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 25_000);
+
+    try {
+      if (lastSubmission.current?.payloadKey !== payloadKey) {
+        lastSubmission.current = { payloadKey, submissionId: crypto.randomUUID() };
+      }
+
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...payload, submissionId: lastSubmission.current.submissionId }),
+        signal: controller.signal,
+      });
+      const result: unknown = await response.json();
+      if (!response.ok || typeof result !== "object" || result === null || !("ok" in result) || result.ok !== true) {
+        throw new Error("Contact submission was not confirmed");
+      }
+
       setFormStatus("success");
-    }, 1500);
+    } catch {
+      setFormStatus("error");
+    } finally {
+      clearTimeout(timeout);
+      submissionInFlight.current = false;
+    }
   };
 
   return (
@@ -84,40 +125,56 @@ export default function ContactContent({ content }: ContactContentProps) {
           </div>
 
           <div>
-            <form onSubmit={handleSubmit} className="space-y-5">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                <div className="space-y-2">
-                  <label htmlFor="name" className="text-xs uppercase tracking-[0.12em] text-stone font-medium block">{content.form.nameLabel}</label>
-                  <input required id="name" type="text" className="w-full bg-warm-white border border-light-border rounded-xl px-5 py-3.5 text-sumi focus:outline-none focus:border-brand-red/50 transition-colors placeholder:text-stone/40" placeholder={content.form.namePlaceholder} />
+            <form onSubmit={handleSubmit} aria-busy={formStatus === "submitting"} className="space-y-5">
+              <fieldset disabled={formLocked} className="space-y-5">
+                <div className="hidden" aria-hidden="true">
+                  <label htmlFor="website">Website</label>
+                  <input id="website" name="website" type="text" tabIndex={-1} autoComplete="off" />
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                  <div className="space-y-2">
+                    <label htmlFor="name" className="text-xs uppercase tracking-[0.12em] text-stone font-medium block">{content.form.nameLabel}</label>
+                    <input required id="name" name="name" type="text" maxLength={100} autoComplete="name" className="w-full bg-warm-white border border-light-border rounded-xl px-5 py-3.5 text-sumi focus:outline-none focus:border-brand-red/50 transition-colors placeholder:text-stone/40" placeholder={content.form.namePlaceholder} />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label htmlFor="phone" className="text-xs uppercase tracking-[0.12em] text-stone font-medium block">{content.form.phoneLabel}</label>
+                    <input id="phone" name="phone" type="tel" maxLength={40} autoComplete="tel" className="w-full bg-warm-white border border-light-border rounded-xl px-5 py-3.5 text-sumi focus:outline-none focus:border-brand-red/50 transition-colors placeholder:text-stone/40" placeholder={content.form.phonePlaceholder} />
+                  </div>
                 </div>
 
                 <div className="space-y-2">
-                  <label htmlFor="phone" className="text-xs uppercase tracking-[0.12em] text-stone font-medium block">{content.form.phoneLabel}</label>
-                  <input id="phone" type="tel" className="w-full bg-warm-white border border-light-border rounded-xl px-5 py-3.5 text-sumi focus:outline-none focus:border-brand-red/50 transition-colors placeholder:text-stone/40" placeholder={content.form.phonePlaceholder} />
+                  <label htmlFor="email" className="text-xs uppercase tracking-[0.12em] text-stone font-medium block">{content.form.emailLabel}</label>
+                  <input required id="email" name="email" type="email" maxLength={254} autoComplete="email" className="w-full bg-warm-white border border-light-border rounded-xl px-5 py-3.5 text-sumi focus:outline-none focus:border-brand-red/50 transition-colors placeholder:text-stone/40" placeholder={content.form.emailPlaceholder} />
                 </div>
-              </div>
 
-              <div className="space-y-2">
-                <label htmlFor="email" className="text-xs uppercase tracking-[0.12em] text-stone font-medium block">{content.form.emailLabel}</label>
-                <input required id="email" type="email" className="w-full bg-warm-white border border-light-border rounded-xl px-5 py-3.5 text-sumi focus:outline-none focus:border-brand-red/50 transition-colors placeholder:text-stone/40" placeholder={content.form.emailPlaceholder} />
-              </div>
+                <div className="space-y-2">
+                  <label htmlFor="message" className="text-xs uppercase tracking-[0.12em] text-stone font-medium block">{content.form.messageLabel}</label>
+                  <textarea required id="message" name="message" rows={5} maxLength={5000} className="w-full bg-warm-white border border-light-border rounded-xl px-5 py-3.5 text-sumi focus:outline-none focus:border-brand-red/50 transition-colors resize-none placeholder:text-stone/40" placeholder={content.form.messagePlaceholder}></textarea>
+                </div>
 
-              <div className="space-y-2">
-                <label htmlFor="message" className="text-xs uppercase tracking-[0.12em] text-stone font-medium block">{content.form.messageLabel}</label>
-                <textarea required id="message" rows={5} className="w-full bg-warm-white border border-light-border rounded-xl px-5 py-3.5 text-sumi focus:outline-none focus:border-brand-red/50 transition-colors resize-none placeholder:text-stone/40" placeholder={content.form.messagePlaceholder}></textarea>
-              </div>
+                <p className="text-xs text-stone leading-relaxed">{content.form.reservationNote}</p>
 
-              <button
-                type="submit"
-                disabled={formStatus !== "idle"}
-                className="w-full bg-brand-red hover:bg-brand-red-hover disabled:bg-stone/30 disabled:cursor-not-allowed text-white py-4 rounded-full text-sm uppercase tracking-[0.12em] font-medium transition-all mt-2"
-              >
-                {formStatus === "submitting" ? content.form.submittingLabel : content.form.buttonLabel}
-              </button>
+                <button
+                  type="submit"
+                  disabled={formLocked}
+                  className="w-full bg-brand-red hover:bg-brand-red-hover disabled:bg-stone/30 disabled:cursor-not-allowed text-white py-4 rounded-full text-sm uppercase tracking-[0.12em] font-medium transition-all mt-2"
+                >
+                  {formStatus === "submitting" ? content.form.submittingLabel : content.form.buttonLabel}
+                </button>
+              </fieldset>
 
               {formStatus === "success" && (
-                <div className="p-4 bg-green-50 border border-green-200 rounded-xl text-green-700 text-sm text-center">
+                <div role="status" className="p-4 bg-green-50 border border-green-200 rounded-xl text-green-700 text-sm text-center">
                   {content.form.successMessage}
+                </div>
+              )}
+              {formStatus === "error" && (
+                <div role="alert" className="p-4 bg-warm-white border border-brand-red/30 rounded-xl text-sumi text-sm text-center">
+                  {content.form.errorMessage}{" "}
+                  <a href={`mailto:${content.infoCard.generalEmail}`} className="text-brand-red underline underline-offset-2">
+                    {content.infoCard.generalEmail}
+                  </a>
                 </div>
               )}
             </form>
