@@ -27,7 +27,7 @@ const fallbackAbout = {
     intro: "It started with an obsession for flavor.",
   },
   introSection: {
-    image: "/images/img-3.webp",
+    image: "/images/about-yoramen-real-dish.webp",
     paragraphs: [
       "We opened this ramen house to do one thing exceptionally well: make every bowl with real discipline. Truly memorable flavor is never built on gimmicks. It comes from getting every fundamental step right.",
       "From broth depth to noodle texture, from heat control to service pace, we refine every detail so that no matter when you visit, your bowl feels consistent, premium, and worth returning for.",
