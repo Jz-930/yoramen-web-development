@@ -1,12 +1,10 @@
-import GalleryContent, { type GalleryItem, type GalleryTestimonial } from "./GalleryContent";
-import { SOURCE_LOCALE } from "@/i18n";
+import GalleryContent, { type GalleryItem, type GalleryTestimonial } from "@/components/GalleryContent";
+import { SOURCE_LOCALE, type SupportedLocale } from "@/i18n";
 import { buildLocalizedMetadata, ENGLISH_PAGE_METADATA } from "@/i18n/metadata";
-import { createServerTextTranslator, getRequestLocale } from "@/i18n/server";
+import { createServerTextTranslator } from "@/i18n/server";
 import { arrayOr, textOr } from "@/sanity/fallback";
 import { fetchGalleryPage } from "@/sanity/fetchers";
 import { resolveImageUrl } from "@/sanity/image";
-
-export const dynamic = "force-dynamic";
 
 export async function generateMetadata() {
   const page = await fetchGalleryPage();
@@ -55,8 +53,7 @@ function normalizeStyle(value: string | undefined, fallback: string) {
   return value && allowedTestimonialStyles.has(value) ? value : fallback;
 }
 
-export default async function GalleryPage() {
-  const locale = await getRequestLocale();
+export default async function GalleryPage({ locale = SOURCE_LOCALE }: { locale?: SupportedLocale } = {}) {
   const t = (await createServerTextTranslator(locale)).text;
   const page = await fetchGalleryPage();
   const sourceCategories = arrayOr(page?.categories, fallbackGallery.categories).includes("All")

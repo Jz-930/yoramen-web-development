@@ -1,15 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Plus } from "lucide-react";
-import { SOURCE_LOCALE, localizeInternalHref } from "@/i18n";
+import { SOURCE_LOCALE, type SupportedLocale, localizeInternalHref } from "@/i18n";
 import { buildLocalizedMetadata, ENGLISH_PAGE_METADATA } from "@/i18n/metadata";
-import { createServerTextTranslator, getRequestLocale } from "@/i18n/server";
+import { createServerTextTranslator } from "@/i18n/server";
 import { fetchMenuCmsContent } from "@/sanity/fetchers";
 import { boolOr, textOr } from "@/sanity/fallback";
 import { resolveImageUrl } from "@/sanity/image";
 import type { MenuCategoryContent, MenuPageContent } from "@/sanity/types";
-
-export const dynamic = "force-dynamic";
 
 export async function generateMetadata() {
     const { page } = await fetchMenuCmsContent();
@@ -106,8 +104,7 @@ const fallbackMenuCategories: MenuCategoryContent[] = [
     }
 ];
 
-export default async function MenuPage() {
-    const locale = await getRequestLocale();
+export default async function MenuPage({ locale = SOURCE_LOCALE }: { locale?: SupportedLocale } = {}) {
     const t = (await createServerTextTranslator(locale)).text;
     const cmsContent = await fetchMenuCmsContent();
     const pageContent = {

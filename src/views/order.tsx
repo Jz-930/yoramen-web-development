@@ -1,13 +1,11 @@
 import Image from "next/image";
 import OrderIframe from "@/components/OrderIframe";
-import { SOURCE_LOCALE } from "@/i18n";
+import { SOURCE_LOCALE, type SupportedLocale } from "@/i18n";
 import { buildTextDictionary, ORDER_UI_SOURCE_STRINGS } from "@/i18n/client-copy";
 import { buildLocalizedMetadata, ENGLISH_PAGE_METADATA } from "@/i18n/metadata";
-import { createServerTextTranslator, getRequestLocale } from "@/i18n/server";
+import { createServerTextTranslator } from "@/i18n/server";
 import { fetchOrderPage } from "@/sanity/fetchers";
 import { textOr } from "@/sanity/fallback";
-
-export const dynamic = "force-dynamic";
 
 export async function generateMetadata() {
     const order = await fetchOrderPage();
@@ -20,8 +18,7 @@ export async function generateMetadata() {
     });
 }
 
-export default async function OrderPage() {
-    const locale = await getRequestLocale();
+export default async function OrderPage({ locale = SOURCE_LOCALE }: { locale?: SupportedLocale } = {}) {
     const translator = await createServerTextTranslator(locale);
     const t = translator.text;
     const orderCopy = buildTextDictionary(ORDER_UI_SOURCE_STRINGS, t);

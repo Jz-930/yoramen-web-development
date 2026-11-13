@@ -30,6 +30,6 @@ export function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|studio|images|videos|.*\\..*).*)",
+    "/:locale([fF][rR]-[cC][aA]|[zZ][hH]-[hH][aA][nN][tT]|[jJ][aA]-[jJ][pP])/:path*",
   ],
 };

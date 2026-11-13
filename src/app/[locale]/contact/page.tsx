@@ -1,12 +1,10 @@
-import EnglishContactPage from "../../contact/page";
+import EnglishContactPage from "@/views/contact";
 import { requireTargetLocale, type LocaleRouteProps } from "@/app/_localeRoute";
 import {
   ENGLISH_PAGE_METADATA,
   buildLocalizedMetadata,
 } from "@/i18n/metadata";
 import { fetchContactPage } from "@/sanity/fetchers";
-
-export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: LocaleRouteProps) {
   const locale = await requireTargetLocale(params);
@@ -21,6 +19,6 @@ export async function generateMetadata({ params }: LocaleRouteProps) {
 }
 
 export default async function LocalizedContactPage({ params }: LocaleRouteProps) {
-  await requireTargetLocale(params);
-  return <EnglishContactPage />;
+  const locale = await requireTargetLocale(params);
+  return <EnglishContactPage locale={locale} />;
 }

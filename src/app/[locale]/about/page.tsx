@@ -1,9 +1,7 @@
-import EnglishAboutPage from "../../about/page";
+import EnglishAboutPage from "@/views/about";
 import { requireTargetLocale, type LocaleRouteProps } from "@/app/_localeRoute";
 import { buildLocalizedMetadata, ENGLISH_PAGE_METADATA } from "@/i18n/metadata";
 import { fetchAboutPage } from "@/sanity/fetchers";
-
-export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: LocaleRouteProps) {
   const locale = await requireTargetLocale(params);
@@ -18,6 +16,6 @@ export async function generateMetadata({ params }: LocaleRouteProps) {
 }
 
 export default async function LocalizedAboutPage({ params }: LocaleRouteProps) {
-  await requireTargetLocale(params);
-  return <EnglishAboutPage />;
+  const locale = await requireTargetLocale(params);
+  return <EnglishAboutPage locale={locale} />;
 }

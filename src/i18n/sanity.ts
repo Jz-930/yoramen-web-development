@@ -16,7 +16,8 @@ import {
   type TranslationEntry,
 } from "./types";
 
-const fetchOptions = { cache: "no-store" as const };
+// Public, published CMS data can be shared across visitors for ten minutes.
+const fetchOptions = { next: { revalidate: 600 } };
 
 export const LOCALIZATION_CONFIG_QUERY = `*[
   _type == "localizationConfig" &&

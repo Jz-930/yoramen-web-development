@@ -1,9 +1,7 @@
-import EnglishMenuPage from "../../menu/page";
+import EnglishMenuPage from "@/views/menu";
 import { requireTargetLocale, type LocaleRouteProps } from "@/app/_localeRoute";
 import { buildLocalizedMetadata, ENGLISH_PAGE_METADATA } from "@/i18n/metadata";
 import { fetchMenuCmsContent } from "@/sanity/fetchers";
-
-export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: LocaleRouteProps) {
   const locale = await requireTargetLocale(params);
@@ -18,6 +16,6 @@ export async function generateMetadata({ params }: LocaleRouteProps) {
 }
 
 export default async function LocalizedMenuPage({ params }: LocaleRouteProps) {
-  await requireTargetLocale(params);
-  return <EnglishMenuPage />;
+  const locale = await requireTargetLocale(params);
+  return <EnglishMenuPage locale={locale} />;
 }

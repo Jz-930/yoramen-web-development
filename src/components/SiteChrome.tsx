@@ -14,6 +14,7 @@ export default function SiteChrome({
   settings,
   locale,
   enabledLocales,
+  enabledLocalesByPath,
   copy,
 }: {
   children: React.ReactNode;
@@ -21,6 +22,7 @@ export default function SiteChrome({
   settings?: SiteSettingsContent | null;
   locale: SupportedLocale;
   enabledLocales: TargetLocale[];
+  enabledLocalesByPath?: Record<string, TargetLocale[]>;
   copy: TextDictionary;
 }) {
   const pathname = usePathname();
@@ -44,7 +46,8 @@ export default function SiteChrome({
           gtag('config', 'AW-18296558792');
         `}
       </Script>
-      <Navbar settings={settings} locale={locale} enabledLocales={enabledLocales} copy={copy} />
+      <Navbar settings={settings} locale={locale}
+        enabledLocales={enabledLocalesByPath?.[pathname || "/"] ?? enabledLocales} copy={copy} />
       <main className="flex-grow">{children}</main>
       <Footer settings={settings} locale={locale} copy={copy} />
       {modal}

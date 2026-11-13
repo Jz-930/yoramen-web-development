@@ -1,13 +1,11 @@
 import Image from "next/image";
-import StoryTimeline, { type StoryTimelineItem } from "./StoryTimeline";
-import { SOURCE_LOCALE } from "@/i18n";
+import StoryTimeline, { type StoryTimelineItem } from "@/components/StoryTimeline";
+import { SOURCE_LOCALE, type SupportedLocale } from "@/i18n";
 import { buildLocalizedMetadata, ENGLISH_PAGE_METADATA } from "@/i18n/metadata";
-import { createServerTextTranslator, getRequestLocale } from "@/i18n/server";
+import { createServerTextTranslator } from "@/i18n/server";
 import { arrayOr, textOr } from "@/sanity/fallback";
 import { fetchAboutPage } from "@/sanity/fetchers";
 import { resolveImageUrl } from "@/sanity/image";
-
-export const dynamic = "force-dynamic";
 
 export async function generateMetadata() {
   const page = await fetchAboutPage();
@@ -50,8 +48,7 @@ function normalizeAlign(value: string | undefined, fallback: "left" | "right") {
   return value === "left" || value === "right" ? value : fallback;
 }
 
-export default async function AboutPage() {
-  const locale = await getRequestLocale();
+export default async function AboutPage({ locale = SOURCE_LOCALE }: { locale?: SupportedLocale } = {}) {
   const t = (await createServerTextTranslator(locale)).text;
   const page = await fetchAboutPage();
   const introParagraphs = arrayOr(page?.introSection?.paragraphs, fallbackAbout.introSection.paragraphs).map(t);

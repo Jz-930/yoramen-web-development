@@ -1,5 +1,13 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Public-page caching and CPU usage
+
+English public pages use ten-minute ISR (`src/app/(english)/layout.tsx`). Normal repeat visits are served from the CDN without rendering the page or querying Sanity again. Published Sanity data and translation inputs also use a 600-second data cache. Updates appear after cache expiry and a subsequent visit triggers background regeneration; this is not a scheduled publish every ten minutes.
+
+English, localized, and Studio pages have separate root layouts. Localized pages retain request-aware language fallback and query-string-preserving redirects, while reusing cached CMS data. Only localized URLs run the locale proxy. Studio no longer loads the public navigation or translation data. Contact POST requests remain uncached and are unaffected by public-page caching.
+
+After building, run `node scripts/check-public-cache.mjs`. Set `CHECK_BASE_URL` to a local production server to additionally check page responses, locale redirects, robots, unknown paths, and rejection of an invalid contact request. This check sends no email.
+
 ## Contact form email delivery
 
 The contact form posts to `/api/contact`. The website is configured to send only to **info@yoramen.ca**, with the customer's email as `Reply-To`. The browser cannot choose the recipient. The server supports a comma-separated `CONTACT_TO_EMAILS` list, but production should contain this single address to conserve the email quota. A successful form submission is a message/reservation request, not a confirmed reservation.

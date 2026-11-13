@@ -1,12 +1,10 @@
-import EnglishGalleryPage from "../../gallery/page";
+import EnglishGalleryPage from "@/views/gallery";
 import { requireTargetLocale, type LocaleRouteProps } from "@/app/_localeRoute";
 import {
   ENGLISH_PAGE_METADATA,
   buildLocalizedMetadata,
 } from "@/i18n/metadata";
 import { fetchGalleryPage } from "@/sanity/fetchers";
-
-export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: LocaleRouteProps) {
   const locale = await requireTargetLocale(params);
@@ -21,6 +19,6 @@ export async function generateMetadata({ params }: LocaleRouteProps) {
 }
 
 export default async function LocalizedGalleryPage({ params }: LocaleRouteProps) {
-  await requireTargetLocale(params);
-  return <EnglishGalleryPage />;
+  const locale = await requireTargetLocale(params);
+  return <EnglishGalleryPage locale={locale} />;
 }

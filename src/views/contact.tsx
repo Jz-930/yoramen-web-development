@@ -1,11 +1,9 @@
-import ContactContent from "./ContactContent";
-import { SOURCE_LOCALE } from "@/i18n";
+import ContactContent from "@/components/ContactContent";
+import { SOURCE_LOCALE, type SupportedLocale } from "@/i18n";
 import { buildLocalizedMetadata, ENGLISH_PAGE_METADATA } from "@/i18n/metadata";
-import { createServerTextTranslator, getRequestLocale } from "@/i18n/server";
+import { createServerTextTranslator } from "@/i18n/server";
 import { textOr } from "@/sanity/fallback";
 import { fetchContactPage, fetchSiteSettings } from "@/sanity/fetchers";
-
-export const dynamic = "force-dynamic";
 
 export async function generateMetadata() {
   const page = await fetchContactPage();
@@ -49,8 +47,7 @@ const fallbackContact = {
   },
 };
 
-export default async function ContactPage() {
-  const locale = await getRequestLocale();
+export default async function ContactPage({ locale = SOURCE_LOCALE }: { locale?: SupportedLocale } = {}) {
   const t = (await createServerTextTranslator(locale)).text;
   const [page, settings] = await Promise.all([
     fetchContactPage(),

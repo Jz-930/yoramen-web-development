@@ -83,7 +83,7 @@ const loadRuntimeSourceEntries = cache(async (): Promise<SourceEntry[] | null> =
     const documents = await client.fetch<SourceDocument[]>(
       PUBLISHED_LOCALIZATION_SOURCE_QUERY,
       { sourceTypes: [...SOURCE_DOCUMENT_TYPES] },
-      { cache: "no-store" },
+      { next: { revalidate: 600 } },
     );
     if (!Array.isArray(documents)) return null;
     return extractSourceEntries(documents, UI_CATALOG_SOURCE_STRINGS, UI_CATALOG_UPDATED_AT);

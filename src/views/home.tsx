@@ -5,15 +5,13 @@ import HeroSection from "@/components/HeroSection";
 import MangaCollage from "@/components/MangaCollage";
 import SpecialOffersCarousel from "@/components/SpecialOffersCarousel";
 import SpecialOffersEmptyState from "@/components/SpecialOffersEmptyState";
-import { SOURCE_LOCALE, localizeInternalHref } from "@/i18n";
+import { SOURCE_LOCALE, type SupportedLocale, localizeInternalHref } from "@/i18n";
 import { buildTextDictionary, HERO_UI_SOURCE_STRINGS } from "@/i18n/client-copy";
 import { buildLocalizedMetadata, ENGLISH_PAGE_METADATA } from "@/i18n/metadata";
-import { createServerTextTranslator, getRequestLocale } from "@/i18n/server";
+import { createServerTextTranslator } from "@/i18n/server";
 import { arrayOr, textOr } from "@/sanity/fallback";
 import { fetchHomeCmsContent, fetchSiteSettings } from "@/sanity/fetchers";
 import { resolveImageUrl } from "@/sanity/image";
-
-export const dynamic = "force-dynamic";
 
 export async function generateMetadata() {
   const [{ page }, settings] = await Promise.all([
@@ -90,8 +88,7 @@ function renderLineBreaks(text: string) {
   ));
 }
 
-export default async function Home() {
-  const locale = await getRequestLocale();
+export default async function Home({ locale = SOURCE_LOCALE }: { locale?: SupportedLocale } = {}) {
   const translator = await createServerTextTranslator(locale);
   const t = translator.text;
   const heroCopy = buildTextDictionary(HERO_UI_SOURCE_STRINGS, t);

@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
-import "./globals.css";
+import "@/app/globals.css";
 import SiteChrome from "@/components/SiteChrome";
-import { TARGET_LOCALES, type TargetLocale } from "@/i18n";
+import { TARGET_LOCALES, localeFromSegment, type TargetLocale } from "@/i18n";
+import { notFound } from "next/navigation";
 import { buildTextDictionary, GLOBAL_UI_SOURCE_STRINGS } from "@/i18n/client-copy";
 import { SITE_URL } from "@/i18n/metadata";
 import {
@@ -22,15 +23,17 @@ export const metadata: Metadata = {
   },
 };
 
-export const dynamic = "force-dynamic";
-
 export default async function RootLayout({
   children,
   modal,
+  params,
 }: Readonly<{
   children: React.ReactNode;
   modal: React.ReactNode;
+  params: Promise<{ locale: string }>;
 }>) {
+  // Reject unknown paths before loading CMS content or translation bundles.
+  if (!localeFromSegment((await params).locale)) notFound();
   const requestLocale = await getRequestLocaleContext();
   const locale = requestLocale.locale;
   const currentLocaleGate = await getLocaleGate(locale);

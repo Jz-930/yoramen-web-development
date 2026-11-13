@@ -1,9 +1,7 @@
-import EnglishOrderPage from "../../order/page";
+import EnglishOrderPage from "@/views/order";
 import { requireTargetLocale, type LocaleRouteProps } from "@/app/_localeRoute";
 import { buildLocalizedMetadata, ENGLISH_PAGE_METADATA } from "@/i18n/metadata";
 import { fetchOrderPage } from "@/sanity/fetchers";
-
-export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: LocaleRouteProps) {
   const locale = await requireTargetLocale(params);
@@ -18,6 +16,6 @@ export async function generateMetadata({ params }: LocaleRouteProps) {
 }
 
 export default async function LocalizedOrderPage({ params }: LocaleRouteProps) {
-  await requireTargetLocale(params);
-  return <EnglishOrderPage />;
+  const locale = await requireTargetLocale(params);
+  return <EnglishOrderPage locale={locale} />;
 }

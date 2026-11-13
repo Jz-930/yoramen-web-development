@@ -1,13 +1,11 @@
 import Image from "next/image";
 import { Clock, MapPin, Phone } from "lucide-react";
-import { SOURCE_LOCALE } from "@/i18n";
+import { SOURCE_LOCALE, type SupportedLocale } from "@/i18n";
 import { buildLocalizedMetadata, ENGLISH_PAGE_METADATA } from "@/i18n/metadata";
-import { createServerTextTranslator, getRequestLocale } from "@/i18n/server";
+import { createServerTextTranslator } from "@/i18n/server";
 import { textOr } from "@/sanity/fallback";
 import { fetchLocations } from "@/sanity/fetchers";
 import { resolveImageUrl } from "@/sanity/image";
-
-export const dynamic = "force-dynamic";
 
 export async function generateMetadata() {
   return buildLocalizedMetadata({
@@ -31,8 +29,7 @@ const fallbackLocations = [
   },
 ];
 
-export default async function LocationsPage() {
-  const locale = await getRequestLocale();
+export default async function LocationsPage({ locale = SOURCE_LOCALE }: { locale?: SupportedLocale } = {}) {
   const t = (await createServerTextTranslator(locale)).text;
   const cmsLocations = await fetchLocations();
   const count = Math.max(fallbackLocations.length, cmsLocations.length);
