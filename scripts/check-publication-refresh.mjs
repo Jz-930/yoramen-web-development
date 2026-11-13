@@ -25,7 +25,17 @@ for(const path of paths) {
     await r.arrayBuffer();
     states.push(r.headers.get('x-nextjs-cache') ?? r.headers.get('x-vercel-cache'));
   }
-  assert.equal(states[1],'HIT',`${path} repeat should be static: ${states}`);
+  // Vercel propagates invalidation asynchronously across its CDN. Allow a
+  // bounded settling period, but never accept a permanently dynamic response.
+  for(let retry=0;states.at(-1)!=='HIT' && retry<10;retry++) {
+    await new Promise(resolve=>setTimeout(resolve,1000));
+    const r=await fetch(base+path,{redirect:'manual'});
+    assert.equal(r.status,previous.get(path).status,`${path} during propagation`);
+    assert.equal(r.headers.get('location'),previous.get(path).location);
+    await r.arrayBuffer();
+    states.push(r.headers.get('x-nextjs-cache') ?? r.headers.get('x-vercel-cache'));
+  }
+  assert.equal(states.at(-1),'HIT',`${path} repeat should become static: ${states}`);
   console.log(path,states.join(' -> '));
 }
 const query=await fetch(base+'/fr-ca?utm_source=static-check',{redirect:'manual'});
