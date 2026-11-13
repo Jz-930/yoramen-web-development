@@ -1,4 +1,5 @@
 import { isValidSignature, SIGNATURE_HEADER_NAME } from "@sanity/webhook";
+import { createHash } from "node:crypto";
 
 export const PUBLIC_DOCUMENT_TYPES = [
   "siteSettings", "homePage", "aboutPage", "galleryPage", "contactPage",
@@ -10,8 +11,7 @@ type Dependencies = {
   secret?: string;
   projectId: string;
   dataset: string;
-  invalidate: () => void | Promise<void>;
-  waitForConsistency?: () => Promise<void>;
+  enqueue: (event: { eventId: string; receivedAt: number }) => Promise<{ runId: string; quietUntil: number }>;
 };
 
 function json(body: unknown, status = 200) {
@@ -57,7 +57,15 @@ export async function handlePublishedContentWebhook(request: Request, deps: Depe
   if (!["create", "update", "delete"].includes(String(body.operation))) {
     return json({ error: "Unexpected operation" }, 400);
   }
-  await deps.waitForConsistency?.();
-  await deps.invalidate();
-  return json({ revalidated: true });
+  const eventId = createHash("sha256").update(raw).update(
+    typeof body._rev === "string" ? "" : signature,
+  ).digest("hex");
+  try {
+    const scheduled = await deps.enqueue({ eventId, receivedAt: Date.now() });
+    return json({ queued: true, revalidated: false, ...scheduled }, 202);
+  } catch (error) {
+    console.error("Publication queue unavailable", error instanceof Error ? error.name : "UnknownError");
+    // Sanity must retry; never acknowledge a publication that wasn't persisted.
+    return json({ error: "Publication queue unavailable; retry delivery" }, 503);
+  }
 }

@@ -23,6 +23,7 @@
 # local generated artifacts
 /output/
 /tmp/
+/.workflow-data/
 
 # misc
 .DS_Store
@@ -44,3 +45,4 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+/.swc

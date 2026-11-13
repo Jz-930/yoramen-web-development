@@ -11,11 +11,37 @@ for(const path of paths) {
   previous.set(path,{status:r.status,location:r.headers.get('location')});
   await r.arrayBuffer();
 }
-const raw=JSON.stringify({_id:'homePage',_type:'homePage',projectId:'08xf72v9',dataset:'production',operation:'update'});
-const signature=await encodeSignatureHeader(raw,Date.now(),process.env.SANITY_REVALIDATE_SECRET);
-const result=await fetch(base+'/api/revalidate',{method:'POST',headers:{'sanity-webhook-signature':signature},body:raw});
-assert.equal(result.status,200); assert.equal((await result.json()).revalidated,true);
-console.log('PASS: signed invalidation accepted.');
+const delay=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+async function send(revision) {
+  const raw=JSON.stringify({_id:'homePage',_type:'homePage',_rev:revision,projectId:'08xf72v9',dataset:'production',operation:'update'});
+  const signature=await encodeSignatureHeader(raw,Date.now(),process.env.SANITY_REVALIDATE_SECRET);
+  const response=await fetch(base+'/api/revalidate',{method:'POST',headers:{'sanity-webhook-signature':signature},body:raw});
+  const result=await response.json();
+  assert.equal(response.status,202,JSON.stringify(result)); assert.equal(result.revalidated,false);
+  return result;
+}
+const runStartedAt=Date.now();
+const runLabel='debounce-smoke-'+runStartedAt;
+const first=await send(runLabel+'-a'); console.log('First event queued:',JSON.stringify(first));
+await delay(Number(process.env.CHECK_DEBOUNCE_RESET_MS ?? 45000));
+const last=await send(runLabel+'-b'); assert.equal(first.runId,last.runId);
+assert.ok(last.quietUntil>first.quietUntil);console.log('Second event resets deadline:',JSON.stringify(last));
+await send(runLabel+'-b'); // Same signed revision is a delivery retry, not another publication.
+const evidence={first,last,checks:[]};
+async function waitUntil(deadline) {
+ while(Date.now()<deadline) {
+  await delay(Math.min(30000,deadline-Date.now()));
+  const r=await fetch(base+'/',{redirect:'manual'});await r.arrayBuffer();
+  const check={at:new Date().toISOString(),cache:r.headers.get('x-vercel-cache')??r.headers.get('x-nextjs-cache'),age:r.headers.get('age')};
+  evidence.checks.push(check);console.log('Waiting with static page:',JSON.stringify(check));
+ }
+}
+await waitUntil(first.quietUntil+3000);
+const beforeLast=await fetch(base+'/');await beforeLast.arrayBuffer();
+assert.equal(beforeLast.headers.get('x-vercel-cache')??beforeLast.headers.get('x-nextjs-cache'),'HIT','Old timer must not invalidate');
+if(beforeLast.headers.has('age')) assert.ok(Number(beforeLast.headers.get('age'))>=Math.floor((Date.now()-runStartedAt)/1000)-5, 'Cache must survive the original deadline');
+console.log('PASS: original deadline passed without invalidation.');
+await waitUntil(last.quietUntil+3000);
 for(const path of paths) {
   const states=[];
   for(let i=0;i<2;i++) {
@@ -42,3 +68,9 @@ const query=await fetch(base+'/fr-ca?utm_source=static-check',{redirect:'manual'
 if(query.status===307) assert.ok(query.headers.get('location')?.endsWith('/?utm_source=static-check'));
 assert.equal((await fetch(base+'/not-a-locale/order',{redirect:'manual'})).status,404);
 console.log('PASS: all 28 routes survive publication and return to static cache; query and unknown-locale behavior preserved.');
+
+const finalRoot=await fetch(base+'/');await finalRoot.arrayBuffer();
+if(finalRoot.headers.has('age')) assert.ok(Number(finalRoot.headers.get('age')) < Math.floor((Date.now()-runStartedAt)/1000)-30,'The final quiet window must actually refresh the cache');
+evidence.finalRootAge=finalRoot.headers.get('age');
+const {writeFile}=await import('node:fs/promises');
+await writeFile(new URL('../tmp/debounce-production-result.json',import.meta.url),JSON.stringify({...evidence,passed:true},null,2));
