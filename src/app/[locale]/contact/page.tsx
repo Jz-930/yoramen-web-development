@@ -7,7 +7,7 @@ import {
 import { fetchContactPage } from "@/sanity/fetchers";
 
 export async function generateMetadata({ params }: LocaleRouteProps) {
-  const locale = await requireTargetLocale(params);
+  const locale = await requireTargetLocale(params, "/contact");
   const page = await fetchContactPage();
   return buildLocalizedMetadata({
     locale,
@@ -19,6 +19,6 @@ export async function generateMetadata({ params }: LocaleRouteProps) {
 }
 
 export default async function LocalizedContactPage({ params }: LocaleRouteProps) {
-  const locale = await requireTargetLocale(params);
+  const locale = await requireTargetLocale(params, "/contact");
   return <EnglishContactPage locale={locale} />;
 }

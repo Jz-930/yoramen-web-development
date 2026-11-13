@@ -1,10 +1,7 @@
-import { SOURCE_LOCALE, localeFromSegment, segmentFromLocale } from "@/i18n";
+import { localeFromSegment, segmentFromLocale } from "@/i18n";
 import { NextResponse, type NextRequest } from "next/server";
 
-const LOCALE_HEADER = "x-yoramen-locale";
-const PATH_HEADER = "x-yoramen-path";
-
-export function proxy(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const segment = request.nextUrl.pathname.split("/")[1];
   const locale = localeFromSegment(segment);
 
@@ -16,16 +13,28 @@ export function proxy(request: NextRequest) {
     return NextResponse.redirect(canonicalUrl, 308);
   }
 
-  const requestHeaders = new Headers(request.headers);
-  // These are internal routing headers. Always replace client-provided values.
-  requestHeaders.set(LOCALE_HEADER, locale ?? SOURCE_LOCALE);
-  requestHeaders.set(PATH_HEADER, `${request.nextUrl.pathname}${request.nextUrl.search}`);
-
-  return NextResponse.next({
-    request: {
-      headers: requestHeaders,
-    },
-  });
+  // Published locale pages (including English fallback redirects) are static.
+  // Only query-bearing document requests need to preserve tracking parameters
+  // through a cached redirect. Inspect the query-free CDN response, never CMS.
+  if (locale && request.method === "GET" && request.nextUrl.search &&
+      !request.nextUrl.searchParams.has("_rsc") && !request.headers.has("rsc")) {
+    const url = request.nextUrl.clone();
+    url.search = "";
+    try {
+      const response = await fetch(url, { method: "HEAD", redirect: "manual", signal: AbortSignal.timeout(3000) });
+      const location = response.headers.get("location");
+      if (location && [301, 302, 303, 307, 308].includes(response.status)) {
+        const target = new URL(location, url);
+        if (target.origin === url.origin) {
+          request.nextUrl.searchParams.forEach((value, key) => target.searchParams.append(key, value));
+          return NextResponse.redirect(target, response.status);
+        }
+      }
+    } catch {
+      // Routing remains available if the CDN probe times out.
+    }
+  }
+  return NextResponse.next();
 }
 
 export const config = {

@@ -4,7 +4,7 @@ import { buildLocalizedMetadata, ENGLISH_PAGE_METADATA } from "@/i18n/metadata";
 import { fetchMenuCmsContent } from "@/sanity/fetchers";
 
 export async function generateMetadata({ params }: LocaleRouteProps) {
-  const locale = await requireTargetLocale(params);
+  const locale = await requireTargetLocale(params, "/menu");
   const { page } = await fetchMenuCmsContent();
   return buildLocalizedMetadata({
     locale,
@@ -16,6 +16,6 @@ export async function generateMetadata({ params }: LocaleRouteProps) {
 }
 
 export default async function LocalizedMenuPage({ params }: LocaleRouteProps) {
-  const locale = await requireTargetLocale(params);
+  const locale = await requireTargetLocale(params, "/menu");
   return <EnglishMenuPage locale={locale} />;
 }

@@ -83,10 +83,10 @@ export const HOME_PAGE_QUERY = `*[_type == "homePage" && _id == "homePage"][0]{
 
 export const ACTIVE_PROMOTIONS_QUERY = `*[
   _type == "promotion" &&
-  active != false &&
-  (!defined(startsAt) || startsAt <= now()) &&
-  (!defined(endsAt) || endsAt >= now())
+  active != false
 ] | order(sortOrder asc, title asc) {
+  startsAt,
+  endsAt,
   title,
   priceOrBadge,
   description,

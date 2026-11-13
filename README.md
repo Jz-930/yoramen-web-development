@@ -2,11 +2,31 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Public-page caching and CPU usage
 
-English public pages use ten-minute ISR (`src/app/(english)/layout.tsx`). Normal repeat visits are served from the CDN without rendering the page or querying Sanity again. Published Sanity data and translation inputs also use a 600-second data cache. Updates appear after cache expiry and a subsequent visit triggers background regeneration; this is not a scheduled publish every ten minutes.
+All 28 public routes (English, French, Traditional Chinese, and Japanese) are prerendered. Their root layouts use `dynamic="error"` and `revalidate=false`; published Sanity data has a shared permanent cache tag. Ordinary visits reuse static HTML without rendering or querying Sanity. Publication invalidates the tag and root layout; the next request regenerates once and subsequent requests reuse that result. Redeployments and platform cache eviction can also cause regeneration.
 
-English, localized, and Studio pages have separate root layouts. Localized pages retain request-aware language fallback and query-string-preserving redirects, while reusing cached CMS data. Only localized URLs run the locale proxy. Studio no longer loads the public navigation or translation data. Contact POST requests remain uncached and are unaffected by public-page caching.
+The only timed refreshes correspond to an explicitly configured promotion start/end or a translation grace-period deadline. Once a deadline passes, it is no longer scheduled. There is no recurring ten-minute refresh. CMS fetch errors fail regeneration instead of permanently caching fallback content. Localized fallback redirects are also static. A lightweight locale proxy canonicalizes uppercase paths and preserves query parameters through fallback redirects; it does not load CMS data. Studio, contact submissions, and the authenticated webhook remain dynamic.
 
-After building, run `node scripts/check-public-cache.mjs`. Set `CHECK_BASE_URL` to a local production server to additionally check page responses, locale redirects, robots, unknown paths, and rejection of an invalid contact request. This check sends no email.
+### Sanity publication webhook
+
+Manage **Yoramen Website CMS**, project `08xf72v9`, dataset `production`, under the **Jz-930** organization. Sign in to Sanity using **Continue with GitHub**, account **Jz-930**. The Google login with the same email is a different Sanity identity and does not have this project's permissions.
+
+`Refresh published Yoramen pages` sends POST requests to `https://www.yoramen.ca/api/revalidate`. The same random `SANITY_REVALIDATE_SECRET` must be set in Vercel Production and the webhook's Secret field; never expose it via a `NEXT_PUBLIC_` variable or commit it. The handler verifies Sanity's HMAC, project, dataset, document type, and operation before clearing caches. It waits three seconds for Sanity publication consistency. Draft and release-version changes are excluded. Create, update, delete, and unpublish are covered. Changes to revision metadata alone do not refresh the site.
+
+Filter:
+```groq
+_type in ["siteSettings","homePage","aboutPage","galleryPage","contactPage","menuPage","orderPage","menuCategory","menuItem","promotion","location","localizationConfig","translationBundle"] && !(_id in path("drafts.**")) && !(_id in path("versions.**")) && (delta::operation() != "update" || !delta::changedOnly((_rev, _updatedAt)))
+```
+
+Projection:
+```groq
+{_id, _type, "projectId": sanity::projectId(), "dataset": sanity::dataset(), "operation": delta::operation()}
+```
+
+Keep webhook drafts and versions disabled. If publication does not appear, inspect Sanity webhook delivery attempts before clearing caches or redeploying. The automatic cache update depends on successful delivery; there is deliberately no polling fallback.
+
+Next 16.1.6 has an upstream duplicate `Location` header bug on the first regenerated redirect ([#82117](https://github.com/vercel/next.js/issues/82117)). `postinstall` applies a narrow, version-checked template fix. Review and remove it when upgrading to a version with the upstream fix. `scripts/check-publication-refresh.mjs` verifies all 28 paths before and after a signed invalidation, including the first redirect response; run with `CHECK_BASE_URL` and the local secret loaded via `node --env-file=.env.local`. This test invalidates caches but does not edit CMS content.
+
+After building, run `node scripts/check-public-cache.mjs`. It expects all 28 routes to have no timed expiry (the current content has no future deadline); if editors schedule a future event, inspect the corresponding finite expiry against that deadline. Set `CHECK_BASE_URL` to a local production server to additionally check page responses, locale redirects, robots, unknown paths, invalid contact requests, and unsigned webhook rejection. Run `node --test scripts/test-published-content-webhook.mjs scripts/test-content-transitions.mjs scripts/test-contact-email.mjs` for handler and deadline regression checks. These checks send no email.
 
 ## Contact form email delivery
 

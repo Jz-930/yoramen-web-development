@@ -1,3 +1,5 @@
+import { publishedFetchOptions } from "@/sanity/cache";
+import { markNextContentTransition } from "@/sanity/content-transitions";
 import "server-only";
 
 import { createHash } from "node:crypto";
@@ -48,6 +50,7 @@ type RuntimeEntryDecision = {
   normalizedSource: string;
   available: boolean;
   value?: string;
+  expiresAt?: number;
 };
 
 type RuntimeBlockHealth = {
@@ -83,11 +86,13 @@ const loadRuntimeSourceEntries = cache(async (): Promise<SourceEntry[] | null> =
     const documents = await client.fetch<SourceDocument[]>(
       PUBLISHED_LOCALIZATION_SOURCE_QUERY,
       { sourceTypes: [...SOURCE_DOCUMENT_TYPES] },
-      { next: { revalidate: 600 } },
+      publishedFetchOptions,
     );
     if (!Array.isArray(documents)) return null;
     return extractSourceEntries(documents, UI_CATALOG_SOURCE_STRINGS, UI_CATALOG_UPDATED_AT);
   } catch (error) {
+    // A CMS outage must not replace a good static page with a permanent fallback.
+    if (process.env.NODE_ENV === "production") throw error;
     console.warn("Sanity localization source fetch failed. Falling back to English.", error);
     return null;
   }
@@ -241,6 +246,7 @@ function resolveRuntimeEntry(
       normalizedSource,
       available: true,
       value: storedEntry.value,
+      expiresAt: staleSince + gracePeriodMs + 1,
     };
   }
 
@@ -359,6 +365,8 @@ async function buildServerTextTranslator(
       Date.now(),
     ),
   );
+  await markNextContentTransition(decisions.flatMap(decision =>
+    decision.expiresAt ? [decision.expiresAt] : []));
   resolveAmbiguousSources(decisions);
 
   const blocks = aggregateRuntimeBlocks(decisions);

@@ -4,7 +4,7 @@ import { usePathname } from "next/navigation";
 import Script from "next/script";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import type { SupportedLocale, TargetLocale } from "@/i18n";
+import { stripLocaleFromPathname, type SupportedLocale, type TargetLocale } from "@/i18n";
 import type { TextDictionary } from "@/i18n/client-copy";
 import type { SiteSettingsContent } from "@/sanity/types";
 
@@ -47,7 +47,7 @@ export default function SiteChrome({
         `}
       </Script>
       <Navbar settings={settings} locale={locale}
-        enabledLocales={enabledLocalesByPath?.[pathname || "/"] ?? enabledLocales} copy={copy} />
+        enabledLocales={enabledLocalesByPath?.[stripLocaleFromPathname(pathname || "/").pathname] ?? enabledLocales} copy={copy} />
       <main className="flex-grow">{children}</main>
       <Footer settings={settings} locale={locale} copy={copy} />
       {modal}

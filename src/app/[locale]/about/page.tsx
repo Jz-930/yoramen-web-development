@@ -4,7 +4,7 @@ import { buildLocalizedMetadata, ENGLISH_PAGE_METADATA } from "@/i18n/metadata";
 import { fetchAboutPage } from "@/sanity/fetchers";
 
 export async function generateMetadata({ params }: LocaleRouteProps) {
-  const locale = await requireTargetLocale(params);
+  const locale = await requireTargetLocale(params, "/about");
   const page = await fetchAboutPage();
   return buildLocalizedMetadata({
     locale,
@@ -16,6 +16,6 @@ export async function generateMetadata({ params }: LocaleRouteProps) {
 }
 
 export default async function LocalizedAboutPage({ params }: LocaleRouteProps) {
-  const locale = await requireTargetLocale(params);
+  const locale = await requireTargetLocale(params, "/about");
   return <EnglishAboutPage locale={locale} />;
 }

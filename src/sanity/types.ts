@@ -93,6 +93,8 @@ export type PromiseCardContent = {
 };
 
 export type PromotionContent = {
+  startsAt?: string;
+  endsAt?: string;
   title?: string;
   priceOrBadge?: string;
   description?: string;

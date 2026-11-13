@@ -1,3 +1,6 @@
+import { publishedFetchOptions } from "@/sanity/cache";
+import { markNextContentTransition } from "./content-transitions";
+import { promotionIsActive } from "@/lib/content-transitions";
 import { client } from "./client";
 import { cache } from "react";
 import {
@@ -25,13 +28,14 @@ import type {
   SiteSettingsContent,
 } from "./types";
 
-// Public, published CMS data can be shared across visitors for ten minutes.
-const fetchOptions = { next: { revalidate: 600 } };
+const fetchOptions = publishedFetchOptions;
 
 export const fetchSiteSettings = cache(async function fetchSiteSettings() {
   try {
     return await client.fetch<SiteSettingsContent | null>(SITE_SETTINGS_QUERY, {}, fetchOptions);
   } catch (error) {
+    // A CMS outage must not replace a good static page with a permanent fallback.
+    if (process.env.NODE_ENV === "production") throw error;
     console.warn("Sanity site settings fetch failed. Falling back to local content.", error);
     return null;
   }
@@ -44,11 +48,19 @@ export const fetchHomeCmsContent = cache(async function fetchHomeCmsContent() {
       client.fetch<PromotionContent[]>(ACTIVE_PROMOTIONS_QUERY, {}, fetchOptions),
     ]);
 
+    const now = Date.now();
+    const allPromotions = Array.isArray(promotions) ? promotions : [];
+    await markNextContentTransition(allPromotions.flatMap(promotion => [
+      Date.parse(promotion.startsAt ?? ""), Date.parse(promotion.endsAt ?? "") + 1,
+    ]), now);
+
     return {
       page,
-      promotions: Array.isArray(promotions) ? promotions : [],
+      promotions: allPromotions.filter(promotion => promotionIsActive(promotion, now)),
     };
   } catch (error) {
+    // A CMS outage must not replace a good static page with a permanent fallback.
+    if (process.env.NODE_ENV === "production") throw error;
     console.warn("Sanity home fetch failed. Falling back to local content.", error);
     return {
       page: null,
@@ -69,6 +81,8 @@ export const fetchMenuCmsContent = cache(async function fetchMenuCmsContent() {
       categories: Array.isArray(categories) ? categories : [],
     };
   } catch (error) {
+    // A CMS outage must not replace a good static page with a permanent fallback.
+    if (process.env.NODE_ENV === "production") throw error;
     console.warn("Sanity menu fetch failed. Falling back to local content.", error);
     return {
       page: null,
@@ -81,6 +95,8 @@ export const fetchOrderPage = cache(async function fetchOrderPage() {
   try {
     return await client.fetch<OrderPageContent | null>(ORDER_PAGE_QUERY, {}, fetchOptions);
   } catch (error) {
+    // A CMS outage must not replace a good static page with a permanent fallback.
+    if (process.env.NODE_ENV === "production") throw error;
     console.warn("Sanity order page fetch failed. Falling back to local content.", error);
     return null;
   }
@@ -91,6 +107,8 @@ export const fetchLocations = cache(async function fetchLocations() {
     const locations = await client.fetch<LocationContent[]>(LOCATIONS_QUERY, {}, fetchOptions);
     return Array.isArray(locations) ? locations : [];
   } catch (error) {
+    // A CMS outage must not replace a good static page with a permanent fallback.
+    if (process.env.NODE_ENV === "production") throw error;
     console.warn("Sanity locations fetch failed. Falling back to local content.", error);
     return [];
   }
@@ -100,6 +118,8 @@ export const fetchAboutPage = cache(async function fetchAboutPage() {
   try {
     return await client.fetch<AboutPageContent | null>(ABOUT_PAGE_QUERY, {}, fetchOptions);
   } catch (error) {
+    // A CMS outage must not replace a good static page with a permanent fallback.
+    if (process.env.NODE_ENV === "production") throw error;
     console.warn("Sanity about page fetch failed. Falling back to local content.", error);
     return null;
   }
@@ -109,6 +129,8 @@ export const fetchGalleryPage = cache(async function fetchGalleryPage() {
   try {
     return await client.fetch<GalleryPageContent | null>(GALLERY_PAGE_QUERY, {}, fetchOptions);
   } catch (error) {
+    // A CMS outage must not replace a good static page with a permanent fallback.
+    if (process.env.NODE_ENV === "production") throw error;
     console.warn("Sanity gallery page fetch failed. Falling back to local content.", error);
     return null;
   }
@@ -118,6 +140,8 @@ export const fetchContactPage = cache(async function fetchContactPage() {
   try {
     return await client.fetch<ContactPageContent | null>(CONTACT_PAGE_QUERY, {}, fetchOptions);
   } catch (error) {
+    // A CMS outage must not replace a good static page with a permanent fallback.
+    if (process.env.NODE_ENV === "production") throw error;
     console.warn("Sanity contact page fetch failed. Falling back to local content.", error);
     return null;
   }

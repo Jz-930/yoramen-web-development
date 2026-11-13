@@ -7,7 +7,7 @@ import {
 import { fetchGalleryPage } from "@/sanity/fetchers";
 
 export async function generateMetadata({ params }: LocaleRouteProps) {
-  const locale = await requireTargetLocale(params);
+  const locale = await requireTargetLocale(params, "/gallery");
   const page = await fetchGalleryPage();
   return buildLocalizedMetadata({
     locale,
@@ -19,6 +19,6 @@ export async function generateMetadata({ params }: LocaleRouteProps) {
 }
 
 export default async function LocalizedGalleryPage({ params }: LocaleRouteProps) {
-  const locale = await requireTargetLocale(params);
+  const locale = await requireTargetLocale(params, "/gallery");
   return <EnglishGalleryPage locale={locale} />;
 }

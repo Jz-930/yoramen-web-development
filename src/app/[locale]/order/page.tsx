@@ -4,7 +4,7 @@ import { buildLocalizedMetadata, ENGLISH_PAGE_METADATA } from "@/i18n/metadata";
 import { fetchOrderPage } from "@/sanity/fetchers";
 
 export async function generateMetadata({ params }: LocaleRouteProps) {
-  const locale = await requireTargetLocale(params);
+  const locale = await requireTargetLocale(params, "/order");
   const order = await fetchOrderPage();
   return buildLocalizedMetadata({
     locale,
@@ -16,6 +16,6 @@ export async function generateMetadata({ params }: LocaleRouteProps) {
 }
 
 export default async function LocalizedOrderPage({ params }: LocaleRouteProps) {
-  const locale = await requireTargetLocale(params);
+  const locale = await requireTargetLocale(params, "/order");
   return <EnglishOrderPage locale={locale} />;
 }

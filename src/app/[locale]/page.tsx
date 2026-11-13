@@ -7,7 +7,7 @@ import {
 import { fetchHomeCmsContent, fetchSiteSettings } from "@/sanity/fetchers";
 
 export async function generateMetadata({ params }: LocaleRouteProps) {
-  const locale = await requireTargetLocale(params);
+  const locale = await requireTargetLocale(params, "/");
   const [{ page }, settings] = await Promise.all([
     fetchHomeCmsContent(),
     fetchSiteSettings(),
@@ -22,6 +22,6 @@ export async function generateMetadata({ params }: LocaleRouteProps) {
 }
 
 export default async function LocalizedHomePage({ params }: LocaleRouteProps) {
-  const locale = await requireTargetLocale(params);
+  const locale = await requireTargetLocale(params, "/");
   return <EnglishHomePage locale={locale} />;
 }

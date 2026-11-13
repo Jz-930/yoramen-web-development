@@ -1,3 +1,4 @@
+import { publishedFetchOptions } from "@/sanity/cache";
 import "server-only";
 
 import { client } from "@/sanity/client";
@@ -16,8 +17,7 @@ import {
   type TranslationEntry,
 } from "./types";
 
-// Public, published CMS data can be shared across visitors for ten minutes.
-const fetchOptions = { next: { revalidate: 600 } };
+const fetchOptions = publishedFetchOptions;
 
 export const LOCALIZATION_CONFIG_QUERY = `*[
   _type == "localizationConfig" &&
@@ -192,6 +192,8 @@ async function fetchLocalizationConfig(): Promise<LocalizationConfig> {
     );
     return normalizeConfig(value);
   } catch (error) {
+    // A CMS outage must not replace a good static page with a permanent fallback.
+    if (process.env.NODE_ENV === "production") throw error;
     console.warn("Sanity localization config fetch failed. Localization stays disabled.", error);
     return DISABLED_LOCALIZATION_CONFIG;
   }
@@ -399,6 +401,8 @@ export async function loadCombinedTranslationBundleResult(options: {
 
     return { status: "loaded", bundle };
   } catch (error) {
+    // A CMS outage must not replace a good static page with a permanent fallback.
+    if (process.env.NODE_ENV === "production") throw error;
     console.warn("Sanity translation bundle fetch failed. Falling back to English.", error);
     return { status: "unavailable", bundle: null };
   }
