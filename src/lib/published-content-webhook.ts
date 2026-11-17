@@ -1,4 +1,5 @@
-import { isValidSignature, SIGNATURE_HEADER_NAME } from "@sanity/webhook";
+import { SIGNATURE_HEADER_NAME } from "@sanity/webhook";
+import { validPublicationSignature } from "./publication-signature";
 import { createHash } from "node:crypto";
 
 export const PUBLIC_DOCUMENT_TYPES = [
@@ -9,6 +10,7 @@ export const PUBLIC_DOCUMENT_TYPES = [
 
 type Dependencies = {
   secret?: string;
+  legacySecret?: string;
   projectId: string;
   dataset: string;
   enqueue: (event: { eventId: string; receivedAt: number }) => Promise<{ runId: string; quietUntil: number }>;
@@ -39,7 +41,7 @@ export async function handlePublishedContentWebhook(request: Request, deps: Depe
   }
   const raw = Buffer.concat(chunks).toString("utf8");
   try {
-    if (!await isValidSignature(raw, signature, deps.secret)) return json({ error: "Invalid signature" }, 401);
+    if (!await validPublicationSignature(raw, signature, deps.secret, deps.legacySecret)) return json({ error: "Invalid signature" }, 401);
   } catch {
     return json({ error: "Invalid signature" }, 401);
   }

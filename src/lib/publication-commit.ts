@@ -1,7 +1,8 @@
-import { isValidSignature, SIGNATURE_HEADER_NAME } from "@sanity/webhook";
+import { SIGNATURE_HEADER_NAME } from "@sanity/webhook";
+import { validPublicationSignature } from "./publication-signature";
 
 export async function handlePublicationCommit(request: Request, deps: {
-  secret?: string; now: () => number; invalidate: () => void;
+  secret?: string; legacySecret?: string; now: () => number; invalidate: () => void;
 }) {
   const json = (body: unknown, status: number) => Response.json(body, {status,headers:{"Cache-Control":"no-store"}});
   const signature = request.headers.get(SIGNATURE_HEADER_NAME);
@@ -18,7 +19,7 @@ export async function handlePublicationCommit(request: Request, deps: {
   }
   const raw = Buffer.concat(chunks).toString("utf8");
   try {
-    if (!await isValidSignature(raw,signature,deps.secret)) return json({error:"Invalid signature"},401);
+    if (!await validPublicationSignature(raw,signature,deps.secret,deps.legacySecret)) return json({error:"Invalid signature"},401);
   } catch { return json({error:"Invalid signature"},401); }
   let body;
   try { body=JSON.parse(raw); } catch { return json({error:"Invalid body"},400); }

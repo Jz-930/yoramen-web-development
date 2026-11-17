@@ -1,6 +1,7 @@
 import { createHook, sleep, RetryableError } from "workflow";
 import { encodeSignatureHeader, SIGNATURE_HEADER_NAME } from "@sanity/webhook";
 import { runPublicationDebounce, type PublicationBatch, type PublicationEvent } from "@/lib/publication-debounce";
+import { publicationSigningSecret } from "@/lib/publication-rotation";
 
 export async function publicationWorkflow(token: string, callbackOrigin: string, quietMs: number) {
   "use workflow";
@@ -15,8 +16,7 @@ export async function publicationWorkflow(token: string, callbackOrigin: string,
 
 async function commitPublication(origin: string, batch: PublicationBatch) {
   "use step";
-  const secret = process.env.SANITY_REVALIDATE_SECRET;
-  if (!secret) throw new Error("Publication secret is missing");
+  const secret = publicationSigningSecret(process.env);
   const body = JSON.stringify({ kind: "quiet-publication", ...batch });
   const signature = await encodeSignatureHeader(body, Date.now(), secret);
   // Use the current production alias, even if this waiting run predates a deploy.
